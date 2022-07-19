@@ -1,0 +1,149 @@
+use proc_macro::TokenStream;
+use quote::quote;
+use syn::parse_macro_input;
+
+#[doc(hidden)]
+#[proc_macro_derive(Meta)]
+pub fn derive_meta(_input: TokenStream) -> TokenStream {
+    TokenStream::new()
+}
+
+#[allow(clippy::cognitive_complexity, clippy::too_many_lines)] // TODO
+#[doc(hidden)]
+#[proc_macro_derive(TES3Object, attributes(tag))]
+pub fn derive_tes3object(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as syn::DeriveInput);
+
+    let variants = match &input.data {
+        syn::Data::Enum(e) => &e.variants,
+        _ => panic!("annotated item must be an enum"),
+    };
+
+    let idents: Vec<_> = variants.iter().map(|v| &v.ident).collect();
+    let tags: Vec<_> = variants.iter().map(parse_variant_tag).collect();
+
+    let tag_strs = tags
+        .iter()
+        .map(|tag| syn::LitStr::new(&String::from_utf8_lossy(&tag.value()), tag.span()));
+
+    let ident_strs = idents.iter().map(|id| syn::LitStr::new(&id.to_string(), id.span()));
+
+    let output = quote! {
+        const _: () = {
+            use bytes_io::*;
+
+            impl TES3Object {
+                pub const fn tag(&self) -> &'static [u8; 4] {
+                    match self {
+                        #(
+                            TES3Object::#idents(_) => #idents::TAG,
+                        )*
+                    }
+                }
+                pub const fn tag_str(&self) -> &'static str {
+                    match self {
+                        #(
+                            TES3Object::#idents(_) => #idents::TAG_STR,
+                        )*
+                    }
+                }
+            }
+
+            impl Load for TES3Object {
+                fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+                    let tag = stream.load()?;
+                    stream.skip(4)?; // size
+
+                    match &tag {
+                        #(
+                            #idents::TAG => Ok(Self::#idents(stream.load()?)),
+                        )*
+                        _ => Err(io::Error::new(
+                            io::ErrorKind::InvalidData,
+                            format!("Unexpected Tag: {}", tag.to_str_lossy()),
+                        ))
+                    }
+                }
+            }
+
+            impl Save for TES3Object {
+                fn save(&self, stream: &mut Writer) -> io::Result<()> {
+                    let start_pos = stream.cursor.position();
+
+                    // buffer for tag & size
+                    stream.save(&[0u32; 2])?;
+
+                    // save object & get tag
+                    let tag = match self {
+                        #(
+                            TES3Object::#idents(obj) => { stream.save(obj)?; obj.tag() }
+                        )*
+                    };
+
+                    // calculate object size
+                    let final_pos = stream.cursor.position();
+                    let size = (final_pos - start_pos - 16) as u32;
+
+                    // update the tag & size
+                    stream.cursor.set_position(start_pos);
+                    stream.save(tag)?;
+                    stream.save(&size)?;
+                    stream.cursor.set_position(final_pos);
+
+                    Ok(())
+                }
+            }
+
+            #(
+                impl #idents {
+                    pub const TAG: &'static [u8; 4] = #tags;
+                    pub const TAG_STR: &'static str = #tag_strs;
+                    pub const fn tag(&self) -> &'static [u8; 4] { Self::TAG }
+                    pub const fn tag_str(&self) -> &'static str { Self::TAG_STR }
+                    #[doc(hidden)]
+                    pub const fn type_name(&self) -> &'static str {
+                        #ident_strs
+                    }
+                }
+                impl From<#idents> for TES3Object {
+                    fn from(value: #idents) -> Self {
+                        Self::#idents(value)
+                    }
+                }
+                impl TryFrom<TES3Object> for #idents {
+                    type Error = ();
+                    fn try_from(value: TES3Object) -> Result<Self, Self::Error> {
+                        match value {
+                            TES3Object::#idents(inner) => Ok(inner),
+                            _ => Err(())
+                        }
+                    }
+                }
+                impl<'a> TryFrom<&'a TES3Object> for &'a #idents {
+                    type Error = ();
+                    fn try_from(value: &'a TES3Object) -> Result<Self, Self::Error> {
+                        match value {
+                            TES3Object::#idents(inner) => Ok(inner),
+                            _ => Err(())
+                        }
+                    }
+                }
+                impl<'a> TryFrom<&'a mut TES3Object> for &'a mut #idents {
+                    type Error = ();
+                    fn try_from(value: &'a mut TES3Object) -> Result<Self, Self::Error> {
+                        match value {
+                            TES3Object::#idents(inner) => Ok(inner),
+                            _ => Err(())
+                        }
+                    }
+                }
+            )*
+        };
+    };
+
+    output.into()
+}
+
+fn parse_variant_tag(variant: &syn::Variant) -> syn::LitByteStr {
+    variant.attrs[0].parse_args().unwrap()
+}

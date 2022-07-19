@@ -1,0 +1,13 @@
+[package]
+name = "nif_macros"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+dashmap = "^5.0"
+hashbrown = { version = "^0.12", features = ["nightly", "rayon"] }
+quote = "^1.0"
+syn = { version = "^1.0", default-features = false }

@@ -1,0 +1,77 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cargo check",
+            "type": "shell",
+            "command": "cargo check --workspace --all-features",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo lints",
+            "type": "shell",
+            "command": "cargo lints clippy --workspace --all-features --no-deps",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo fmt",
+            "type": "shell",
+            "command": "cargo fmt",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo test",
+            "type": "shell",
+            "command": "cargo test --workspace --all-features",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo doc",
+            "type": "shell",
+            "command": "cargo doc --workspace --no-deps --open",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo upgrade",
+            "type": "shell",
+            "command": "cargo upgrade --workspace --skip-compatible",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo udeps",
+            "type": "shell",
+            "command": "cargo udeps --workspace",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo build --release",
+            "type": "shell",
+            "command": "cargo build --release",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        }
+    ]
+}

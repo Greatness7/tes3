@@ -3,9 +3,8 @@ use std::io::{self, Read};
 
 // external imports
 use bstr::BString;
-use bytemuck::{bytes_of_mut, Pod, Zeroable};
+use bytemuck::{bytes_of_mut, Zeroable};
 use copyless::BoxHelper;
-use nalgebra::{allocator::Allocator, DefaultAllocator, DimName, OMatrix, Scalar};
 
 // internal imports
 use crate::bytes_io::{AsRepr, Reader};
@@ -38,21 +37,6 @@ impl<L: Load> Load for Vec<L> {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let len = stream.load::<u32>()?;
         (0..len).map(|_| stream.load()).collect()
-    }
-}
-
-impl<S, R, C> Load for OMatrix<S, R, C>
-where
-    Self: Pod,
-    S: Scalar,
-    R: DimName,
-    C: DimName,
-    DefaultAllocator: Allocator<S, R, C>,
-{
-    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self::zeroed();
-        stream.cursor.read_exact(bytes_of_mut(&mut this))?;
-        Ok(this)
     }
 }
 
@@ -136,3 +120,24 @@ pub trait LoadFn: Iterator {
 
 impl LoadFn for std::ops::Range<u16> {}
 impl LoadFn for std::ops::Range<u32> {}
+
+#[cfg(feature = "nalgebra")]
+const _: () = {
+    use bytemuck::Pod;
+    use nalgebra::{allocator::Allocator, DefaultAllocator, DimName, OMatrix, Scalar};
+
+    impl<S, R, C> Load for OMatrix<S, R, C>
+    where
+        Self: Pod,
+        S: Scalar,
+        R: DimName,
+        C: DimName,
+        DefaultAllocator: Allocator<S, R, C>,
+    {
+        fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+            let mut this = Self::zeroed();
+            stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+            Ok(this)
+        }
+    }
+};

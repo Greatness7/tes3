@@ -3,10 +3,8 @@ use std::borrow::Cow;
 use std::io::{self, Read};
 
 // external imports
-use bytemuck::{cast_slice_mut, Pod};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use memchr::memchr;
-use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
 use smart_default::SmartDefault;
 
 // internal imports
@@ -80,18 +78,6 @@ impl<'a> Reader<'a> {
         ))
     }
 
-    pub fn load_matrix<S, R, C>(&mut self, nrows: usize, ncols: usize) -> io::Result<OMatrix<S, R, C>>
-    where
-        S: Scalar + Pod,
-        R: Dim,
-        C: Dim,
-        DefaultAllocator: Allocator<S, R, C>,
-    {
-        let mut this = OMatrix::repeat_generic(R::from_usize(nrows), C::from_usize(ncols), S::zeroed());
-        self.cursor.read_exact(cast_slice_mut(this.as_mut_slice()))?;
-        Ok(this)
-    }
-
     pub fn expect<L>(&mut self, expected: L) -> io::Result<()>
     where
         L: Copy + Load + PartialEq,
@@ -124,3 +110,23 @@ impl Read for Reader<'_> {
         self.cursor.read(buf)
     }
 }
+
+#[cfg(feature = "nalgebra")]
+const _: () = {
+    use bytemuck::{cast_slice_mut, Pod};
+    use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
+
+    impl Reader<'_> {
+        pub fn load_matrix<S, R, C>(&mut self, nrows: usize, ncols: usize) -> io::Result<OMatrix<S, R, C>>
+        where
+            S: Scalar + Pod,
+            R: Dim,
+            C: Dim,
+            DefaultAllocator: Allocator<S, R, C>,
+        {
+            let mut this = OMatrix::repeat_generic(R::from_usize(nrows), C::from_usize(ncols), S::zeroed());
+            self.cursor.read_exact(cast_slice_mut(this.as_mut_slice()))?;
+            Ok(this)
+        }
+    }
+};

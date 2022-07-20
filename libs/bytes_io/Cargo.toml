@@ -11,5 +11,5 @@ copyless = "^0.1"
 encoding_rs = { version = "^0.8", features = ["simd-accel"] }
 hashbrown = { version = "^0.12", features = ["nightly", "rayon"] }
 memchr = "^2.4"
-nalgebra = { version = "^0.31", features = ["convert-bytemuck"] }
+nalgebra = { version = "^0.31", features = ["convert-bytemuck"], optional = true }
 smart-default = "^0.6"

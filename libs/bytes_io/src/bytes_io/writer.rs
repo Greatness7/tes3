@@ -3,11 +3,9 @@ use std::borrow::Cow;
 use std::io::{self, Write};
 
 // external imports
-use bytemuck::{cast_slice, Pod};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use hashbrown::HashMap;
 use memchr::memchr;
-use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
 use smart_default::SmartDefault;
 
 // internal imports
@@ -88,16 +86,6 @@ impl Writer {
         Err(io::Error::new(io::ErrorKind::InvalidData, format!("encode error: {}", value)))
     }
 
-    pub fn save_matrix<S, R, C>(&mut self, matrix: &OMatrix<S, R, C>) -> io::Result<()>
-    where
-        S: Scalar + Pod,
-        R: Dim,
-        C: Dim,
-        DefaultAllocator: Allocator<S, R, C>,
-    {
-        self.save_bytes(cast_slice(matrix.as_slice()))
-    }
-
     pub fn encode<'a>(&self, str: &'a str) -> io::Result<Cow<'a, [u8]>> {
         if let (bytes, _, false) = self.encoding.encode(str) {
             Ok(match memchr(0, &bytes) {
@@ -125,3 +113,21 @@ impl Write for Writer {
         self.cursor.flush()
     }
 }
+
+#[cfg(feature = "nalgebra")]
+const _: () = {
+    use bytemuck::{cast_slice, Pod};
+    use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
+
+    impl Writer {
+        pub fn save_matrix<S, R, C>(&mut self, matrix: &OMatrix<S, R, C>) -> io::Result<()>
+        where
+            S: Scalar + Pod,
+            R: Dim,
+            C: Dim,
+            DefaultAllocator: Allocator<S, R, C>,
+        {
+            self.save_bytes(cast_slice(matrix.as_slice()))
+        }
+    }
+};

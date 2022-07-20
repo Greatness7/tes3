@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 bstr = { version = "^0.2", default-features = false, features = ["std"] }
-bytes_io = { path = "../bytes_io" }
+bytes_io = { path = "../bytes_io", features = ["nalgebra"] }
 derive_more = "^0.99"
 float_eq = "^1.0"
 hashbrown = { version = "^0.12", features = ["nightly", "rayon"] }

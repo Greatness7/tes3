@@ -3,8 +3,7 @@ use std::io::{self, Write};
 
 // external imports
 use bstr::BString;
-use bytemuck::{bytes_of, Pod};
-use nalgebra::{allocator::Allocator, DefaultAllocator, DimName, OMatrix, Scalar};
+use bytemuck::bytes_of;
 
 // internal imports
 use crate::bytes_io::{AsRepr, Writer};
@@ -38,20 +37,6 @@ impl<S: Save> Save for Vec<S> {
         for item in self {
             stream.save(item)?;
         }
-        Ok(())
-    }
-}
-
-impl<S, R, C> Save for OMatrix<S, R, C>
-where
-    Self: Pod,
-    S: Scalar,
-    R: DimName,
-    C: DimName,
-    DefaultAllocator: Allocator<S, R, C>,
-{
-    fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.cursor.write_all(bytes_of(self))?;
         Ok(())
     }
 }
@@ -120,3 +105,23 @@ macro_rules! impl_save {
     }
 }
 impl_save! { i8 u8 i16 u16 f32 i32 u32 f64 i64 u64 }
+
+#[cfg(feature = "nalgebra")]
+const _: () = {
+    use bytemuck::Pod;
+    use nalgebra::{allocator::Allocator, DefaultAllocator, DimName, OMatrix, Scalar};
+
+    impl<S, R, C> Save for OMatrix<S, R, C>
+    where
+        Self: Pod,
+        S: Scalar,
+        R: DimName,
+        C: DimName,
+        DefaultAllocator: Allocator<S, R, C>,
+    {
+        fn save(&self, stream: &mut Writer) -> io::Result<()> {
+            stream.cursor.write_all(bytes_of(self))?;
+            Ok(())
+        }
+    }
+};

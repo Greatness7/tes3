@@ -106,6 +106,16 @@ macro_rules! impl_save {
                     stream.cursor.write_all(bytes_of(self))
                 }
             }
+            impl<const M: usize, const N: usize> Save for [[$T; M]; N] {
+                fn save(&self, stream: &mut Writer) -> io::Result<()> {
+                    stream.cursor.write_all(bytes_of(self))
+                }
+            }
+            impl<const M: usize, const N: usize, const O: usize> Save for [[[$T; M]; N]; O] {
+                fn save(&self, stream: &mut Writer) -> io::Result<()> {
+                    stream.cursor.write_all(bytes_of(self))
+                }
+            }
         )*
     }
 }

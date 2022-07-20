@@ -105,6 +105,20 @@ macro_rules! impl_load {
                     Ok(this)
                 }
             }
+            impl<const M: usize, const N: usize> Load for [[$T; M]; N] {
+                fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+                    let mut this = Self::zeroed();
+                    stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    Ok(this)
+                }
+            }
+            impl<const M: usize, const N: usize, const O: usize> Load for [[[$T; M]; N]; O] {
+                fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+                    let mut this = Self::zeroed();
+                    stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    Ok(this)
+                }
+            }
         )*
     }
 }

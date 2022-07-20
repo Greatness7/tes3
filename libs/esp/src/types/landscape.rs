@@ -1,3 +1,6 @@
+// external imports
+use bytemuck::zeroed_box;
+
 // internal imports
 use crate::prelude::*;
 
@@ -17,33 +20,33 @@ pub struct Landscape {
 
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct VertexNormals {
-    #[default(Box::new([0; 3 * 65 * 65]))]
-    pub data: Box<[i8; 3 * 65 * 65]>,
+    #[default(zeroed_box())]
+    pub data: Box<[[[i8; 3]; 65]; 65]>,
 }
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct VertexHeights {
     pub offset: f32,
-    #[default(Box::new([0; 65 * 65]))]
-    pub data: Box<[i8; 65 * 65]>,
+    #[default(zeroed_box())]
+    pub data: Box<[[i8; 65]; 65]>,
 }
 
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct WorldMapData {
-    #[default(Box::new([0; 9 * 9]))]
-    pub data: Box<[i8; 9 * 9]>,
+    #[default(zeroed_box())]
+    pub data: Box<[[i8; 9]; 9]>,
 }
 
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct VertexColors {
-    #[default(Box::new([0; 3 * 65 * 65]))]
-    pub data: Box<[u8; 3 * 65 * 65]>,
+    #[default(zeroed_box())]
+    pub data: Box<[[[u8; 3]; 65]; 65]>,
 }
 
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct TextureIndices {
-    #[default(Box::new([0; 16 * 16]))]
-    pub data: Box<[u16; 16 * 16]>,
+    #[default(zeroed_box())]
+    pub data: Box<[[u16; 16]; 16]>,
 }
 
 impl Load for Landscape {

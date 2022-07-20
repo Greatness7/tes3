@@ -1,13 +1,12 @@
-#![feature(once_cell)]
-
-use std::sync::LazyLock;
-
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{Data, DataStruct, DeriveInput, Fields, Ident, LitByteStr, Type};
 
 use dashmap::DashMap;
 use hashbrown::{hash_map::DefaultHashBuilder as S, HashMap};
+
+// use [`std::sync::LazyLock`] when stable
+use once_cell::sync::Lazy as LazyLock;
 
 type LazyMap<K, V> = LazyLock<DashMap<K, V, S>>;
 

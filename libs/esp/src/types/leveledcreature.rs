@@ -35,15 +35,15 @@ impl Load for LeveledCreature {
                 }
                 b"INDX" => {
                     stream.expect(4u32)?;
-                    this.creatures.get_or_insert_default().reserve(stream.load_as::<u32, _>()?);
+                    this.creatures.get_or_insert_with(default).reserve(stream.load_as::<u32, _>()?);
                 }
                 b"CNAM" => {
-                    this.creatures.get_or_insert_default().push(default());
-                    this.creatures.get_or_insert_default().last_mut().ok_or_else(err)?.0 = stream.load()?;
+                    this.creatures.get_or_insert_with(default).push(default());
+                    this.creatures.get_or_insert_with(default).last_mut().ok_or_else(err)?.0 = stream.load()?;
                 }
                 b"INTV" => {
                     stream.expect(2u32)?;
-                    this.creatures.get_or_insert_default().last_mut().ok_or_else(err)?.1 = stream.load()?;
+                    this.creatures.get_or_insert_with(default).last_mut().ok_or_else(err)?.1 = stream.load()?;
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

@@ -1,4 +1,4 @@
-#![feature(option_get_or_insert_default, default_free_fn, drain_filter)]
+#![cfg_attr(feature = "nightly", feature(drain_filter))]
 
 pub mod types;
 pub use types::*;
@@ -13,10 +13,11 @@ pub(crate) mod prelude {
 
     // external imports
     pub(crate) use bstr::{BString, ByteSlice, ByteVec};
-    pub(crate) use cow_utils::CowUtils;
     pub(crate) use hashbrown::{HashMap, HashSet};
     pub(crate) use smart_default::SmartDefault;
 
-    // helper functions
-    pub(crate) use std::default::default;
+    // use [`std::default::default`] when stable
+    pub(crate) fn default<T: Default>() -> T {
+        Default::default()
+    }
 }

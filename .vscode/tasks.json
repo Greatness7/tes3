@@ -4,6 +4,15 @@
         {
             "label": "cargo check",
             "type": "shell",
+            "command": "cargo check --workspace",
+            "presentation": {
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "cargo check nightly",
+            "type": "shell",
             "command": "cargo check --workspace --all-features",
             "presentation": {
                 "clear": true,

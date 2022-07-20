@@ -36,7 +36,7 @@ impl Load for Birthsign {
                     this.description = Some(stream.load()?);
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_default().push(stream.load()?);
+                    this.spells.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

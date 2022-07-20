@@ -8,8 +8,12 @@ bstr = { version = "^0.2", default-features = false, features = ["std"] }
 bytemuck = { version = "^1.9", features = ["derive", "extern_crate_alloc", "min_const_generics", "zeroable_maybe_uninit"] }
 bytes_io_macros = { path = "../bytes_io_macros" }
 copyless = "^0.1"
-encoding_rs = { version = "^0.8", features = ["simd-accel"] }
-hashbrown = { version = "^0.12", features = ["nightly", "rayon"] }
+encoding_rs = { version = "^0.8" }
+hashbrown = { version = "^0.12", features = ["rayon"] }
 memchr = "^2.4"
 nalgebra = { version = "^0.31", features = ["convert-bytemuck"], optional = true }
 smart-default = "^0.6"
+
+[features]
+default = []
+nightly = ["hashbrown/nightly", "encoding_rs/simd-accel"]

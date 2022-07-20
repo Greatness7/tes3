@@ -68,7 +68,7 @@ impl Load for Race {
                     this.data = Some(stream.load()?);
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_default().push(stream.load()?);
+                    this.spells.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"DESC" => {
                     this.description = Some(stream.load()?);

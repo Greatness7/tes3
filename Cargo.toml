@@ -30,3 +30,4 @@ walkdir = "^2.3"
 
 [features]
 default = ["esp", "nif"]
+nightly = ["esp/nightly", "nif/nightly"]

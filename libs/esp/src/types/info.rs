@@ -111,18 +111,18 @@ impl Load for Info {
                     this.quest_restart = Some(stream.load()?);
                 }
                 b"SCVR" => {
-                    this.filters.get_or_insert_default().push(stream.load()?);
+                    this.filters.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"FLTV" => {
                     // TODO these most likely follow immmediately after
                     stream.expect(4u32)?;
-                    let filter = this.filters.get_or_insert_default().last_mut().ok_or_else(err)?;
+                    let filter = this.filters.get_or_insert_with(default).last_mut().ok_or_else(err)?;
                     filter.value = Some(FilterValue::Float(stream.load()?));
                 }
                 b"INTV" => {
                     // TODO these most likely follow immmediately after
                     stream.expect(4u32)?;
-                    let filter = this.filters.get_or_insert_default().last_mut().ok_or_else(err)?;
+                    let filter = this.filters.get_or_insert_with(default).last_mut().ok_or_else(err)?;
                     filter.value = Some(FilterValue::Integer(stream.load()?));
                 }
                 b"BNAM" => {

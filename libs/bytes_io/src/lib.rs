@@ -1,5 +1,3 @@
-#![feature(maybe_uninit_as_bytes)]
-
 // external exports
 pub use std::io;
 

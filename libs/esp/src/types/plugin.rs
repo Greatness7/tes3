@@ -106,6 +106,7 @@ impl Plugin {
         self.objects.iter_mut().filter_map(|object| object.try_into().ok())
     }
 
+    #[cfg(feature = "nightly")]
     pub fn drain_objects_of_type<T>(&mut self) -> impl Iterator<Item = T> + '_
     where
         TES3Object: TryInto<T>,

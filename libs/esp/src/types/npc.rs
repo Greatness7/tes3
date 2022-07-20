@@ -89,10 +89,10 @@ impl Load for Npc {
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
-                    this.inventory.get_or_insert_default().push(stream.load()?);
+                    this.inventory.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_default().push(stream.load()?);
+                    this.spells.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"AIDT" => {
                     stream.expect(12u32)?;
@@ -100,36 +100,36 @@ impl Load for Npc {
                 }
                 b"DODT" => {
                     stream.expect(24u32)?;
-                    this.travel_destinations.get_or_insert_default().push(stream.load()?);
+                    this.travel_destinations.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"AI_T" => {
                     stream.expect(16u32)?;
                     this.ai_packages
-                        .get_or_insert_default()
+                        .get_or_insert_with(default)
                         .push(AiPackage::Travel(stream.load()?));
                 }
                 b"AI_W" => {
                     stream.expect(14u32)?;
                     this.ai_packages
-                        .get_or_insert_default()
+                        .get_or_insert_with(default)
                         .push(AiPackage::Wander(stream.load()?));
                 }
                 b"AI_E" => {
                     stream.expect(48u32)?;
                     this.ai_packages
-                        .get_or_insert_default()
+                        .get_or_insert_with(default)
                         .push(AiPackage::Escort(stream.load()?));
                 }
                 b"AI_F" => {
                     stream.expect(48u32)?;
                     this.ai_packages
-                        .get_or_insert_default()
+                        .get_or_insert_with(default)
                         .push(AiPackage::Follow(stream.load()?));
                 }
                 b"AI_A" => {
                     stream.expect(33u32)?;
                     this.ai_packages
-                        .get_or_insert_default()
+                        .get_or_insert_with(default)
                         .push(AiPackage::Activate(stream.load()?));
                 }
                 b"DELE" => {

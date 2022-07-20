@@ -47,7 +47,7 @@ impl Load for Container {
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
-                    this.inventory.get_or_insert_default().push(stream.load()?);
+                    this.inventory.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

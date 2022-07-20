@@ -53,14 +53,14 @@ impl Load for Faction {
                 }
                 b"RNAM" => {
                     stream.expect(32u32)?;
-                    this.rank_names.get_or_insert_default().push(stream.load()?);
+                    this.rank_names.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"FADT" => {
                     stream.expect(240u32)?;
                     this.data = Some(stream.load()?);
                 }
                 b"ANAM" => {
-                    this.reactions.get_or_insert_default().push(stream.load()?);
+                    this.reactions.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

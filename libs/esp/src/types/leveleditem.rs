@@ -36,15 +36,15 @@ impl Load for LeveledItem {
                 b"INDX" => {
                     stream.expect(4u32)?;
                     let len: u32 = stream.load()?;
-                    this.items.get_or_insert_default().reserve(len as usize);
+                    this.items.get_or_insert_with(default).reserve(len as usize);
                 }
                 b"INAM" => {
-                    this.items.get_or_insert_default().push(default());
-                    this.items.get_or_insert_default().last_mut().ok_or_else(err)?.0 = stream.load()?;
+                    this.items.get_or_insert_with(default).push(default());
+                    this.items.get_or_insert_with(default).last_mut().ok_or_else(err)?.0 = stream.load()?;
                 }
                 b"INTV" => {
                     stream.expect(2u32)?;
-                    this.items.get_or_insert_default().last_mut().ok_or_else(err)?.1 = stream.load()?;
+                    this.items.get_or_insert_with(default).last_mut().ok_or_else(err)?.1 = stream.load()?;
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

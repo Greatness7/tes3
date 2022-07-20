@@ -53,7 +53,7 @@ impl Load for Alchemy {
                 }
                 b"ENAM" => {
                     stream.expect(24u32)?;
-                    this.effects.get_or_insert_default().push(stream.load()?);
+                    this.effects.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

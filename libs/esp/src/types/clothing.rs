@@ -54,7 +54,7 @@ impl Load for Clothing {
                     this.icon = Some(stream.load()?);
                 }
                 b"INDX" => {
-                    this.biped_objects.get_or_insert_default().push(stream.load()?);
+                    this.biped_objects.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"ENAM" => {
                     this.enchanting = Some(stream.load()?);

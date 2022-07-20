@@ -39,7 +39,7 @@ impl Load for Header {
                     stream.expect(8u32)?;
                     let master_size = stream.load()?;
                     //
-                    this.masters.get_or_insert_default().push((master_name, master_size));
+                    this.masters.get_or_insert_with(default).push((master_name, master_size));
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;

@@ -12,8 +12,6 @@ The plan is to eventually stablize a useful API and publish to `crates.io`. Not 
 
 ### Example
 
-This crate currently requires the **nightly** toolchain to compile. Partly to enable some upstream performance improvements (SIMD), but also to use a few minor syntax sugar conveniences.
-
 `cargo.toml`
 ```toml
 [dependencies.tes3]

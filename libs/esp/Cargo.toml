@@ -7,9 +7,12 @@ edition = "2021"
 bstr = { version = "^0.2", default-features = false, features = ["std"] }
 bytemuck = { version = "^1.9", features = ["derive", "extern_crate_alloc"] }
 bytes_io = { path = "../bytes_io" }
-cow-utils = "^0.1"
 derive_more = "^0.99"
 esp_macros = { path = "../esp_macros" }
-hashbrown = { version = "^0.12", features = ["nightly", "rayon"] }
+hashbrown = { version = "^0.12", features = ["rayon"] }
 rayon = "^1.5"
 smart-default = "^0.6"
+
+[features]
+default = []
+nightly = ["bytes_io/nightly", "hashbrown/nightly"]

@@ -1,5 +1,3 @@
-#![feature(default_free_fn)]
-
 pub mod traits;
 pub use traits::*;
 
@@ -17,9 +15,7 @@ pub(crate) mod prelude {
     // external imports
     pub(crate) use bstr::{BString, ByteSlice, ByteVec};
     pub(crate) use hashbrown::{HashMap, HashSet};
-    pub(crate) use slotmap::DefaultKey;
     pub(crate) use smart_default::SmartDefault;
 
-    // helper functions
-    pub(crate) use std::default::default;
+    pub(crate) use slotmap::DefaultKey;
 }

@@ -8,7 +8,7 @@ bstr = { version = "^0.2", default-features = false, features = ["std"] }
 bytes_io = { path = "../bytes_io", features = ["nalgebra"] }
 derive_more = "^0.99"
 float_eq = "^1.0"
-hashbrown = { version = "^0.12", features = ["nightly", "rayon"] }
+hashbrown = { version = "^0.12", features = ["rayon"] }
 nalgebra = "^0.31"
 nif_macros = { path = "../nif_macros" }
 slotmap = "^1.0"
@@ -16,3 +16,7 @@ smart-default = "^0.6"
 
 [dev-dependencies]
 test-case = "^2.0"
+
+[features]
+default = []
+nightly = ["bytes_io/nightly", "hashbrown/nightly"]

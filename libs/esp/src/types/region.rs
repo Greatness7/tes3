@@ -56,7 +56,7 @@ impl Load for Region {
                 }
                 b"SNAM" => {
                     stream.expect(33u32)?;
-                    this.sounds.get_or_insert_default().push(stream.load()?);
+                    this.sounds.get_or_insert_with(default).push(stream.load()?);
                 }
                 b"DELE" => {
                     stream.expect(4u32)?;

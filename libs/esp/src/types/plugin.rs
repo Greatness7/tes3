@@ -39,13 +39,25 @@ impl Plugin {
     }
 
     pub fn load_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
+        self.load_bytes_filtered(bytes, |_| true)
+    }
+
+    pub fn load_path_filtered(&mut self, path: impl AsRef<Path>, filter: impl Fn([u8; 4]) -> bool) -> io::Result<()> {
+        self.load_bytes_filtered(&std::fs::read(path)?, filter)
+    }
+
+    pub fn load_bytes_filtered(&mut self, bytes: &[u8], filter: impl Fn([u8; 4]) -> bool) -> io::Result<()> {
         let mut stream = Reader::new(bytes);
+
+        type ObjectHeader = ([u8; 4], u32, u64);
 
         // do a quick pass calculating the positions of objects
         let mut offsets = Vec::new();
-        while let Ok([_, len, ..]) = stream.load::<[u32; 4]>() {
+        while let Ok((tag, len, _)) = stream.load::<ObjectHeader>() {
             if let Ok((start, end)) = stream.skip(len as usize) {
-                offsets.push((start - 16, end)); // keep header
+                if filter(tag) {
+                    offsets.push((start - 16, end)); // keep header
+                }
             }
         }
 

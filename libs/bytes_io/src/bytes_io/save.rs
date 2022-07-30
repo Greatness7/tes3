@@ -4,6 +4,7 @@ use std::io::{self, Write};
 // external imports
 use bstr::BString;
 use bytemuck::bytes_of;
+use enumflags2::{BitFlag, BitFlags};
 
 // internal imports
 use crate::bytes_io::{AsRepr, Writer};
@@ -22,6 +23,16 @@ impl Save for BString {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save_as::<_, u32>(self.len())?;
         stream.cursor.write_all(self.as_slice())
+    }
+}
+
+impl<S> Save for BitFlags<S>
+where
+    S: BitFlag,
+    S::Numeric: Save,
+{
+    fn save(&self, stream: &mut Writer) -> io::Result<()> {
+        stream.save(&self.bits())
     }
 }
 

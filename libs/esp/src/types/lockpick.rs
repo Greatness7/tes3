@@ -3,15 +3,13 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Lockpick {
-    pub flags1: u32,
-    pub flags2: u32,
+    pub flags: BitFlags<ObjectFlags>,
     pub id: String,
     pub data: Option<LockpickData>,
     pub name: Option<String>,
     pub mesh: Option<String>,
     pub icon: Option<String>,
     pub script: Option<String>,
-    pub deleted: Option<u32>,
 }
 
 #[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
@@ -24,11 +22,9 @@ pub struct LockpickData {
 
 impl Load for Lockpick {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self {
-            flags1: stream.load()?,
-            flags2: stream.load()?,
-            ..default()
-        };
+        let mut this: Self = default();
+
+        this.flags = stream.load()?;
 
         while let Ok(tag) = stream.load() {
             match &tag {
@@ -52,8 +48,9 @@ impl Load for Lockpick {
                     this.icon = Some(stream.load()?);
                 }
                 b"DELE" => {
-                    stream.expect(4u32)?;
-                    this.deleted = Some(stream.load()?);
+                    let size: u32 = stream.load()?;
+                    stream.skip(size)?;
+                    this.flags.insert(ObjectFlags::Deleted);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -67,8 +64,7 @@ impl Load for Lockpick {
 
 impl Save for Lockpick {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.flags1)?;
-        stream.save(&self.flags2)?;
+        stream.save(&self.flags)?;
         // NAME
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
@@ -99,10 +95,10 @@ impl Save for Lockpick {
             stream.save(value)?;
         }
         // DELE
-        if let Some(value) = &self.deleted {
+        if self.flags.contains(ObjectFlags::Deleted) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
-            stream.save(value)?;
+            stream.save(&0u32)?;
         }
         Ok(())
     }

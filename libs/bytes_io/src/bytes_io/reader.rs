@@ -92,13 +92,12 @@ impl<'a> Reader<'a> {
         }
     }
 
-    #[allow(clippy::cast_possible_truncation)]
-    pub fn skip(&mut self, len: usize) -> io::Result<(usize, usize)> {
-        let old_pos = self.cursor.position() as usize;
-        let new_pos = old_pos + len;
-        if new_pos <= self.cursor.get_ref().len() {
-            self.cursor.set_position(new_pos as u64);
-            Ok((old_pos, new_pos))
+    pub fn skip(&mut self, len: u32) -> io::Result<u64> {
+        let old_pos = self.cursor.position();
+        let new_pos = old_pos + u64::from(len);
+        if new_pos <= (self.cursor.get_ref().len() as u64) {
+            self.cursor.set_position(new_pos);
+            Ok(new_pos)
         } else {
             Err(io::Error::new(io::ErrorKind::InvalidData, "Skip out of bounds"))
         }

@@ -5,6 +5,7 @@ use std::io::{self, Read};
 use bstr::BString;
 use bytemuck::{bytes_of_mut, Zeroable};
 use copyless::BoxHelper;
+use enumflags2::{BitFlag, BitFlags};
 
 // internal imports
 use crate::bytes_io::{AsRepr, Reader};
@@ -24,6 +25,16 @@ impl Load for BString {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let len = stream.load::<u32>()? as usize;
         Ok(stream.load_bytes(len)?.into())
+    }
+}
+
+impl<L> Load for BitFlags<L>
+where
+    L: BitFlag,
+    L::Numeric: Load,
+{
+    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+        Ok(Self::from_bits_truncate(stream.load()?))
     }
 }
 

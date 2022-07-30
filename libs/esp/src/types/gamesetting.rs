@@ -3,8 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct GameSetting {
-    pub flags1: u32,
-    pub flags2: u32,
+    pub flags: BitFlags<ObjectFlags>,
     pub id: String,
     pub value: Option<GameSettingValue>,
 }
@@ -19,11 +18,9 @@ pub enum GameSettingValue {
 
 impl Load for GameSetting {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self {
-            flags1: stream.load()?,
-            flags2: stream.load()?,
-            ..default()
-        };
+        let mut this: Self = default();
+
+        this.flags = stream.load()?;
 
         while let Ok(tag) = stream.load() {
             match &tag {
@@ -53,8 +50,7 @@ impl Load for GameSetting {
 
 impl Save for GameSetting {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.flags1)?;
-        stream.save(&self.flags2)?;
+        stream.save(&self.flags)?;
         // NAME
         stream.save(b"NAME")?;
         stream.save(&self.id)?;

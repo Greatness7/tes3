@@ -25,7 +25,7 @@ pub struct Reference {
     pub key: Option<String>,
     pub trap: Option<String>,
     pub soul: Option<String>,
-    pub deleted: Option<u32>,
+    pub deleted: Option<bool>,
 }
 
 impl Load for Reference {
@@ -97,8 +97,9 @@ impl Load for Reference {
                     break;
                 }
                 b"DELE" => {
-                    stream.expect(4u32)?;
-                    this.deleted = Some(stream.load()?);
+                    let size: u32 = stream.load()?;
+                    stream.skip(size)?;
+                    this.deleted = Some(true);
                     break;
                 }
                 _ => {
@@ -204,10 +205,10 @@ impl Save for Reference {
             stream.save(value)?;
         }
         // DELE
-        if let Some(value) = &self.deleted {
+        if self.deleted.is_some() {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
-            stream.save(value)?;
+            stream.save(&0u32)?;
         } else {
             // DATA
             stream.save(b"DATA")?;

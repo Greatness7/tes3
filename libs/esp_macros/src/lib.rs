@@ -52,7 +52,7 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
             impl Load for TES3Object {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let tag = stream.load()?;
-                    stream.skip(4)?; // size
+                    stream.skip(8)?; // skip size/padding
 
                     match &tag {
                         #(
@@ -70,8 +70,8 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
                     let start_pos = stream.cursor.position();
 
-                    // buffer for tag & size
-                    stream.save(&[0u32; 2])?;
+                    // buffer for tag/size/padding
+                    stream.save(&[0u32; 3])?;
 
                     // save object & get tag
                     let tag = match self {
@@ -100,10 +100,7 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
                     pub const TAG_STR: &'static str = #tag_strs;
                     pub const fn tag(&self) -> &'static [u8; 4] { Self::TAG }
                     pub const fn tag_str(&self) -> &'static str { Self::TAG_STR }
-                    #[doc(hidden)]
-                    pub const fn type_name(&self) -> &'static str {
-                        #ident_strs
-                    }
+                    pub const fn type_name(&self) -> &'static str { #ident_strs }
                 }
                 impl From<#idents> for TES3Object {
                     fn from(value: #idents) -> Self {

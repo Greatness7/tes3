@@ -49,14 +49,14 @@ impl Plugin {
     pub fn load_bytes_filtered(&mut self, bytes: &[u8], filter: impl Fn([u8; 4]) -> bool) -> io::Result<()> {
         let mut stream = Reader::new(bytes);
 
-        type ObjectHeader = ([u8; 4], u32, u64);
-
         // do a quick pass calculating the positions of objects
         let mut offsets = Vec::new();
-        while let Ok((tag, len, _)) = stream.load::<ObjectHeader>() {
-            if let Ok((start, end)) = stream.skip(len as usize) {
+        while let Ok((tag, len)) = stream.load::<([u8; 4], u32)>() {
+            let start = stream.cursor.position() - 8;
+            if let Ok(end) = stream.skip(len + 8) {
                 if filter(tag) {
-                    offsets.push((start - 16, end)); // keep header
+                    #[allow(clippy::cast_possible_truncation)]
+                    offsets.push(start as usize..end as usize);
                 }
             }
         }
@@ -64,7 +64,7 @@ impl Plugin {
         // now visit each chunk and decode them all in parellel
         self.objects = offsets
             .into_par_iter()
-            .map(|(start, end)| Reader::new(&bytes[start..end]).load())
+            .map(|range| Reader::new(&bytes[range]).load())
             .collect::<io::Result<_>>()?;
 
         Ok(())

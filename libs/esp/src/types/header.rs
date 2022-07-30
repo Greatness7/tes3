@@ -3,8 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct Header {
-    pub flags1: u32,
-    pub flags2: u32,
+    pub flags: BitFlags<ObjectFlags>,
     #[default(1.3)]
     pub version: f32,
     pub file_type: FileType,
@@ -16,11 +15,9 @@ pub struct Header {
 
 impl Load for Header {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self {
-            flags1: stream.load()?,
-            flags2: stream.load()?,
-            ..default()
-        };
+        let mut this: Self = default();
+
+        this.flags = stream.load()?;
 
         while let Ok(tag) = stream.load() {
             match &tag {
@@ -53,8 +50,7 @@ impl Load for Header {
 
 impl Save for Header {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.flags1)?;
-        stream.save(&self.flags2)?;
+        stream.save(&self.flags)?;
         // HEDR
         stream.save(b"HEDR")?;
         stream.save(&300u32)?;

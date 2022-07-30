@@ -3,8 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Cell {
-    pub flags1: u32,
-    pub flags2: u32,
+    pub flags: BitFlags<ObjectFlags>,
     pub id: String,
     pub data: CellData,
     pub region: Option<String>,
@@ -12,7 +11,6 @@ pub struct Cell {
     pub water_height: Option<f32>,
     pub atmosphere_data: Option<AtmosphereData>,
     pub references: HashMap<(u32, u32), Reference>, // no option, to prevent auto merge
-    pub deleted: Option<u32>,
 }
 
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
@@ -31,11 +29,9 @@ pub struct AtmosphereData {
 
 impl Load for Cell {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self {
-            flags1: stream.load()?,
-            flags2: stream.load()?,
-            ..default()
-        };
+        let mut this: Self = default();
+
+        this.flags = stream.load()?;
 
         let mut num_temp_refs: i32 = 0;
         let mut moved_refs = vec![];
@@ -104,8 +100,9 @@ impl Load for Cell {
                     }
                 }
                 b"DELE" => {
-                    stream.expect(4u32)?;
-                    this.deleted = Some(stream.load()?);
+                    let size: u32 = stream.load()?;
+                    stream.skip(size)?;
+                    this.flags.insert(ObjectFlags::Deleted);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -138,8 +135,7 @@ impl Load for Cell {
 
 impl Save for Cell {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.flags1)?;
-        stream.save(&self.flags2)?;
+        stream.save(&self.flags)?;
         // NAME
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
@@ -171,10 +167,10 @@ impl Save for Cell {
             stream.save(value)?;
         }
         // DELE
-        if let Some(value) = &self.deleted {
+        if self.flags.contains(ObjectFlags::Deleted) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
-            stream.save(value)?;
+            stream.save(&0u32)?;
         }
         //
         let mut num_temp_refs = 0;

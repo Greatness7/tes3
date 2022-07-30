@@ -13,6 +13,7 @@ pub(crate) mod prelude {
 
     // external imports
     pub(crate) use bstr::{BString, ByteSlice, ByteVec};
+    pub(crate) use enumflags2::{bitflags, BitFlag, BitFlags};
     pub(crate) use hashbrown::{HashMap, HashSet};
     pub(crate) use smart_default::SmartDefault;
 

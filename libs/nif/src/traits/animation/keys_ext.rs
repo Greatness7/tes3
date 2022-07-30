@@ -9,7 +9,6 @@ use nalgebra::Const;
 use crate::prelude::*;
 
 // aliased generics
-#[allow(clippy::redundant_pub_crate)]
 mod private {
     use nalgebra::*;
     pub(crate) type Key<const K: usize> = OVector<f32, Const<K>>;

@@ -10,12 +10,6 @@ license = "MIT OR Apache-2.0"
 keywords = ["TES3", "Morrowind"]
 categories = ["Game development"]
 
-[profile.release]
-codegen-units = 1
-lto = "fat"
-panic = "abort"
-strip = "symbols"
-
 [workspace]
 members = ["libs/*"]
 

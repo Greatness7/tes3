@@ -13,10 +13,6 @@ type LazyMap<K, V> = LazyLock<DashMap<K, V, S>>;
 static RELATIONS: LazyMap<String, String> = LazyMap::new(Default::default);
 
 /// Internal derive macro for use with `NiObject` structs in `nif.rs`.
-///
-/// Provides the following features:
-///     Implements `type_name` const function for retrieving the type's name.
-///     Implements `Deref` and `DerefMut` to simulate inheritence via the `base` field.
 #[doc(hidden)]
 #[proc_macro_derive(Meta)]
 pub fn derive_meta(input: TokenStream) -> TokenStream {
@@ -83,11 +79,6 @@ fn get_struct_fields_rev(data: &Data) -> impl Iterator<Item = &Ident> {
 }
 
 /// Internal derive macro for use with the `NiType` enum in `nif.rs`.
-///
-/// Provides the following features:
-///     Implements `load` function for each variant.
-///     Implements `From` for converting structs into variants.
-///     Implements `TryFrom` for converting variants into structs.
 #[doc(hidden)]
 #[proc_macro_derive(NiType)]
 pub fn derive_nitype(input: TokenStream) -> TokenStream {

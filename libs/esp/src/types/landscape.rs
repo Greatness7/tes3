@@ -7,8 +7,8 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Landscape {
     pub flags: BitFlags<ObjectFlags>,
-    pub grid: Option<(i32, i32)>,
-    pub landscape_flags: Option<u32>,
+    pub grid: (i32, i32),
+    pub landscape_flags: BitFlags<LandscapeFlags>,
     pub vertex_normals: Option<VertexNormals>,
     pub vertex_heights: Option<VertexHeights>,
     pub world_map_data: Option<WorldMapData>,
@@ -57,11 +57,11 @@ impl Load for Landscape {
             match &tag {
                 b"INTV" => {
                     stream.expect(8u32)?;
-                    this.grid = Some(stream.load()?);
+                    this.grid = stream.load()?;
                 }
                 b"DATA" => {
                     stream.expect(4u32)?;
-                    this.landscape_flags = Some(stream.load()?);
+                    this.landscape_flags = stream.load()?;
                 }
                 b"VNML" => {
                     stream.expect(12675u32)?;
@@ -102,17 +102,13 @@ impl Save for Landscape {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.flags)?;
         // INTV
-        if let Some(value) = &self.grid {
-            stream.save(b"INTV")?;
-            stream.save(&8u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"INTV")?;
+        stream.save(&8u32)?;
+        stream.save(&self.grid)?;
         // DATA
-        if let Some(value) = &self.landscape_flags {
-            stream.save(b"DATA")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&4u32)?;
+        stream.save(&self.landscape_flags)?;
         // VNML
         if let Some(value) = &self.vertex_normals {
             stream.save(b"VNML")?;

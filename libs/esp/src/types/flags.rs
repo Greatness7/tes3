@@ -10,3 +10,13 @@ pub enum ObjectFlags {
     Ignored = 0x1000,
     Blocked = 0x2000,
 }
+
+#[bitflags]
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LandscapeFlags {
+    UsesVertexHeightsAndNormals = 0x01,
+    UsesVertexColors = 0x02,
+    UsesTextures = 0x04,
+    Unknown = 0x08,
+}

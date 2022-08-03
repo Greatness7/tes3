@@ -4,7 +4,6 @@ use crate::prelude::*;
 // external imports
 use bitflags::bitflags;
 
-
 bitflags! {
     #[derive(LoadSave, Default)]
     #[repr(transparent)]
@@ -24,11 +23,5 @@ bitflags! {
         const USES_VERTEX_COLORS = 0x02;
         const USES_TEXTURES = 0x04;
         const UNKNOWN = 0x08;
-
-        const USES_WORLD_MAP_DATA = (
-            Self::USES_VERTEX_HEIGHTS_AND_NORMALS.bits |
-            Self::USES_VERTEX_COLORS.bits |
-            Self::USES_TEXTURES.bits
-        );
     }
 }

@@ -1,22 +1,28 @@
 // internal imports
 use crate::prelude::*;
 
-#[bitflags]
-#[repr(u32)]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum ObjectFlags {
-    Deleted = 0x0020,
-    Persistent = 0x0400,
-    Ignored = 0x1000,
-    Blocked = 0x2000,
+// external imports
+use bitflags::bitflags;
+
+
+bitflags! {
+    #[derive(LoadSave, Default)]
+    #[repr(transparent)]
+    pub struct ObjectFlags: u32 {
+        const DELETED = 0x0020;
+        const PERSISTENT = 0x0400;
+        const IGNORED = 0x1000;
+        const BLOCKED = 0x2000;
+    }
 }
 
-#[bitflags]
-#[repr(u32)]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum LandscapeFlags {
-    UsesVertexHeightsAndNormals = 0x01,
-    UsesVertexColors = 0x02,
-    UsesTextures = 0x04,
-    Unknown = 0x08,
+bitflags! {
+    #[derive(LoadSave, Default)]
+    #[repr(transparent)]
+    pub struct LandscapeFlags: u32 {
+        const USES_VERTEX_HEIGHTS_AND_NORMALS = 0x01;
+        const USES_VERTEX_COLORS = 0x02;
+        const USES_TEXTURES = 0x04;
+        const UNKNOWN = 0x08;
+    }
 }

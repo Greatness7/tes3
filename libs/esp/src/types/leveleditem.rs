@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct LeveledItem {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     pub id: String,
     pub list_flags: Option<u32>,
     pub chance_none: Option<u8>,
@@ -45,7 +45,7 @@ impl Load for LeveledItem {
                 b"DELE" => {
                     let size: u32 = stream.load()?;
                     stream.skip(size)?;
-                    this.flags.insert(ObjectFlags::Deleted);
+                    this.flags.insert(ObjectFlags::DELETED);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -92,7 +92,7 @@ impl Save for LeveledItem {
             }
         }
         // DELE
-        if self.flags.contains(ObjectFlags::Deleted) {
+        if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
             stream.save(&0u32)?;

@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Sound {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     pub id: String,
     pub sound_path: Option<String>,
     pub data: Option<SoundData>,
@@ -36,7 +36,7 @@ impl Load for Sound {
                 b"DELE" => {
                     let size: u32 = stream.load()?;
                     stream.skip(size)?;
-                    this.flags.insert(ObjectFlags::Deleted);
+                    this.flags.insert(ObjectFlags::DELETED);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -66,7 +66,7 @@ impl Save for Sound {
             stream.save(value)?;
         }
         // DELE
-        if self.flags.contains(ObjectFlags::Deleted) {
+        if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
             stream.save(&0u32)?;

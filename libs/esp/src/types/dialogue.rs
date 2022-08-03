@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Dialogue {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     pub id: String,
     pub kind: Option<DialogueType2>,
 }
@@ -31,7 +31,7 @@ impl Load for Dialogue {
                 b"DELE" => {
                     let size: u32 = stream.load()?;
                     stream.skip(size)?;
-                    this.flags.insert(ObjectFlags::Deleted);
+                    this.flags.insert(ObjectFlags::DELETED);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -56,7 +56,7 @@ impl Save for Dialogue {
             stream.save(value)?;
         }
         // DELE
-        if self.flags.contains(ObjectFlags::Deleted) {
+        if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
             stream.save(&0u32)?;

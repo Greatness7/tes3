@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct GameSetting {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     pub id: String,
     pub value: Option<GameSettingValue>,
 }

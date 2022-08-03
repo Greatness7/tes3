@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct Header {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     #[default(1.3)]
     pub version: f32,
     pub file_type: FileType,

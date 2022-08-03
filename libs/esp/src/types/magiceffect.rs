@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct MagicEffect {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     pub effect_id: EffectId,
     pub data: Option<MagicEffectData>,
     pub icon: Option<String>,
@@ -82,7 +82,7 @@ impl Load for MagicEffect {
                 b"DELE" => {
                     let size: u32 = stream.load()?;
                     stream.skip(size)?;
-                    this.flags.insert(ObjectFlags::Deleted);
+                    this.flags.insert(ObjectFlags::DELETED);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -163,7 +163,7 @@ impl Save for MagicEffect {
             stream.save(value)?;
         }
         // DELE
-        if self.flags.contains(ObjectFlags::Deleted) {
+        if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
             stream.save(&0u32)?;

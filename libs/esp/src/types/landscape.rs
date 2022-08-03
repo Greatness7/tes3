@@ -6,9 +6,9 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Landscape {
-    pub flags: BitFlags<ObjectFlags>,
+    pub flags: ObjectFlags,
     pub grid: (i32, i32),
-    pub landscape_flags: BitFlags<LandscapeFlags>,
+    pub landscape_flags: LandscapeFlags,
     pub vertex_normals: Option<VertexNormals>,
     pub vertex_heights: Option<VertexHeights>,
     pub world_map_data: Option<WorldMapData>,
@@ -86,7 +86,7 @@ impl Load for Landscape {
                 b"DELE" => {
                     let size: u32 = stream.load()?;
                     stream.skip(size)?;
-                    this.flags.insert(ObjectFlags::Deleted);
+                    this.flags.insert(ObjectFlags::DELETED);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -140,7 +140,7 @@ impl Save for Landscape {
             stream.save(value)?;
         }
         // DELE
-        if self.flags.contains(ObjectFlags::Deleted) {
+        if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
             stream.save(&0u32)?;

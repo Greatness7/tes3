@@ -168,7 +168,7 @@ impl Save for VertexHeights {
 }
 
 impl LandscapeFlags {
-    fn uses_world_map_data(&self) -> bool {
+    pub fn uses_world_map_data(&self) -> bool {
         self.intersects(Self::USES_VERTEX_HEIGHTS_AND_NORMALS | Self::USES_VERTEX_COLORS | Self::USES_TEXTURES)
     }
 }

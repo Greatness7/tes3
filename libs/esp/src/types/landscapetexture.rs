@@ -6,7 +6,7 @@ pub struct LandscapeTexture {
     pub flags: ObjectFlags,
     pub id: String,
     pub index: Option<u32>,
-    pub texture: Option<String>,
+    pub file_name: Option<String>,
 }
 
 impl Load for LandscapeTexture {
@@ -25,7 +25,7 @@ impl Load for LandscapeTexture {
                     this.index = Some(stream.load()?);
                 }
                 b"DATA" => {
-                    this.texture = Some(stream.load()?);
+                    this.file_name = Some(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -55,7 +55,7 @@ impl Save for LandscapeTexture {
             stream.save(value)?;
         }
         // DATA
-        if let Some(value) = &self.texture {
+        if let Some(value) = &self.file_name {
             stream.save(b"DATA")?;
             stream.save(value)?;
         }

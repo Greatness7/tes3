@@ -57,8 +57,11 @@ impl Load for Cell {
                     this.water_height = Some(stream.load()?);
                 }
                 b"AMBI" => {
-                    stream.expect(16u32)?;
+                    let size: u32 = stream.load()?;
                     this.atmosphere_data = Some(stream.load()?);
+                    // Apparently some editors may add extra padding to this subrecord.
+                    // see: https://www.nexusmods.com/morrowind/mods/50999 (version: 1.02, offset:196017)
+                    stream.skip(size - 16)?;
                 }
                 b"NAM0" => {
                     stream.expect(4u32)?;

@@ -18,8 +18,8 @@ esp = { path = "libs/esp", optional = true }
 nif = { path = "libs/nif", optional = true }
 
 [dev-dependencies]
-rayon = "^1.5"
-tempfile = "^3.2"
+rayon = "^1.6"
+tempfile = "^3.3"
 walkdir = "^2.3"
 
 [features]

@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Dialogue {
     pub flags: ObjectFlags,
     pub id: String,

@@ -1,13 +1,15 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct GameSetting {
     pub flags: ObjectFlags,
     pub id: String,
     pub value: Option<GameSettingValue>,
 }
 
+#[esp_meta]
 #[derive(Clone, Debug, PartialEq, SmartDefault)]
 pub enum GameSettingValue {
     #[default]

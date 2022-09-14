@@ -1,6 +1,7 @@
 // internal imports
 use crate::prelude::*;
 
+#[esp_meta]
 #[derive(Clone, Debug, PartialEq, SmartDefault)]
 pub enum AiPackage {
     #[default]
@@ -11,13 +12,15 @@ pub enum AiPackage {
     Activate(AiActivatePackage),
 }
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct AiTravelPackage {
     pub location: [f32; 3],
     pub reset: u8,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct AiWanderPackage {
     pub distance: u16,
     pub duration: u16,
@@ -33,7 +36,8 @@ pub struct AiWanderPackage {
     pub reset: i8,
 }
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct AiEscortPackage {
     pub location: [f32; 3],
     pub duration: u16,
@@ -42,7 +46,8 @@ pub struct AiEscortPackage {
     pub cell: Option<String>,
 }
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct AiFollowPackage {
     pub location: [f32; 3],
     pub duration: u16,
@@ -51,13 +56,15 @@ pub struct AiFollowPackage {
     pub cell: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct AiActivatePackage {
     pub target: FixedString<32>,
     pub reset: u8,
 }
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct TravelDestination {
     pub translation: [f32; 3],
     pub rotation: [f32; 3],

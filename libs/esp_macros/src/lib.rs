@@ -1,18 +1,17 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::parse_macro_input;
 
-#[doc(hidden)]
-#[proc_macro_derive(Meta)]
-pub fn derive_meta(_input: TokenStream) -> TokenStream {
-    TokenStream::new()
+#[allow(clippy::missing_const_for_fn)] // false positive
+#[proc_macro_attribute]
+pub fn esp_meta(_args: TokenStream, input: TokenStream) -> TokenStream {
+    input
 }
 
 #[allow(clippy::cognitive_complexity, clippy::too_many_lines)] // TODO
 #[doc(hidden)]
 #[proc_macro_derive(TES3Object, attributes(tag))]
 pub fn derive_tes3object(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as syn::DeriveInput);
+    let input = syn::parse_macro_input!(input as syn::DeriveInput);
 
     let variants = match &input.data {
         syn::Data::Enum(e) => &e.variants,
@@ -20,11 +19,12 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
     };
 
     let idents: Vec<_> = variants.iter().map(|v| &v.ident).collect();
-    let tags: Vec<_> = variants.iter().map(parse_variant_tag).collect();
+
+    let tags: Vec<syn::LitByteStr> = variants.iter().map(|v| v.attrs[0].parse_args().unwrap()).collect();
 
     let tag_strs = tags
         .iter()
-        .map(|tag| syn::LitStr::new(&String::from_utf8_lossy(&tag.value()), tag.span()));
+        .map(|tag| syn::LitStr::new(std::str::from_utf8(&tag.value()).unwrap(), tag.span()));
 
     let ident_strs = idents.iter().map(|id| syn::LitStr::new(&id.to_string(), id.span()));
 
@@ -44,6 +44,20 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
                     match self {
                         #(
                             TES3Object::#idents(_) => #idents::TAG_STR,
+                        )*
+                    }
+                }
+                pub fn flags(&self) -> &ObjectFlags {
+                    match self {
+                        #(
+                            TES3Object::#idents(object) => &object.flags,
+                        )*
+                    }
+                }
+                pub fn flags_mut(&mut self) -> &mut ObjectFlags {
+                    match self {
+                        #(
+                            TES3Object::#idents(object) => &mut object.flags,
                         )*
                     }
                 }
@@ -139,8 +153,4 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
     };
 
     output.into()
-}
-
-fn parse_variant_tag(variant: &syn::Variant) -> syn::LitByteStr {
-    variant.attrs[0].parse_args().unwrap()
 }

@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Alchemy {
     pub flags: ObjectFlags,
     pub id: String,
@@ -13,7 +14,8 @@ pub struct Alchemy {
     pub effects: Option<Vec<Effect>>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct AlchemyData {
     pub weight: f32,
     pub value: u32,

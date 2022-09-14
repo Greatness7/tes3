@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Region {
     pub flags: ObjectFlags,
     pub id: String,
@@ -12,7 +13,8 @@ pub struct Region {
     pub sounds: Option<Vec<(FixedString<32>, u8)>>,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct WeatherChances {
     pub clear: u8,
     pub cloudy: u8,

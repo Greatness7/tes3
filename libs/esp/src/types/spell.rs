@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Spell {
     pub flags: ObjectFlags,
     pub id: String,
@@ -10,7 +11,8 @@ pub struct Spell {
     pub effects: Option<Vec<Effect>>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct SpellData {
     pub kind: SpellType,
     pub cost: u32,

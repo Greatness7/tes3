@@ -4,7 +4,8 @@ use std::cmp::Reverse;
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Cell {
     pub flags: ObjectFlags,
     pub id: String,
@@ -16,13 +17,15 @@ pub struct Cell {
     pub references: HashMap<(u32, u32), Reference>, // no option, to prevent auto merge
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CellData {
     pub flags: u32,
     pub grid: (i32, i32),
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct AtmosphereData {
     pub ambient_color: [u8; 4],
     pub sunlight_color: [u8; 4],

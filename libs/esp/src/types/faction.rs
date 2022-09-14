@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Faction {
     pub flags: ObjectFlags,
     pub id: String,
@@ -11,7 +12,8 @@ pub struct Faction {
     pub reactions: Option<Vec<FactionReaction>>,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct FactionData {
     pub favored_attributes: [AttributeId; 2],
     pub requirements: [FactionRequirement; 10],
@@ -19,7 +21,8 @@ pub struct FactionData {
     pub flags: u32,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct FactionRequirement {
     pub attributes: [i32; 2],
     pub primary_skill: i32,
@@ -27,7 +30,8 @@ pub struct FactionRequirement {
     pub reputation: i32,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct FactionReaction {
     pub faction: String,
     pub reaction: i32,

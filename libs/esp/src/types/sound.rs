@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Sound {
     pub flags: ObjectFlags,
     pub id: String,
@@ -9,7 +10,8 @@ pub struct Sound {
     pub data: Option<SoundData>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct SoundData {
     pub volume: u8,
     pub range: (u8, u8),

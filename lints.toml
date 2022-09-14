@@ -40,7 +40,7 @@ warn = [
     "trivial_numeric_casts",
     "unreachable_pub",
     # "unsafe_code",
-    "unsafe_op_in_unsafe_fn",
+    # "unsafe_op_in_unsafe_fn",
     # "unstable_features",
     "unused_crate_dependencies",
     "unused_extern_crates",

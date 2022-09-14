@@ -8,6 +8,7 @@ use rayon::prelude::*;
 // internal imports
 use crate::prelude::*;
 
+#[esp_meta]
 #[derive(Clone, Debug, Default)]
 pub struct Plugin {
     pub objects: Vec<TES3Object>,

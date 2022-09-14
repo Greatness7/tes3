@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGrid {
     pub flags: ObjectFlags,
     pub cell: Option<String>,
@@ -10,14 +11,16 @@ pub struct PathGrid {
     pub connections: Option<Vec<u32>>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGridData {
     pub grid: (i32, i32),
     pub granularity: u16,
     pub point_count: u16,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGridPoint {
     pub location: [i32; 3],
     pub auto_generated: u8,

@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Clothing {
     pub flags: ObjectFlags,
     pub id: String,
@@ -14,7 +15,8 @@ pub struct Clothing {
     pub biped_objects: Option<Vec<BipedObject>>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ClothingData {
     pub kind: ClothingType,
     pub weight: f32,

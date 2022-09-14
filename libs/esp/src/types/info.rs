@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Info {
     pub flags: ObjectFlags,
     pub id: String,
@@ -23,7 +24,8 @@ pub struct Info {
     pub script_text: Option<String>,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct InfoData {
     pub kind: DialogueType,
     pub disposition: i32,
@@ -32,7 +34,8 @@ pub struct InfoData {
     pub player_rank: i8,
 }
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Filter {
     pub slot: FilterSlot,
     pub kind: FilterType,
@@ -42,6 +45,7 @@ pub struct Filter {
     pub value: Option<FilterValue>,
 }
 
+#[esp_meta]
 #[derive(Clone, Debug, PartialEq, SmartDefault)]
 pub enum FilterValue {
     #[default]

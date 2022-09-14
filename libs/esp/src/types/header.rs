@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
+#[esp_meta]
+#[derive(Clone, Debug, PartialEq, SmartDefault)]
 pub struct Header {
     pub flags: ObjectFlags,
     #[default(1.3)]

@@ -4,7 +4,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-bstr = { version = "^0.2", default-features = false, features = ["std"] }
+bstr = { version = "^1.0", default-features = false, features = ["std"] }
 bytes_io = { path = "../bytes_io", features = ["nalgebra"] }
 derive_more = "^0.99"
 float_eq = "^1.0"

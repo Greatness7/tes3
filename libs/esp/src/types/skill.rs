@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Skill {
     pub flags: ObjectFlags,
     pub skill_id: SkillId,
@@ -9,7 +10,8 @@ pub struct Skill {
     pub description: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct SkillData {
     pub governing_attribute: i32,
     pub specialization: i32,

@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Effect {
     pub magic_effect: EffectId2,
     pub skill: SkillId2,

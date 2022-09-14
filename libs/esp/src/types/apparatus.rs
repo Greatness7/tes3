@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Apparatus {
     pub flags: ObjectFlags,
     pub id: String,
@@ -12,7 +13,8 @@ pub struct Apparatus {
     pub script: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ApparatusData {
     pub kind: ApparatusType,
     pub quality: f32,

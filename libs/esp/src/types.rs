@@ -107,6 +107,7 @@ pub use string::*;
 pub use weapon::*;
 
 #[rustfmt::skip]
+#[esp_meta]
 #[derive(TES3Object, Clone, Debug, PartialEq)]
 pub enum TES3Object {
     #[tag(b"TES3")] Header(Header),

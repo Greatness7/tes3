@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Book {
     pub flags: ObjectFlags,
     pub id: String,
@@ -14,7 +15,8 @@ pub struct Book {
     pub text: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct BookData {
     pub weight: f32,
     pub value: u32,

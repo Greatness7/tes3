@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Enchanting {
     pub flags: ObjectFlags,
     pub id: String,
@@ -9,7 +10,8 @@ pub struct Enchanting {
     pub effects: Option<Vec<Effect>>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct EnchantingData {
     pub kind: EnchantType,
     pub cost: u32,

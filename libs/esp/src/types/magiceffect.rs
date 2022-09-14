@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct MagicEffect {
     pub flags: ObjectFlags,
     pub effect_id: EffectId,
@@ -19,7 +20,8 @@ pub struct MagicEffect {
     pub description: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct MagicEffectData {
     pub school: EffectSchool,
     pub base_cost: f32,

@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Reference {
     pub mast_index: u32,
     pub refr_index: u32,

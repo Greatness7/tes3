@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Probe {
     pub flags: ObjectFlags,
     pub id: String,
@@ -12,7 +13,8 @@ pub struct Probe {
     pub script: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ProbeData {
     pub weight: f32,
     pub value: u32,

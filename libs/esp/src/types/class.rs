@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Class {
     pub flags: ObjectFlags,
     pub id: String,
@@ -10,7 +11,8 @@ pub struct Class {
     pub description: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct ClassData {
     pub attribute1: AttributeId,
     pub attribute2: AttributeId,

@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Npc {
     pub flags: ObjectFlags,
     pub id: String,
@@ -22,7 +23,8 @@ pub struct Npc {
     pub travel_destinations: Option<Vec<TravelDestination>>,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct NpcData {
     pub level: i16,
     pub stats: Option<NpcStats>,
@@ -32,7 +34,8 @@ pub struct NpcData {
     pub gold: u32,
 }
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct NpcStats {
     pub attributes: [u8; 8],
     pub skills: [u8; 27],

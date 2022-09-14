@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Creature {
     pub flags: ObjectFlags,
     pub id: String,
@@ -19,7 +20,8 @@ pub struct Creature {
     pub travel_destinations: Option<Vec<TravelDestination>>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CreatureData {
     pub kind: u32,
     pub level: u32,

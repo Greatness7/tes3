@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Race {
     pub flags: ObjectFlags,
     pub id: String,
@@ -11,7 +12,8 @@ pub struct Race {
     pub description: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct RaceData {
     pub skill_bonuses: SkillBonuses,
     pub strength: [i32; 2],
@@ -27,7 +29,8 @@ pub struct RaceData {
     pub flags: u32,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct SkillBonuses {
     pub skill_0: SkillId,
     pub bonus_0: i32,

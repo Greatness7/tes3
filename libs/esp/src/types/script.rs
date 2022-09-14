@@ -1,7 +1,8 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Script {
     pub flags: ObjectFlags,
     pub id: String,
@@ -11,7 +12,8 @@ pub struct Script {
     pub script_text: Option<String>,
 }
 
-#[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[esp_meta]
+#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct ScriptHeader {
     pub num_shorts: u32,
     pub num_longs: u32,

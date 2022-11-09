@@ -32,12 +32,12 @@ pub(crate) fn counter_warp(t: f32, cos: f32) -> f32 {
     const ATTENUATION: f32 = 0.8227969;
     const WORST_SLOPE: f32 = 0.5854922;
 
-    let mut f = 1.0 - ATTENUATION * cos;
+    let mut f = ATTENUATION.mul_add(-cos, 1.0);
     f *= f;
     f *= WORST_SLOPE;
 
     // t * (f * t * (2.0 * t - 3.0) + 1.0 + f)
-    t * (f * t).mul_add(2.0 * t - 3.0, 1.0 + f)
+    t * (f * t).mul_add(2f32.mul_add(t, -3.0), 1.0 + f)
 }
 
 pub(crate) fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {

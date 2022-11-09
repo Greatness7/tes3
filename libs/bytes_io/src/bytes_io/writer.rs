@@ -45,10 +45,10 @@ impl Writer {
     where
         S: Save + TryFrom<T>,
     {
-        match S::try_from(value) {
-            Ok(value) => value.save(self),
-            _ => Self::error("Invalid Save Conversion"),
-        }
+        S::try_from(value).map_or_else(
+            |_| Self::error("Invalid Save Conversion"), // err
+            |value| value.save(self),
+        )
     }
 
     pub fn save_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
@@ -83,7 +83,7 @@ impl Writer {
             return Ok(());
         }
 
-        Err(io::Error::new(io::ErrorKind::InvalidData, format!("encode error: {}", value)))
+        Err(io::Error::new(io::ErrorKind::InvalidData, format!("encode error: {value}")))
     }
 
     pub fn encode<'a>(&self, str: &'a str) -> io::Result<Cow<'a, [u8]>> {
@@ -99,7 +99,7 @@ impl Writer {
                 },
             })
         } else {
-            Err(io::Error::new(io::ErrorKind::InvalidData, format!("encode error: {}", str)))
+            Err(io::Error::new(io::ErrorKind::InvalidData, format!("encode error: {str}")))
         }
     }
 }

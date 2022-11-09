@@ -26,7 +26,7 @@ impl<const N: usize> Save for FixedString<N> {
         if bytes.len() > N {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidData,
-                format!("Invalid string length ({} != {}): {}", self.len(), N, self.as_str()),
+                format!("Invalid string length ({} != {N}): {}", self.len(), self.as_str()),
             ));
         }
         stream.save_bytes(&bytes)?;

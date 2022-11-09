@@ -20,7 +20,7 @@ impl Load for NiPosKey {
             KeyType::LinKey => LinPosKeys::load(stream, num_keys)?.into(),
             KeyType::BezKey => BezPosKeys::load(stream, num_keys)?.into(),
             KeyType::TCBKey => TCBPosKeys::load(stream, num_keys)?.into(),
-            _ => panic!("NiPosKey does not support {:?}", key_type),
+            _ => panic!("NiPosKey does not support {key_type:?}"),
         })
     }
 }

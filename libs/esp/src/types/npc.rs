@@ -295,7 +295,7 @@ impl Load for NpcData {
                 stream.skip(3)?; // padding
                 this.gold = stream.load()?;
             }
-            _ => Reader::error(format!("Unexpected length ({}) for NPC_::NPDT", len))?,
+            _ => Reader::error(format!("Unexpected length ({len}) for NPC_::NPDT"))?,
         }
 
         Ok(this)

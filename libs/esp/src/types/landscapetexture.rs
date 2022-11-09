@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub struct LandscapeTexture {
     pub flags: ObjectFlags,
     pub id: String,
-    pub index: Option<u32>,
-    pub file_name: Option<String>,
+    pub index: u32,
+    pub file_name: String,
 }
 
 impl Load for LandscapeTexture {
@@ -23,10 +23,10 @@ impl Load for LandscapeTexture {
                 }
                 b"INTV" => {
                     stream.expect(4u32)?;
-                    this.index = Some(stream.load()?);
+                    this.index = stream.load()?;
                 }
                 b"DATA" => {
-                    this.file_name = Some(stream.load()?);
+                    this.file_name = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -50,15 +50,13 @@ impl Save for LandscapeTexture {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // INTV
-        if let Some(value) = &self.index {
-            stream.save(b"INTV")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"INTV")?;
+        stream.save(&4u32)?;
+        stream.save(&self.index)?;
         // DATA
-        if let Some(value) = &self.file_name {
+        if !self.file_name.is_empty() {
             stream.save(b"DATA")?;
-            stream.save(value)?;
+            stream.save(&self.file_name)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

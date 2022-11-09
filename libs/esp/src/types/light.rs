@@ -6,12 +6,12 @@ use crate::prelude::*;
 pub struct Light {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<LightData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub icon: Option<String>,
-    pub script: Option<String>,
-    pub sound: Option<String>,
+    pub data: LightData,
+    pub name: String,
+    pub mesh: String,
+    pub icon: String,
+    pub script: String,
+    pub sound: String,
 }
 
 #[esp_meta]
@@ -37,23 +37,23 @@ impl Load for Light {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"ITEX" => {
-                    this.icon = Some(stream.load()?);
+                    this.icon = stream.load()?;
                 }
                 b"LHDT" => {
                     stream.expect(24u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"SNAM" => {
-                    this.sound = Some(stream.load()?);
+                    this.sound = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -77,35 +77,33 @@ impl Save for Light {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // ITEX
-        if let Some(value) = &self.icon {
+        if !self.icon.is_empty() {
             stream.save(b"ITEX")?;
-            stream.save(value)?;
+            stream.save(&self.icon)?;
         }
         // LHDT
-        if let Some(value) = &self.data {
-            stream.save(b"LHDT")?;
-            stream.save(&24u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"LHDT")?;
+        stream.save(&24u32)?;
+        stream.save(&self.data)?;
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // SNAM
-        if let Some(value) = &self.sound {
+        if !self.sound.is_empty() {
             stream.save(b"SNAM")?;
-            stream.save(value)?;
+            stream.save(&self.sound)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
@@ -114,11 +112,5 @@ impl Save for Light {
             stream.save(&0u32)?;
         }
         Ok(())
-    }
-}
-
-impl Light {
-    pub fn can_carry(&self) -> bool {
-        self.data.as_ref().map_or(false, |data| data.flags & 0x02 != 0)
     }
 }

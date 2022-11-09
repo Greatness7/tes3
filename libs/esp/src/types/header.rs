@@ -11,7 +11,7 @@ pub struct Header {
     pub author: FixedString<32>,
     pub description: FixedString<256>,
     pub num_objects: u32,
-    pub masters: Option<Vec<(String, u64)>>,
+    pub masters: Vec<(String, u64)>,
 }
 
 impl Load for Header {
@@ -37,7 +37,7 @@ impl Load for Header {
                     stream.expect(8u32)?;
                     let master_size = stream.load()?;
                     //
-                    this.masters.get_or_insert_with(default).push((master_name, master_size));
+                    this.masters.push((master_name, master_size));
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -61,7 +61,7 @@ impl Save for Header {
         stream.save(&self.description)?;
         stream.save(&self.num_objects)?;
         //
-        for (master_name, master_size) in self.masters.iter().flatten() {
+        for (master_name, master_size) in &self.masters {
             // MAST
             stream.save(b"MAST")?;
             stream.save(master_name)?;

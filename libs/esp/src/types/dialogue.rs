@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct Dialogue {
     pub flags: ObjectFlags,
     pub id: String,
-    pub kind: Option<DialogueType2>,
+    pub kind: DialogueType2,
 }
 
 impl Load for Dialogue {
@@ -24,7 +24,7 @@ impl Load for Dialogue {
                     // When the dialogue is marked as deleted this field (sometimes) has size 4
                     let size: u32 = stream.load()?;
                     if size == 1 {
-                        this.kind = Some(stream.load()?);
+                        this.kind = stream.load()?;
                     } else {
                         stream.skip(size)?;
                     }
@@ -51,11 +51,9 @@ impl Save for Dialogue {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // DATA
-        if let Some(value) = &self.kind {
-            stream.save(b"DATA")?;
-            stream.save(&1u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&1u32)?;
+        stream.save(&self.kind)?;
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;

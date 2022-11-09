@@ -43,7 +43,7 @@ pub struct AiEscortPackage {
     pub duration: u16,
     pub target: FixedString<32>,
     pub reset: u8,
-    pub cell: Option<String>,
+    pub cell: String,
 }
 
 #[esp_meta]
@@ -53,7 +53,7 @@ pub struct AiFollowPackage {
     pub duration: u16,
     pub target: FixedString<32>,
     pub reset: u8,
-    pub cell: Option<String>,
+    pub cell: String,
 }
 
 #[esp_meta]
@@ -68,7 +68,7 @@ pub struct AiActivatePackage {
 pub struct TravelDestination {
     pub translation: [f32; 3],
     pub rotation: [f32; 3],
-    pub cell: Option<String>,
+    pub cell: String,
 }
 
 impl Load for AiTravelPackage {
@@ -96,7 +96,7 @@ impl Load for AiEscortPackage {
         let target = stream.load()?;
         let reset = stream.load()?;
         stream.skip(1)?; // padding
-        let cell = stream.expect(*b"CNDT").and_then(|_| stream.load()).ok();
+        let cell = stream.expect(*b"CNDT").and_then(|_| stream.load()).unwrap_or_default();
         Ok(Self {
             location,
             duration,
@@ -114,9 +114,9 @@ impl Save for AiEscortPackage {
         stream.save(&self.target)?;
         stream.save(&self.reset)?;
         stream.save(&[0u8; 1])?; // padding
-        if let Some(value) = &self.cell {
+        if !self.cell.is_empty() {
             stream.save(b"CNDT")?;
-            stream.save(value)?;
+            stream.save(&self.cell)?;
         }
         Ok(())
     }
@@ -129,7 +129,7 @@ impl Load for AiFollowPackage {
         let target = stream.load()?;
         let reset = stream.load()?;
         stream.skip(1)?; // padding
-        let cell = stream.expect(*b"CNDT").and_then(|_| stream.load()).ok();
+        let cell = stream.expect(*b"CNDT").and_then(|_| stream.load()).unwrap_or_default();
         Ok(Self {
             location,
             duration,
@@ -147,9 +147,34 @@ impl Save for AiFollowPackage {
         stream.save(&self.target)?;
         stream.save(&self.reset)?;
         stream.save(&[0u8; 1])?; // padding
-        if let Some(value) = &self.cell {
+        if !self.cell.is_empty() {
             stream.save(b"CNDT")?;
-            stream.save(value)?;
+            stream.save(&self.cell)?;
+        }
+        Ok(())
+    }
+}
+
+impl Load for TravelDestination {
+    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+        let translation = stream.load()?;
+        let rotation = stream.load()?;
+        let cell = stream.expect(*b"DNAM").and_then(|_| stream.load()).unwrap_or_default();
+        Ok(Self {
+            translation,
+            rotation,
+            cell,
+        })
+    }
+}
+
+impl Save for TravelDestination {
+    fn save(&self, stream: &mut Writer) -> io::Result<()> {
+        stream.save(&self.translation)?;
+        stream.save(&self.rotation)?;
+        if !self.cell.is_empty() {
+            stream.save(b"DNAM")?;
+            stream.save(&self.cell)?;
         }
         Ok(())
     }

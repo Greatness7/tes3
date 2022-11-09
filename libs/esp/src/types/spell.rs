@@ -6,9 +6,9 @@ use crate::prelude::*;
 pub struct Spell {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub data: Option<SpellData>,
-    pub effects: Option<Vec<Effect>>,
+    pub name: String,
+    pub data: SpellData,
+    pub effects: Vec<Effect>,
 }
 
 #[esp_meta]
@@ -31,15 +31,15 @@ impl Load for Spell {
                     this.id = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"SPDT" => {
                     stream.expect(12u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ENAM" => {
                     stream.expect(24u32)?;
-                    this.effects.get_or_insert_with(default).push(stream.load()?);
+                    this.effects.push(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -63,21 +63,19 @@ impl Save for Spell {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // SPDT
-        if let Some(value) = &self.data {
-            stream.save(b"SPDT")?;
-            stream.save(&12u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"SPDT")?;
+        stream.save(&12u32)?;
+        stream.save(&self.data)?;
         // ENAM
-        for effect in self.effects.iter().flatten() {
+        for value in &self.effects {
             stream.save(b"ENAM")?;
             stream.save(&24u32)?;
-            stream.save(effect)?;
+            stream.save(value)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

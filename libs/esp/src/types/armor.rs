@@ -6,13 +6,13 @@ use crate::prelude::*;
 pub struct Armor {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<ArmorData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub icon: Option<String>,
-    pub script: Option<String>,
-    pub enchanting: Option<String>,
-    pub biped_objects: Option<Vec<BipedObject>>,
+    pub data: ArmorData,
+    pub name: String,
+    pub mesh: String,
+    pub icon: String,
+    pub script: String,
+    pub enchanting: String,
+    pub biped_objects: Vec<BipedObject>,
 }
 
 #[esp_meta]
@@ -38,26 +38,26 @@ impl Load for Armor {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"AODT" => {
                     stream.expect(24u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ITEX" => {
-                    this.icon = Some(stream.load()?);
+                    this.icon = stream.load()?;
                 }
                 b"INDX" => {
-                    this.biped_objects.get_or_insert_with(default).push(stream.load()?);
+                    this.biped_objects.push(stream.load()?);
                 }
                 b"ENAM" => {
-                    this.enchanting = Some(stream.load()?);
+                    this.enchanting = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -81,39 +81,37 @@ impl Save for Armor {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // AODT
-        if let Some(value) = &self.data {
-            stream.save(b"AODT")?;
-            stream.save(&24u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"AODT")?;
+        stream.save(&24u32)?;
+        stream.save(&self.data)?;
         // ITEX
-        if let Some(value) = &self.icon {
+        if !self.icon.is_empty() {
             stream.save(b"ITEX")?;
-            stream.save(value)?;
+            stream.save(&self.icon)?;
         }
         // INDX / BNAM / CNAM
-        for biped_object in self.biped_objects.iter().flatten() {
-            stream.save(biped_object)?;
+        for value in &self.biped_objects {
+            stream.save(value)?;
         }
         // ENAM
-        if let Some(value) = &self.enchanting {
+        if !self.enchanting.is_empty() {
             stream.save(b"ENAM")?;
-            stream.save(value)?;
+            stream.save(&self.enchanting)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

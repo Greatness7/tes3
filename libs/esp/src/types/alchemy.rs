@@ -6,12 +6,12 @@ use crate::prelude::*;
 pub struct Alchemy {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<AlchemyData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub icon: Option<String>,
-    pub script: Option<String>,
-    pub effects: Option<Vec<Effect>>,
+    pub data: AlchemyData,
+    pub name: String,
+    pub mesh: String,
+    pub icon: String,
+    pub script: String,
+    pub effects: Vec<Effect>,
 }
 
 #[esp_meta]
@@ -34,24 +34,24 @@ impl Load for Alchemy {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"TEXT" => {
-                    this.icon = Some(stream.load()?);
+                    this.icon = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"ALDT" => {
                     stream.expect(12u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ENAM" => {
                     stream.expect(24u32)?;
-                    this.effects.get_or_insert_with(default).push(stream.load()?);
+                    this.effects.push(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -75,36 +75,34 @@ impl Save for Alchemy {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // TEXT
-        if let Some(value) = &self.icon {
+        if !self.icon.is_empty() {
             stream.save(b"TEXT")?;
-            stream.save(value)?;
+            stream.save(&self.icon)?;
         }
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // ALDT
-        if let Some(value) = &self.data {
-            stream.save(b"ALDT")?;
-            stream.save(&12u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"ALDT")?;
+        stream.save(&12u32)?;
+        stream.save(&self.data)?;
         // ENAM
-        for effect in self.effects.iter().flatten() {
+        for value in &self.effects {
             stream.save(b"ENAM")?;
             stream.save(&24u32)?;
-            stream.save(effect)?;
+            stream.save(value)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

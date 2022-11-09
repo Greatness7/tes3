@@ -6,9 +6,9 @@ use crate::prelude::*;
 pub struct Bodypart {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<BodypartData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
+    pub data: BodypartData,
+    pub name: String,
+    pub mesh: String,
 }
 
 #[esp_meta]
@@ -32,14 +32,14 @@ impl Load for Bodypart {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"BYDT" => {
                     stream.expect(4u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -63,21 +63,19 @@ impl Save for Bodypart {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // BYDT
-        if let Some(value) = &self.data {
-            stream.save(b"BYDT")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"BYDT")?;
+        stream.save(&4u32)?;
+        stream.save(&self.data)?;
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;

@@ -6,11 +6,11 @@ use crate::prelude::*;
 pub struct Region {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub weather_chances: Option<WeatherChances>,
-    pub sleep_creature: Option<String>,
-    pub map_color: Option<[u8; 4]>,
-    pub sounds: Option<Vec<(FixedString<32>, u8)>>,
+    pub name: String,
+    pub weather_chances: WeatherChances,
+    pub sleep_creature: String,
+    pub map_color: [u8; 4],
+    pub sounds: Vec<(FixedString<32>, u8)>,
 }
 
 #[esp_meta]
@@ -40,21 +40,21 @@ impl Load for Region {
                     this.id = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"WEAT" => {
-                    this.weather_chances = Some(stream.load()?);
+                    this.weather_chances = stream.load()?;
                 }
                 b"BNAM" => {
-                    this.sleep_creature = Some(stream.load()?);
+                    this.sleep_creature = stream.load()?;
                 }
                 b"CNAM" => {
                     stream.expect(4u32)?;
-                    this.map_color = Some(stream.load()?);
+                    this.map_color = stream.load()?;
                 }
                 b"SNAM" => {
                     stream.expect(33u32)?;
-                    this.sounds.get_or_insert_with(default).push(stream.load()?);
+                    this.sounds.push(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -78,28 +78,24 @@ impl Save for Region {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // WEAT
-        if let Some(value) = &self.weather_chances {
-            stream.save(b"WEAT")?;
-            stream.save(value)?;
-        }
+        stream.save(b"WEAT")?;
+        stream.save(&self.weather_chances)?;
         // BNAM
-        if let Some(value) = &self.sleep_creature {
+        if !self.sleep_creature.is_empty() {
             stream.save(b"BNAM")?;
-            stream.save(value)?;
+            stream.save(&self.sleep_creature)?;
         }
         // CNAM
-        if let Some(value) = &self.map_color {
-            stream.save(b"CNAM")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"CNAM")?;
+        stream.save(&4u32)?;
+        stream.save(&self.map_color)?;
         // SNAM
-        for (sound, chance) in self.sounds.iter().flatten() {
+        for (sound, chance) in &self.sounds {
             stream.save(b"SNAM")?;
             stream.save(&33u32)?;
             stream.save(sound)?;

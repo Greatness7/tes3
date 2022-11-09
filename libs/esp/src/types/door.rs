@@ -6,11 +6,11 @@ use crate::prelude::*;
 pub struct Door {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub script: Option<String>,
-    pub open_sound: Option<String>,
-    pub close_sound: Option<String>,
+    pub name: String,
+    pub mesh: String,
+    pub script: String,
+    pub open_sound: String,
+    pub close_sound: String,
 }
 
 impl Load for Door {
@@ -25,19 +25,19 @@ impl Load for Door {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"SNAM" => {
-                    this.open_sound = Some(stream.load()?);
+                    this.open_sound = stream.load()?;
                 }
                 b"ANAM" => {
-                    this.close_sound = Some(stream.load()?);
+                    this.close_sound = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -61,29 +61,29 @@ impl Save for Door {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // SNAM
-        if let Some(value) = &self.open_sound {
+        if !self.open_sound.is_empty() {
             stream.save(b"SNAM")?;
-            stream.save(value)?;
+            stream.save(&self.open_sound)?;
         }
         // ANAM
-        if let Some(value) = &self.close_sound {
+        if !self.close_sound.is_empty() {
             stream.save(b"ANAM")?;
-            stream.save(value)?;
+            stream.save(&self.close_sound)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

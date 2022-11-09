@@ -6,11 +6,11 @@ use crate::prelude::*;
 pub struct Apparatus {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<ApparatusData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub icon: Option<String>,
-    pub script: Option<String>,
+    pub data: ApparatusData,
+    pub name: String,
+    pub mesh: String,
+    pub icon: String,
+    pub script: String,
 }
 
 #[esp_meta]
@@ -34,20 +34,20 @@ impl Load for Apparatus {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"AADT" => {
                     stream.expect(16u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ITEX" => {
-                    this.icon = Some(stream.load()?);
+                    this.icon = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -71,30 +71,28 @@ impl Save for Apparatus {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // AADT
-        if let Some(value) = &self.data {
-            stream.save(b"AADT")?;
-            stream.save(&16u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"AADT")?;
+        stream.save(&16u32)?;
+        stream.save(&self.data)?;
         // ITEX
-        if let Some(value) = &self.icon {
+        if !self.icon.is_empty() {
             stream.save(b"ITEX")?;
-            stream.save(value)?;
+            stream.save(&self.icon)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

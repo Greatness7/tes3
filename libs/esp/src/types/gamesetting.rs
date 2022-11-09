@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct GameSetting {
     pub flags: ObjectFlags,
     pub id: String,
-    pub value: Option<GameSettingValue>,
+    pub value: GameSettingValue,
 }
 
 #[esp_meta]
@@ -30,15 +30,15 @@ impl Load for GameSetting {
                     this.id = stream.load()?;
                 }
                 b"STRV" => {
-                    this.value = Some(GameSettingValue::String(stream.load()?));
+                    this.value = GameSettingValue::String(stream.load()?);
                 }
                 b"FLTV" => {
                     stream.expect(4u32)?;
-                    this.value = Some(GameSettingValue::Float(stream.load()?));
+                    this.value = GameSettingValue::Float(stream.load()?);
                 }
                 b"INTV" => {
                     stream.expect(4u32)?;
-                    this.value = Some(GameSettingValue::Integer(stream.load()?));
+                    this.value = GameSettingValue::Integer(stream.load()?);
                 }
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
@@ -57,25 +57,23 @@ impl Save for GameSetting {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         //
-        if let Some(value) = &self.value {
-            match value {
-                GameSettingValue::String(value) => {
-                    // STRV
-                    stream.save(b"STRV")?;
-                    stream.save(value)?;
-                }
-                GameSettingValue::Float(value) => {
-                    // FLTV
-                    stream.save(b"FLTV")?;
-                    stream.save(&4u32)?;
-                    stream.save(value)?;
-                }
-                GameSettingValue::Integer(value) => {
-                    // INTV
-                    stream.save(b"INTV")?;
-                    stream.save(&4u32)?;
-                    stream.save(value)?;
-                }
+        match &self.value {
+            GameSettingValue::String(value) => {
+                // STRV
+                stream.save(b"STRV")?;
+                stream.save(value)?;
+            }
+            GameSettingValue::Float(value) => {
+                // FLTV
+                stream.save(b"FLTV")?;
+                stream.save(&4u32)?;
+                stream.save(value)?;
+            }
+            GameSettingValue::Integer(value) => {
+                // INTV
+                stream.save(b"INTV")?;
+                stream.save(&4u32)?;
+                stream.save(value)?;
             }
         }
         Ok(())

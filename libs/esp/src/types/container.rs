@@ -6,12 +6,12 @@ use crate::prelude::*;
 pub struct Container {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub script: Option<String>,
-    pub encumbrance: Option<f32>,
-    pub container_flags: Option<u32>,
-    pub inventory: Option<Vec<(i32, FixedString<32>)>>,
+    pub name: String,
+    pub mesh: String,
+    pub script: String,
+    pub encumbrance: f32,
+    pub container_flags: u32,
+    pub inventory: Vec<(i32, FixedString<32>)>,
 }
 
 impl Load for Container {
@@ -26,25 +26,25 @@ impl Load for Container {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"CNDT" => {
                     stream.expect(4u32)?;
-                    this.encumbrance = Some(stream.load()?);
+                    this.encumbrance = stream.load()?;
                 }
                 b"FLAG" => {
                     stream.expect(4u32)?;
-                    this.container_flags = Some(stream.load()?);
+                    this.container_flags = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
-                    this.inventory.get_or_insert_with(default).push(stream.load()?);
+                    this.inventory.push(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -68,34 +68,30 @@ impl Save for Container {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // CNDT
-        if let Some(value) = &self.encumbrance {
-            stream.save(b"CNDT")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"CNDT")?;
+        stream.save(&4u32)?;
+        stream.save(&self.encumbrance)?;
         // FLAG
-        if let Some(value) = &self.container_flags {
-            stream.save(b"FLAG")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"FLAG")?;
+        stream.save(&4u32)?;
+        stream.save(&self.container_flags)?;
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // NPCO
-        for (count, id) in self.inventory.iter().flatten() {
+        for (count, id) in &self.inventory {
             stream.save(b"NPCO")?;
             stream.save(&36u32)?;
             stream.save(count)?;

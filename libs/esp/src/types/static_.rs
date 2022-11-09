@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct Static {
     pub flags: ObjectFlags,
     pub id: String,
-    pub mesh: Option<String>,
+    pub mesh: String,
 }
 
 impl Load for Static {
@@ -21,7 +21,7 @@ impl Load for Static {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -45,9 +45,9 @@ impl Save for Static {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

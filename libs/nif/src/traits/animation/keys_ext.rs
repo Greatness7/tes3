@@ -675,8 +675,8 @@ impl KeysExt<8, 4> for TCBRotKeys {
         let this_value: na::Quaternion<f32> = self.value(i).into_owned().into();
         let next_value: na::Quaternion<f32> = self.value(n).into_owned().into();
 
-        let prev_len = (unit_inverse(prev_value) * this_value).ln();
-        let next_len = (unit_inverse(this_value) * next_value).ln();
+        let prev_len = (prev_value.conjugate() * this_value).ln();
+        let next_len = (this_value.conjugate() * next_value).ln();
 
         let [t, c, b] = self.tcb_param(i).as_ref().to_owned();
         let ts = (1.0 - t) * (1.0 - c) * (1.0 + b) * prev_len;
@@ -699,8 +699,8 @@ impl KeysExt<8, 4> for TCBRotKeys {
         let this_value: na::Quaternion<f32> = self.value(i).into_owned().into();
         let next_value: na::Quaternion<f32> = self.value(n).into_owned().into();
 
-        let prev_len = (unit_inverse(prev_value) * this_value).ln();
-        let next_len = (unit_inverse(this_value) * next_value).ln();
+        let prev_len = (prev_value.conjugate() * this_value).ln();
+        let next_len = (this_value.conjugate() * next_value).ln();
 
         let [t, c, b] = self.tcb_param(i).as_ref().to_owned();
         let ts = (1.0 - t) * (1.0 + c) * (1.0 + b) * prev_len;

@@ -1,11 +1,6 @@
-#![allow(dead_code, clippy::redundant_pub_crate)]
-
-// external imports
-use nalgebra::Quaternion;
-
 // http://number-none.com/product/Hacking%20Quaternions/
 
-type Quat = Quaternion<f32>;
+type Quat = nalgebra::Quaternion<f32>;
 
 pub(crate) fn isqrt_approx_in_neighborhood(s: f32) -> f32 {
     const NEIGHBORHOOD: f32 = 0.959066;
@@ -57,13 +52,8 @@ pub(crate) fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
     q
 }
 
-pub(crate) fn unit_inverse(q: Quat) -> Quat {
-    let co = q.coords;
-    Quat::new(co.w, -co.x, -co.y, -co.z)
-}
-
 pub(crate) fn intermediate(prev: Quat, this: Quat, next: Quat) -> Quat {
-    let inv = unit_inverse(this);
+    let inv = this.conjugate();
     let mut q = (inv * prev).ln() + (inv * next).ln();
     q.coords.scale_mut(-0.25);
     this * q.exp()

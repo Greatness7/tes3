@@ -6,10 +6,10 @@ use crate::prelude::*;
 pub struct Race {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub data: Option<RaceData>,
-    pub spells: Option<Vec<String>>,
-    pub description: Option<String>,
+    pub name: String,
+    pub data: RaceData,
+    pub spells: Vec<String>,
+    pub description: String,
 }
 
 #[esp_meta]
@@ -60,17 +60,17 @@ impl Load for Race {
                     this.id = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"RADT" => {
                     stream.expect(140u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_with(default).push(stream.load()?);
+                    this.spells.push(stream.load()?);
                 }
                 b"DESC" => {
-                    this.description = Some(stream.load()?);
+                    this.description = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -94,25 +94,23 @@ impl Save for Race {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // RADT
-        if let Some(value) = &self.data {
-            stream.save(b"RADT")?;
-            stream.save(&140u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"RADT")?;
+        stream.save(&140u32)?;
+        stream.save(&self.data)?;
         // NPCS
-        for spell in self.spells.iter().flatten() {
+        for value in &self.spells {
             stream.save(b"NPCS")?;
-            stream.save(spell)?;
+            stream.save(value)?;
         }
         // DESC
-        if let Some(value) = &self.description {
+        if !self.description.is_empty() {
             stream.save(b"DESC")?;
-            stream.save(value)?;
+            stream.save(&self.description)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

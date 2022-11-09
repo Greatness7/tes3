@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub struct GlobalVariable {
     pub flags: ObjectFlags,
     pub id: String,
-    pub kind: Option<GlobalType>,
-    pub value: Option<f32>,
+    pub kind: GlobalType,
+    pub value: f32,
 }
 
 impl Load for GlobalVariable {
@@ -23,11 +23,11 @@ impl Load for GlobalVariable {
                 }
                 b"FNAM" => {
                     stream.expect(1u32)?;
-                    this.kind = Some(stream.load()?);
+                    this.kind = stream.load()?;
                 }
                 b"FLTV" => {
                     stream.expect(4u32)?;
-                    this.value = Some(stream.load()?);
+                    this.value = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -51,17 +51,13 @@ impl Save for GlobalVariable {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.kind {
-            stream.save(b"FNAM")?;
-            stream.save(&1u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"FNAM")?;
+        stream.save(&1u32)?;
+        stream.save(&self.kind)?;
         // FLTV
-        if let Some(value) = &self.value {
-            stream.save(b"FLTV")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"FLTV")?;
+        stream.save(&4u32)?;
+        stream.save(&self.value)?;
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;

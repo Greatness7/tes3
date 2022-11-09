@@ -6,9 +6,9 @@ use crate::prelude::*;
 pub struct LeveledCreature {
     pub flags: ObjectFlags,
     pub id: String,
-    pub list_flags: Option<u32>,
-    pub chance_none: Option<u8>,
-    pub creatures: Option<Vec<(String, u16)>>,
+    pub list_flags: u32,
+    pub chance_none: u8,
+    pub creatures: Vec<(String, u16)>,
 }
 
 impl Load for LeveledCreature {
@@ -24,25 +24,23 @@ impl Load for LeveledCreature {
                 }
                 b"DATA" => {
                     stream.expect(4u32)?;
-                    this.list_flags = Some(stream.load()?);
+                    this.list_flags = stream.load()?;
                 }
                 b"NNAM" => {
                     stream.expect(1u32)?;
-                    this.chance_none = Some(stream.load()?);
+                    this.chance_none = stream.load()?;
                 }
                 b"INDX" => {
                     stream.expect(4u32)?;
-                    this.creatures
-                        .get_or_insert_with(default)
-                        .reserve(stream.load_as::<u32, _>()?);
+                    this.creatures.reserve(stream.load_as::<u32, _>()?);
                 }
                 b"CNAM" => {
-                    this.creatures.get_or_insert_with(default).push(default());
-                    this.creatures.get_or_insert_with(default).last_mut().ok_or_else(err)?.0 = stream.load()?;
+                    this.creatures.push(default());
+                    this.creatures.last_mut().ok_or_else(err)?.0 = stream.load()?;
                 }
                 b"INTV" => {
                     stream.expect(2u32)?;
-                    this.creatures.get_or_insert_with(default).last_mut().ok_or_else(err)?.1 = stream.load()?;
+                    this.creatures.last_mut().ok_or_else(err)?.1 = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -66,24 +64,20 @@ impl Save for LeveledCreature {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // DATA
-        if let Some(value) = &self.list_flags {
-            stream.save(b"DATA")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&4u32)?;
+        stream.save(&self.list_flags)?;
         // NNAM
-        if let Some(value) = &self.chance_none {
-            stream.save(b"NNAM")?;
-            stream.save(&1u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"NNAM")?;
+        stream.save(&1u32)?;
+        stream.save(&self.chance_none)?;
         // INDX
-        if let Some(values) = self.creatures.as_ref().filter(|x| !x.is_empty()) {
+        if !self.creatures.is_empty() {
             stream.save(b"INDX")?;
             stream.save(&4u32)?;
-            stream.save_as::<_, u32>(values.len())?;
+            stream.save_as::<_, u32>(self.creatures.len())?;
             //
-            for (item, level) in values {
+            for (item, level) in &self.creatures {
                 // CNAM
                 stream.save(b"CNAM")?;
                 stream.save(item)?;

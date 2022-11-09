@@ -6,10 +6,10 @@ use crate::prelude::*;
 pub struct Birthsign {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub texture: Option<String>,
-    pub description: Option<String>,
-    pub spells: Option<Vec<String>>,
+    pub name: String,
+    pub texture: String,
+    pub description: String,
+    pub spells: Vec<String>,
 }
 
 impl Load for Birthsign {
@@ -24,16 +24,16 @@ impl Load for Birthsign {
                     this.id = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"TNAM" => {
-                    this.texture = Some(stream.load()?);
+                    this.texture = stream.load()?;
                 }
                 b"DESC" => {
-                    this.description = Some(stream.load()?);
+                    this.description = stream.load()?;
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_with(default).push(stream.load()?);
+                    this.spells.push(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -57,24 +57,24 @@ impl Save for Birthsign {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // TNAM
-        if let Some(value) = &self.texture {
+        if !self.texture.is_empty() {
             stream.save(b"TNAM")?;
-            stream.save(value)?;
+            stream.save(&self.texture)?;
         }
         // DESC
-        if let Some(value) = &self.description {
+        if !self.description.is_empty() {
             stream.save(b"DESC")?;
-            stream.save(value)?;
+            stream.save(&self.description)?;
         }
         // NPCS
-        for spell in self.spells.iter().flatten() {
+        for value in &self.spells {
             stream.save(b"NPCS")?;
-            stream.save(spell)?;
+            stream.save(value)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

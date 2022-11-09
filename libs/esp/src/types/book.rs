@@ -6,13 +6,13 @@ use crate::prelude::*;
 pub struct Book {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<BookData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub icon: Option<String>,
-    pub script: Option<String>,
-    pub enchanting: Option<String>,
-    pub text: Option<String>,
+    pub data: BookData,
+    pub name: String,
+    pub mesh: String,
+    pub icon: String,
+    pub script: String,
+    pub enchanting: String,
+    pub text: String,
 }
 
 #[esp_meta]
@@ -37,26 +37,26 @@ impl Load for Book {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"BKDT" => {
                     stream.expect(20u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"ITEX" => {
-                    this.icon = Some(stream.load()?);
+                    this.icon = stream.load()?;
                 }
                 b"TEXT" => {
-                    this.text = Some(stream.load()?);
+                    this.text = stream.load()?;
                 }
                 b"ENAM" => {
-                    this.enchanting = Some(stream.load()?);
+                    this.enchanting = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -80,40 +80,38 @@ impl Save for Book {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // BKDT
-        if let Some(value) = &self.data {
-            stream.save(b"BKDT")?;
-            stream.save(&20u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"BKDT")?;
+        stream.save(&20u32)?;
+        stream.save(&self.data)?;
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // ITEX
-        if let Some(value) = &self.icon {
+        if !self.icon.is_empty() {
             stream.save(b"ITEX")?;
-            stream.save(value)?;
+            stream.save(&self.icon)?;
         }
         // TEXT
-        if let Some(value) = &self.text {
+        if !self.text.is_empty() {
             stream.save(b"TEXT")?;
-            stream.save(value)?;
+            stream.save(&self.text)?;
         }
         // ENAM
-        if let Some(value) = &self.enchanting {
+        if !self.enchanting.is_empty() {
             stream.save(b"ENAM")?;
-            stream.save(value)?;
+            stream.save(&self.enchanting)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

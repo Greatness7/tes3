@@ -6,9 +6,9 @@ use crate::prelude::*;
 pub struct SoundGen {
     pub flags: ObjectFlags,
     pub id: String,
-    pub sound_flags: Option<u32>,
-    pub creature: Option<String>,
-    pub sound: Option<String>,
+    pub sound_flags: u32,
+    pub creature: String,
+    pub sound: String,
 }
 
 impl Load for SoundGen {
@@ -24,13 +24,13 @@ impl Load for SoundGen {
                 }
                 b"DATA" => {
                     stream.expect(4u32)?;
-                    this.sound_flags = Some(stream.load()?);
+                    this.sound_flags = stream.load()?;
                 }
                 b"CNAM" => {
-                    this.creature = Some(stream.load()?);
+                    this.creature = stream.load()?;
                 }
                 b"SNAM" => {
-                    this.sound = Some(stream.load()?);
+                    this.sound = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -54,20 +54,18 @@ impl Save for SoundGen {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // DATA
-        if let Some(value) = &self.sound_flags {
-            stream.save(b"DATA")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&4u32)?;
+        stream.save(&self.sound_flags)?;
         // CNAM
-        if let Some(value) = &self.creature {
+        if !self.creature.is_empty() {
             stream.save(b"CNAM")?;
-            stream.save(value)?;
+            stream.save(&self.creature)?;
         }
         // SNAM
-        if let Some(value) = &self.sound {
+        if !self.sound.is_empty() {
             stream.save(b"SNAM")?;
-            stream.save(value)?;
+            stream.save(&self.sound)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

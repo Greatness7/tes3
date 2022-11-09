@@ -6,10 +6,10 @@ use crate::prelude::*;
 pub struct Faction {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub rank_names: Option<Vec<FixedString<32>>>,
-    pub data: Option<FactionData>,
-    pub reactions: Option<Vec<FactionReaction>>,
+    pub name: String,
+    pub rank_names: Vec<FixedString<32>>,
+    pub data: FactionData,
+    pub reactions: Vec<FactionReaction>,
 }
 
 #[esp_meta]
@@ -49,18 +49,18 @@ impl Load for Faction {
                     this.id = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"RNAM" => {
                     stream.expect(32u32)?;
-                    this.rank_names.get_or_insert_with(default).push(stream.load()?);
+                    this.rank_names.push(stream.load()?);
                 }
                 b"FADT" => {
                     stream.expect(240u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ANAM" => {
-                    this.reactions.get_or_insert_with(default).push(stream.load()?);
+                    this.reactions.push(stream.load()?);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -84,25 +84,23 @@ impl Save for Faction {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // RNAM
-        for value in self.rank_names.iter().flatten() {
+        for value in &self.rank_names {
             stream.save(b"RNAM")?;
             stream.save(&32u32)?;
             stream.save(value)?;
         }
         // FADT
-        if let Some(value) = &self.data {
-            stream.save(b"FADT")?;
-            stream.save(&240u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"FADT")?;
+        stream.save(&240u32)?;
+        stream.save(&self.data)?;
         // ANAM / INTV
-        for reaction in self.reactions.iter().flatten() {
-            stream.save(reaction)?;
+        for value in &self.reactions {
+            stream.save(value)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

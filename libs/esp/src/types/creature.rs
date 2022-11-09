@@ -6,18 +6,18 @@ use crate::prelude::*;
 pub struct Creature {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: Option<CreatureData>,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub script: Option<String>,
-    pub sound: Option<String>,
-    pub creature_flags: Option<u32>,
-    pub scale: Option<f32>,
-    pub inventory: Option<Vec<(i32, FixedString<32>)>>,
-    pub spells: Option<Vec<String>>,
-    pub ai_data: Option<AiData>,
-    pub ai_packages: Option<Vec<AiPackage>>,
-    pub travel_destinations: Option<Vec<TravelDestination>>,
+    pub data: CreatureData,
+    pub name: String,
+    pub mesh: String,
+    pub script: String,
+    pub sound: String,
+    pub creature_flags: u32,
+    pub scale: f32,
+    pub inventory: Vec<(i32, FixedString<32>)>,
+    pub spells: Vec<String>,
+    pub ai_data: AiData,
+    pub ai_packages: Vec<AiPackage>,
+    pub travel_destinations: Vec<TravelDestination>,
 }
 
 #[esp_meta]
@@ -58,73 +58,63 @@ impl Load for Creature {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"CNAM" => {
-                    this.sound = Some(stream.load()?);
+                    this.sound = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"NPDT" => {
                     stream.expect(96u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"FLAG" => {
                     stream.expect(4u32)?;
-                    this.creature_flags = Some(stream.load()?);
+                    this.creature_flags = stream.load()?;
                 }
                 b"XSCL" => {
                     stream.expect(4u32)?;
-                    this.scale = Some(stream.load()?);
+                    this.scale = stream.load()?;
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
-                    this.inventory.get_or_insert_with(default).push(stream.load()?);
+                    this.inventory.push(stream.load()?);
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_with(default).push(stream.load()?);
+                    this.spells.push(stream.load()?);
                 }
                 b"AIDT" => {
                     stream.expect(12u32)?;
-                    this.ai_data = Some(stream.load()?);
+                    this.ai_data = stream.load()?;
                 }
                 b"DODT" => {
                     stream.expect(24u32)?;
-                    this.travel_destinations.get_or_insert_with(default).push(stream.load()?);
+                    this.travel_destinations.push(stream.load()?);
                 }
                 b"AI_T" => {
                     stream.expect(16u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Travel(stream.load()?));
+                    this.ai_packages.push(AiPackage::Travel(stream.load()?));
                 }
                 b"AI_W" => {
                     stream.expect(14u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Wander(stream.load()?));
+                    this.ai_packages.push(AiPackage::Wander(stream.load()?));
                 }
                 b"AI_E" => {
                     stream.expect(48u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Escort(stream.load()?));
+                    this.ai_packages.push(AiPackage::Escort(stream.load()?));
                 }
                 b"AI_F" => {
                     stream.expect(48u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Follow(stream.load()?));
+                    this.ai_packages.push(AiPackage::Follow(stream.load()?));
                 }
                 b"AI_A" => {
                     stream.expect(33u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Activate(stream.load()?));
+                    this.ai_packages.push(AiPackage::Activate(stream.load()?));
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -148,68 +138,60 @@ impl Save for Creature {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // CNAM
-        if let Some(value) = &self.sound {
+        if !self.sound.is_empty() {
             stream.save(b"CNAM")?;
-            stream.save(value)?;
+            stream.save(&self.sound)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // NPDT
-        if let Some(value) = &self.data {
-            stream.save(b"NPDT")?;
-            stream.save(&96u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"NPDT")?;
+        stream.save(&96u32)?;
+        stream.save(&self.data)?;
         // FLAG
-        if let Some(value) = &self.creature_flags {
-            stream.save(b"FLAG")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"FLAG")?;
+        stream.save(&4u32)?;
+        stream.save(&self.creature_flags)?;
         // XSCL
-        if let Some(value) = &self.scale {
-            stream.save(b"XSCL")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"XSCL")?;
+        stream.save(&4u32)?;
+        stream.save(&self.scale)?;
         // NPCO
-        for value in self.inventory.iter().flatten() {
+        for value in &self.inventory {
             stream.save(b"NPCO")?;
             stream.save(&36u32)?;
             stream.save(value)?;
         }
         // NPCS
-        for value in self.spells.iter().flatten() {
+        for value in &self.spells {
             stream.save(b"NPCS")?;
             stream.save(value)?;
         }
         // AIDT
-        if let Some(value) = &self.ai_data {
-            stream.save(b"AIDT")?;
-            stream.save(&12u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"AIDT")?;
+        stream.save(&12u32)?;
+        stream.save(&self.ai_data)?;
         // DODT
-        for value in self.travel_destinations.iter().flatten() {
+        for value in &self.travel_destinations {
             stream.save(b"DODT")?;
             stream.save(&24u32)?;
             stream.save(value)?;
         }
         //
-        for value in self.ai_packages.iter().flatten() {
+        for value in &self.ai_packages {
             match value {
                 AiPackage::Travel(package) => {
                     // AI_T
@@ -248,31 +230,6 @@ impl Save for Creature {
             stream.save(b"DELE")?;
             stream.save(&4u32)?;
             stream.save(&0u32)?;
-        }
-        Ok(())
-    }
-}
-
-impl Load for TravelDestination {
-    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let translation = stream.load()?;
-        let rotation = stream.load()?;
-        let cell = stream.expect(*b"DNAM").and_then(|_| stream.load()).ok();
-        Ok(Self {
-            translation,
-            rotation,
-            cell,
-        })
-    }
-}
-
-impl Save for TravelDestination {
-    fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.translation)?;
-        stream.save(&self.rotation)?;
-        if let Some(value) = &self.cell {
-            stream.save(b"DNAM")?;
-            stream.save(value)?;
         }
         Ok(())
     }

@@ -5,8 +5,8 @@ use crate::prelude::*;
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct BipedObject {
     pub kind: BipedObjectType,
-    pub male_bodypart: Option<String>,
-    pub female_bodypart: Option<String>,
+    pub male_bodypart: String,
+    pub female_bodypart: String,
 }
 
 impl Load for BipedObject {
@@ -19,12 +19,12 @@ impl Load for BipedObject {
         for _ in 0..2 {
             // BNAM
             if stream.expect(*b"BNAM").is_ok() {
-                this.male_bodypart = Some(stream.load()?);
+                this.male_bodypart = stream.load()?;
                 continue;
             }
             // CNAM
             if stream.expect(*b"CNAM").is_ok() {
-                this.female_bodypart = Some(stream.load()?);
+                this.female_bodypart = stream.load()?;
                 continue;
             }
         }
@@ -39,14 +39,14 @@ impl Save for BipedObject {
         stream.save(&1u32)?;
         stream.save(&self.kind)?;
         // BNAM
-        if let Some(value) = &self.male_bodypart {
+        if !self.male_bodypart.is_empty() {
             stream.save(b"BNAM")?;
-            stream.save(value)?;
+            stream.save(&self.male_bodypart)?;
         }
         // CNAM
-        if let Some(value) = &self.female_bodypart {
+        if !self.female_bodypart.is_empty() {
             stream.save(b"CNAM")?;
-            stream.save(value)?;
+            stream.save(&self.female_bodypart)?;
         }
         Ok(())
     }

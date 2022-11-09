@@ -5,10 +5,10 @@ use crate::prelude::*;
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGrid {
     pub flags: ObjectFlags,
-    pub cell: Option<String>,
-    pub data: Option<PathGridData>,
-    pub points: Option<Vec<PathGridPoint>>,
-    pub connections: Option<Vec<u32>>,
+    pub cell: String,
+    pub data: PathGridData,
+    pub points: Vec<PathGridPoint>,
+    pub connections: Vec<u32>,
 }
 
 #[esp_meta]
@@ -36,19 +36,19 @@ impl Load for PathGrid {
         while let Ok(tag) = stream.load() {
             match &tag {
                 b"NAME" => {
-                    this.cell = Some(stream.load()?);
+                    this.cell = stream.load()?;
                 }
                 b"DATA" => {
                     stream.expect(12u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"PGRP" => {
                     let len: u32 = stream.load()?;
-                    this.points = Some((0..len / 16).load(|_| stream.load())?);
+                    this.points = (0..len / 16).load(|_| stream.load())?;
                 }
                 b"PGRC" => {
                     let len: u32 = stream.load()?;
-                    this.connections = Some((0..len / 4).load(|_| stream.load())?);
+                    this.connections = (0..len / 4).load(|_| stream.load())?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -69,29 +69,25 @@ impl Save for PathGrid {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.flags)?;
         // DATA
-        if let Some(value) = &self.data {
-            stream.save(b"DATA")?;
-            stream.save(&12u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&12u32)?;
+        stream.save(&self.data)?;
         // NAME
-        if let Some(value) = &self.cell {
-            stream.save(b"NAME")?;
-            stream.save(value)?;
-        }
+        stream.save(b"NAME")?;
+        stream.save(&self.cell)?;
         // PGRP
-        if let Some(values) = self.points.as_ref().filter(|x| !x.is_empty()) {
+        if !self.points.is_empty() {
             stream.save(b"PGRP")?;
-            stream.save_as::<_, u32>(values.len() * 16)?;
-            for value in values {
+            stream.save_as::<_, u32>(self.points.len() * 16)?;
+            for value in &self.points {
                 stream.save(value)?;
             }
         }
         // PGRC
-        if let Some(values) = self.connections.as_ref().filter(|x| !x.is_empty()) {
+        if !self.connections.is_empty() {
             stream.save(b"PGRC")?;
-            stream.save_as::<_, u32>(values.len() * 4)?;
-            for value in values {
+            stream.save_as::<_, u32>(self.connections.len() * 4)?;
+            for value in &self.connections {
                 stream.save(value)?;
             }
         }

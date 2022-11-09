@@ -6,18 +6,18 @@ use crate::prelude::*;
 pub struct MagicEffect {
     pub flags: ObjectFlags,
     pub effect_id: EffectId,
-    pub data: Option<MagicEffectData>,
-    pub icon: Option<String>,
-    pub texture: Option<String>,
-    pub bolt_sound: Option<String>,
-    pub cast_sound: Option<String>,
-    pub hit_sound: Option<String>,
-    pub area_sound: Option<String>,
-    pub cast_visual: Option<String>,
-    pub bolt_visual: Option<String>,
-    pub hit_visual: Option<String>,
-    pub area_visual: Option<String>,
-    pub description: Option<String>,
+    pub data: MagicEffectData,
+    pub icon: String,
+    pub texture: String,
+    pub bolt_sound: String,
+    pub cast_sound: String,
+    pub hit_sound: String,
+    pub area_sound: String,
+    pub cast_visual: String,
+    pub bolt_visual: String,
+    pub hit_visual: String,
+    pub area_visual: String,
+    pub description: String,
 }
 
 #[esp_meta]
@@ -46,40 +46,40 @@ impl Load for MagicEffect {
                 }
                 b"MEDT" => {
                     stream.expect(36u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ITEX" => {
-                    this.icon = Some(stream.load()?);
+                    this.icon = stream.load()?;
                 }
                 b"PTEX" => {
-                    this.texture = Some(stream.load()?);
+                    this.texture = stream.load()?;
                 }
                 b"BSND" => {
-                    this.bolt_sound = Some(stream.load()?);
+                    this.bolt_sound = stream.load()?;
                 }
                 b"CSND" => {
-                    this.cast_sound = Some(stream.load()?);
+                    this.cast_sound = stream.load()?;
                 }
                 b"HSND" => {
-                    this.hit_sound = Some(stream.load()?);
+                    this.hit_sound = stream.load()?;
                 }
                 b"ASND" => {
-                    this.area_sound = Some(stream.load()?);
+                    this.area_sound = stream.load()?;
                 }
                 b"CVFX" => {
-                    this.cast_visual = Some(stream.load()?);
+                    this.cast_visual = stream.load()?;
                 }
                 b"BVFX" => {
-                    this.bolt_visual = Some(stream.load()?);
+                    this.bolt_visual = stream.load()?;
                 }
                 b"HVFX" => {
-                    this.hit_visual = Some(stream.load()?);
+                    this.hit_visual = stream.load()?;
                 }
                 b"AVFX" => {
-                    this.area_visual = Some(stream.load()?);
+                    this.area_visual = stream.load()?;
                 }
                 b"DESC" => {
-                    this.description = Some(stream.load()?);
+                    this.description = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -104,65 +104,63 @@ impl Save for MagicEffect {
         stream.save(&4u32)?;
         stream.save(&self.effect_id)?;
         // MEDT
-        if let Some(value) = &self.data {
-            stream.save(b"MEDT")?;
-            stream.save(&36u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"MEDT")?;
+        stream.save(&36u32)?;
+        stream.save(&self.data)?;
         // ITEX
-        if let Some(value) = &self.icon {
+        if !self.icon.is_empty() {
             stream.save(b"ITEX")?;
-            stream.save(value)?;
+            stream.save(&self.icon)?;
         }
         // PTEX
-        if let Some(value) = &self.texture {
+        if !self.texture.is_empty() {
             stream.save(b"PTEX")?;
-            stream.save(value)?;
+            stream.save(&self.texture)?;
         }
         // BSND
-        if let Some(value) = &self.bolt_sound {
+        if !self.bolt_sound.is_empty() {
             stream.save(b"BSND")?;
-            stream.save(value)?;
+            stream.save(&self.bolt_sound)?;
         }
         // CSND
-        if let Some(value) = &self.cast_sound {
+        if !self.cast_sound.is_empty() {
             stream.save(b"CSND")?;
-            stream.save(value)?;
+            stream.save(&self.cast_sound)?;
         }
         // HSND
-        if let Some(value) = &self.hit_sound {
+        if !self.hit_sound.is_empty() {
             stream.save(b"HSND")?;
-            stream.save(value)?;
+            stream.save(&self.hit_sound)?;
         }
         // ASND
-        if let Some(value) = &self.area_sound {
+        if !self.area_sound.is_empty() {
             stream.save(b"ASND")?;
-            stream.save(value)?;
+            stream.save(&self.area_sound)?;
         }
         // CVFX
-        if let Some(value) = &self.cast_visual {
+        if !self.cast_visual.is_empty() {
             stream.save(b"CVFX")?;
-            stream.save(value)?;
+            stream.save(&self.cast_visual)?;
         }
         // BVFX
-        if let Some(value) = &self.bolt_visual {
+        if !self.bolt_visual.is_empty() {
             stream.save(b"BVFX")?;
-            stream.save(value)?;
+            stream.save(&self.bolt_visual)?;
         }
         // HVFX
-        if let Some(value) = &self.hit_visual {
+        if !self.hit_visual.is_empty() {
             stream.save(b"HVFX")?;
-            stream.save(value)?;
+            stream.save(&self.hit_visual)?;
         }
         // AVFX
-        if let Some(value) = &self.area_visual {
+        if !self.area_visual.is_empty() {
             stream.save(b"AVFX")?;
-            stream.save(value)?;
+            stream.save(&self.area_visual)?;
         }
         // DESC
-        if let Some(value) = &self.description {
+        if !self.description.is_empty() {
             stream.save(b"DESC")?;
-            stream.save(value)?;
+            stream.save(&self.description)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

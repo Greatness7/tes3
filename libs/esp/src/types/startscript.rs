@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct StartScript {
     pub flags: ObjectFlags,
     pub id: String,
-    pub script: Option<String>,
+    pub script: String,
 }
 
 impl Load for StartScript {
@@ -21,7 +21,7 @@ impl Load for StartScript {
                     this.id = stream.load()?;
                 }
                 b"NAME" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -45,9 +45,9 @@ impl Save for StartScript {
         stream.save(b"DATA")?;
         stream.save(&self.id)?;
         // NAME
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"NAME")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

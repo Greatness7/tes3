@@ -6,10 +6,10 @@ use crate::prelude::*;
 pub struct Script {
     pub flags: ObjectFlags,
     pub id: String,
-    pub header: Option<ScriptHeader>,
-    pub variables: Option<Vec<u8>>,
-    pub bytecode: Option<Vec<u8>>,
-    pub script_text: Option<String>,
+    pub header: ScriptHeader,
+    pub variables: Vec<u8>,
+    pub bytecode: Vec<u8>,
+    pub script_text: String,
 }
 
 #[esp_meta]
@@ -33,16 +33,16 @@ impl Load for Script {
                 b"SCHD" => {
                     stream.expect(52u32)?;
                     this.id = stream.load::<FixedString<32>>()?.into();
-                    this.header = Some(stream.load()?);
+                    this.header = stream.load()?;
                 }
                 b"SCVR" => {
-                    this.variables = Some(stream.load()?);
+                    this.variables = stream.load()?;
                 }
                 b"SCDT" => {
-                    this.bytecode = Some(stream.load()?);
+                    this.bytecode = stream.load()?;
                 }
                 b"SCTX" => {
-                    this.script_text = Some(stream.load()?);
+                    this.script_text = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -63,26 +63,24 @@ impl Save for Script {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.flags)?;
         // SCHD
-        if let Some(value) = &self.header {
-            stream.save(b"SCHD")?;
-            stream.save(&52u32)?;
-            stream.save::<FixedString<32>>(self.id.as_ref())?;
-            stream.save(value)?;
-        }
+        stream.save(b"SCHD")?;
+        stream.save(&52u32)?;
+        stream.save::<FixedString<32>>(self.id.as_ref())?;
+        stream.save(&self.header)?;
         // SCVR
-        if let Some(value) = &self.variables {
+        if !self.variables.is_empty() {
             stream.save(b"SCVR")?;
-            stream.save(value)?;
+            stream.save(&self.variables)?;
         }
         // SCDT
-        if let Some(value) = &self.bytecode {
+        if !self.bytecode.is_empty() {
             stream.save(b"SCDT")?;
-            stream.save(value)?;
+            stream.save(&self.bytecode)?;
         }
         // SCTX
-        if let Some(value) = &self.script_text {
+        if !self.script_text.is_empty() {
             stream.save(b"SCTX")?;
-            stream.save(value)?;
+            stream.save(&self.script_text)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

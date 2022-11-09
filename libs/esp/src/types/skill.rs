@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub struct Skill {
     pub flags: ObjectFlags,
     pub skill_id: SkillId,
-    pub data: Option<SkillData>,
-    pub description: Option<String>,
+    pub data: SkillData,
+    pub description: String,
 }
 
 #[esp_meta]
@@ -32,10 +32,10 @@ impl Load for Skill {
                 }
                 b"SKDT" => {
                     stream.expect(24u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"DESC" => {
-                    this.description = Some(stream.load()?);
+                    this.description = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -60,15 +60,13 @@ impl Save for Skill {
         stream.save(&4u32)?;
         stream.save(&self.skill_id)?;
         // SKDT
-        if let Some(value) = &self.data {
-            stream.save(b"SKDT")?;
-            stream.save(&24u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"SKDT")?;
+        stream.save(&24u32)?;
+        stream.save(&self.data)?;
         // DESC
-        if let Some(value) = &self.description {
+        if !self.description.is_empty() {
             stream.save(b"DESC")?;
-            stream.save(value)?;
+            stream.save(&self.description)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

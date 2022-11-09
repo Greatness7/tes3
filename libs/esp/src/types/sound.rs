@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub struct Sound {
     pub flags: ObjectFlags,
     pub id: String,
-    pub sound_path: Option<String>,
-    pub data: Option<SoundData>,
+    pub sound_path: String,
+    pub data: SoundData,
 }
 
 #[esp_meta]
@@ -29,11 +29,11 @@ impl Load for Sound {
                     this.id = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.sound_path = Some(stream.load()?);
+                    this.sound_path = stream.load()?;
                 }
                 b"DATA" => {
                     stream.expect(3u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -57,16 +57,14 @@ impl Save for Sound {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // FNAM
-        if let Some(value) = &self.sound_path {
+        if !self.sound_path.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.sound_path)?;
         }
         // DATA
-        if let Some(value) = &self.data {
-            stream.save(b"DATA")?;
-            stream.save(&3u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&3u32)?;
+        stream.save(&self.data)?;
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;

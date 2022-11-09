@@ -6,28 +6,28 @@ use crate::prelude::*;
 pub struct Npc {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: Option<String>,
-    pub mesh: Option<String>,
-    pub script: Option<String>,
-    pub race: Option<String>,
-    pub class: Option<String>,
-    pub faction: Option<String>,
-    pub head: Option<String>,
-    pub hair: Option<String>,
-    pub npc_flags: Option<u32>,
-    pub data: Option<NpcData>,
-    pub inventory: Option<Vec<(i32, FixedString<32>)>>,
-    pub spells: Option<Vec<String>>,
-    pub ai_data: Option<AiData>,
-    pub ai_packages: Option<Vec<AiPackage>>,
-    pub travel_destinations: Option<Vec<TravelDestination>>,
+    pub name: String,
+    pub mesh: String,
+    pub script: String,
+    pub race: String,
+    pub class: String,
+    pub faction: String,
+    pub head: String,
+    pub hair: String,
+    pub npc_flags: u32,
+    pub data: NpcData,
+    pub inventory: Vec<(i32, FixedString<32>)>,
+    pub spells: Vec<String>,
+    pub ai_data: AiData,
+    pub ai_packages: Vec<AiPackage>,
+    pub travel_destinations: Vec<TravelDestination>,
 }
 
 #[esp_meta]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct NpcData {
     pub level: i16,
-    pub stats: Option<NpcStats>,
+    pub stats: Option<NpcStats>, // data here is garbage if (npc_flags) autocalc is not set
     pub disposition: i8,
     pub reputation: i8,
     pub rank: i8,
@@ -56,80 +56,70 @@ impl Load for Npc {
                     this.id = stream.load()?;
                 }
                 b"MODL" => {
-                    this.mesh = Some(stream.load()?);
+                    this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = Some(stream.load()?);
+                    this.name = stream.load()?;
                 }
                 b"RNAM" => {
-                    this.race = Some(stream.load()?);
+                    this.race = stream.load()?;
                 }
                 b"CNAM" => {
-                    this.class = Some(stream.load()?);
+                    this.class = stream.load()?;
                 }
                 b"ANAM" => {
-                    this.faction = Some(stream.load()?);
+                    this.faction = stream.load()?;
                 }
                 b"BNAM" => {
-                    this.head = Some(stream.load()?);
+                    this.head = stream.load()?;
                 }
                 b"KNAM" => {
-                    this.hair = Some(stream.load()?);
+                    this.hair = stream.load()?;
                 }
                 b"SCRI" => {
-                    this.script = Some(stream.load()?);
+                    this.script = stream.load()?;
                 }
                 b"NPDT" => {
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"FLAG" => {
                     stream.expect(4u32)?;
-                    this.npc_flags = Some(stream.load()?);
+                    this.npc_flags = stream.load()?;
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
-                    this.inventory.get_or_insert_with(default).push(stream.load()?);
+                    this.inventory.push(stream.load()?);
                 }
                 b"NPCS" => {
-                    this.spells.get_or_insert_with(default).push(stream.load()?);
+                    this.spells.push(stream.load()?);
                 }
                 b"AIDT" => {
                     stream.expect(12u32)?;
-                    this.ai_data = Some(stream.load()?);
+                    this.ai_data = stream.load()?;
                 }
                 b"DODT" => {
                     stream.expect(24u32)?;
-                    this.travel_destinations.get_or_insert_with(default).push(stream.load()?);
+                    this.travel_destinations.push(stream.load()?);
                 }
                 b"AI_T" => {
                     stream.expect(16u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Travel(stream.load()?));
+                    this.ai_packages.push(AiPackage::Travel(stream.load()?));
                 }
                 b"AI_W" => {
                     stream.expect(14u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Wander(stream.load()?));
+                    this.ai_packages.push(AiPackage::Wander(stream.load()?));
                 }
                 b"AI_E" => {
                     stream.expect(48u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Escort(stream.load()?));
+                    this.ai_packages.push(AiPackage::Escort(stream.load()?));
                 }
                 b"AI_F" => {
                     stream.expect(48u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Follow(stream.load()?));
+                    this.ai_packages.push(AiPackage::Follow(stream.load()?));
                 }
                 b"AI_A" => {
                     stream.expect(33u32)?;
-                    this.ai_packages
-                        .get_or_insert_with(default)
-                        .push(AiPackage::Activate(stream.load()?));
+                    this.ai_packages.push(AiPackage::Activate(stream.load()?));
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -153,81 +143,75 @@ impl Save for Npc {
         stream.save(b"NAME")?;
         stream.save(&self.id)?;
         // MODL
-        if let Some(value) = &self.mesh {
+        if !self.mesh.is_empty() {
             stream.save(b"MODL")?;
-            stream.save(value)?;
+            stream.save(&self.mesh)?;
         }
         // FNAM
-        if let Some(value) = &self.name {
+        if !self.name.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.name)?;
         }
         // RNAM
-        if let Some(value) = &self.race {
+        if !self.race.is_empty() {
             stream.save(b"RNAM")?;
-            stream.save(value)?;
+            stream.save(&self.race)?;
         }
         // CNAM
-        if let Some(value) = &self.class {
+        if !self.class.is_empty() {
             stream.save(b"CNAM")?;
-            stream.save(value)?;
+            stream.save(&self.class)?;
         }
         // ANAM
-        if let Some(value) = &self.faction {
+        if !self.faction.is_empty() {
             stream.save(b"ANAM")?;
-            stream.save(value)?;
+            stream.save(&self.faction)?;
         }
         // BNAM
-        if let Some(value) = &self.head {
+        if !self.head.is_empty() {
             stream.save(b"BNAM")?;
-            stream.save(value)?;
+            stream.save(&self.head)?;
         }
         // KNAM
-        if let Some(value) = &self.hair {
+        if !self.hair.is_empty() {
             stream.save(b"KNAM")?;
-            stream.save(value)?;
+            stream.save(&self.hair)?;
         }
         // SCRI
-        if let Some(value) = &self.script {
+        if !self.script.is_empty() {
             stream.save(b"SCRI")?;
-            stream.save(value)?;
+            stream.save(&self.script)?;
         }
         // NPDT
-        if let Some(value) = &self.data {
-            stream.save(b"NPDT")?;
-            stream.save(value)?;
-        }
+        stream.save(b"NPDT")?;
+        stream.save(&self.data)?;
         // FLAG
-        if let Some(value) = &self.npc_flags {
-            stream.save(b"FLAG")?;
-            stream.save(&4u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"FLAG")?;
+        stream.save(&4u32)?;
+        stream.save(&self.npc_flags)?;
         // NPCO
-        for value in self.inventory.iter().flatten() {
+        for value in &self.inventory {
             stream.save(b"NPCO")?;
             stream.save(&36u32)?;
             stream.save(value)?;
         }
         // NPCS
-        for value in self.spells.iter().flatten() {
+        for value in &self.spells {
             stream.save(b"NPCS")?;
             stream.save(value)?;
         }
         // AIDT
-        if let Some(value) = &self.ai_data {
-            stream.save(b"AIDT")?;
-            stream.save(&12u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"AIDT")?;
+        stream.save(&12u32)?;
+        stream.save(&self.ai_data)?;
         // DODT
-        for value in self.travel_destinations.iter().flatten() {
+        for value in &self.travel_destinations {
             stream.save(b"DODT")?;
             stream.save(&24u32)?;
             stream.save(value)?;
         }
         //
-        for value in self.ai_packages.iter().flatten() {
+        for value in &self.ai_packages {
             match value {
                 AiPackage::Travel(package) => {
                     // AI_T

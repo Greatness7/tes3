@@ -6,22 +6,22 @@ use crate::prelude::*;
 pub struct Info {
     pub flags: ObjectFlags,
     pub id: String,
-    pub prev_id: Option<String>,
-    pub next_id: Option<String>,
-    pub data: Option<InfoData>,
-    pub speaker_id: Option<String>,
-    pub speaker_rank: Option<String>,
-    pub speaker_class: Option<String>,
-    pub speaker_faction: Option<String>,
-    pub speaker_cell: Option<String>,
-    pub player_faction: Option<String>,
-    pub text: Option<String>,
-    pub sound_path: Option<String>,
-    pub quest_name: Option<u8>,
-    pub quest_finish: Option<u8>,
-    pub quest_restart: Option<u8>,
-    pub filters: Option<Vec<Filter>>,
-    pub script_text: Option<String>,
+    pub prev_id: String,
+    pub next_id: String,
+    pub data: InfoData,
+    pub speaker_id: String,
+    pub speaker_rank: String,
+    pub speaker_class: String,
+    pub speaker_faction: String,
+    pub speaker_cell: String,
+    pub player_faction: String,
+    pub sound_path: String,
+    pub text: String,
+    pub quest_name: Option<bool>, // TODO: do these with flags
+    pub quest_finish: Option<bool>,
+    pub quest_restart: Option<bool>,
+    pub filters: Vec<Filter>,
+    pub script_text: String,
 }
 
 #[esp_meta]
@@ -42,7 +42,7 @@ pub struct Filter {
     pub function: FilterFunction,
     pub comparison: FilterComparison,
     pub id: String,
-    pub value: Option<FilterValue>,
+    pub value: FilterValue,
 }
 
 #[esp_meta]
@@ -65,68 +65,68 @@ impl Load for Info {
                     this.id = stream.load()?;
                 }
                 b"PNAM" => {
-                    this.prev_id = Some(stream.load()?);
+                    this.prev_id = stream.load()?;
                 }
                 b"NNAM" => {
-                    this.next_id = Some(stream.load()?);
+                    this.next_id = stream.load()?;
                 }
                 b"DATA" => {
                     stream.expect(12u32)?;
-                    this.data = Some(stream.load()?);
+                    this.data = stream.load()?;
                 }
                 b"ONAM" => {
-                    this.speaker_id = Some(stream.load()?);
+                    this.speaker_id = stream.load()?;
                 }
                 b"RNAM" => {
-                    this.speaker_rank = Some(stream.load()?);
+                    this.speaker_rank = stream.load()?;
                 }
                 b"CNAM" => {
-                    this.speaker_class = Some(stream.load()?);
+                    this.speaker_class = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.speaker_faction = Some(stream.load()?);
+                    this.speaker_faction = stream.load()?;
                 }
                 b"ANAM" => {
-                    this.speaker_cell = Some(stream.load()?);
+                    this.speaker_cell = stream.load()?;
                 }
                 b"DNAM" => {
-                    this.player_faction = Some(stream.load()?);
+                    this.player_faction = stream.load()?;
                 }
                 b"SNAM" => {
-                    this.sound_path = Some(stream.load()?);
+                    this.sound_path = stream.load()?;
                 }
                 b"NAME" => {
-                    this.text = Some(stream.load()?);
+                    this.text = stream.load()?;
                 }
                 b"QSTN" => {
                     stream.expect(1u32)?;
-                    this.quest_name = Some(stream.load()?);
+                    this.quest_name = Some(stream.load::<u8>()? != 0);
                 }
                 b"QSTF" => {
                     stream.expect(1u32)?;
-                    this.quest_finish = Some(stream.load()?);
+                    this.quest_finish = Some(stream.load::<u8>()? != 0);
                 }
                 b"QSTR" => {
                     stream.expect(1u32)?;
-                    this.quest_restart = Some(stream.load()?);
+                    this.quest_restart = Some(stream.load::<u8>()? != 0);
                 }
                 b"SCVR" => {
-                    this.filters.get_or_insert_with(default).push(stream.load()?);
+                    this.filters.push(stream.load()?);
                 }
                 b"FLTV" => {
                     // TODO these most likely follow immmediately after
                     stream.expect(4u32)?;
-                    let filter = this.filters.get_or_insert_with(default).last_mut().ok_or_else(err)?;
-                    filter.value = Some(FilterValue::Float(stream.load()?));
+                    let filter = this.filters.last_mut().ok_or_else(err)?;
+                    filter.value = FilterValue::Float(stream.load()?);
                 }
                 b"INTV" => {
                     // TODO these most likely follow immmediately after
                     stream.expect(4u32)?;
-                    let filter = this.filters.get_or_insert_with(default).last_mut().ok_or_else(err)?;
-                    filter.value = Some(FilterValue::Integer(stream.load()?));
+                    let filter = this.filters.last_mut().ok_or_else(err)?;
+                    filter.value = FilterValue::Integer(stream.load()?);
                 }
                 b"BNAM" => {
-                    this.script_text = Some(stream.load()?);
+                    this.script_text = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -150,104 +150,97 @@ impl Save for Info {
         stream.save(b"INAM")?;
         stream.save(&self.id)?;
         // PNAM
-        if let Some(value) = &self.prev_id {
-            stream.save(b"PNAM")?;
-            stream.save(value)?;
-        }
+        stream.save(b"PNAM")?;
+        stream.save(&self.prev_id)?;
         // NNAM
-        if let Some(value) = &self.next_id {
-            stream.save(b"NNAM")?;
-            stream.save(value)?;
-        }
+        stream.save(b"NNAM")?;
+        stream.save(&self.next_id)?;
         // DATA
-        if let Some(value) = &self.data {
-            stream.save(b"DATA")?;
-            stream.save(&12u32)?;
-            stream.save(value)?;
-        }
+        stream.save(b"DATA")?;
+        stream.save(&12u32)?;
+        stream.save(&self.data)?;
         // ONAM
-        if let Some(value) = &self.speaker_id {
+        if !self.speaker_id.is_empty() {
             stream.save(b"ONAM")?;
-            stream.save(value)?;
+            stream.save(&self.speaker_id)?;
         }
         // RNAM
-        if let Some(value) = &self.speaker_rank {
+        if !self.speaker_rank.is_empty() {
             stream.save(b"RNAM")?;
-            stream.save(value)?;
+            stream.save(&self.speaker_rank)?;
         }
         // CNAM
-        if let Some(value) = &self.speaker_class {
+        if !self.speaker_class.is_empty() {
             stream.save(b"CNAM")?;
-            stream.save(value)?;
+            stream.save(&self.speaker_class)?;
         }
         // FNAM
-        if let Some(value) = &self.speaker_faction {
+        if !self.speaker_faction.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(value)?;
+            stream.save(&self.speaker_faction)?;
         }
         // ANAM
-        if let Some(value) = &self.speaker_cell {
+        if !self.speaker_cell.is_empty() {
             stream.save(b"ANAM")?;
-            stream.save(value)?;
+            stream.save(&self.speaker_cell)?;
         }
         // DNAM
-        if let Some(value) = &self.player_faction {
+        if !self.player_faction.is_empty() {
             stream.save(b"DNAM")?;
-            stream.save(value)?;
+            stream.save(&self.player_faction)?;
         }
         // SNAM
-        if let Some(value) = &self.sound_path {
+        if !self.sound_path.is_empty() {
             stream.save(b"SNAM")?;
-            stream.save(value)?;
+            stream.save(&self.sound_path)?;
         }
         // NAME
-        if let Some(value) = &self.text {
+        if !self.text.is_empty() {
             stream.save(b"NAME")?;
-            stream.save(value)?;
+            stream.save(&self.text)?;
         }
         // QSTN
         if let Some(value) = &self.quest_name {
             stream.save(b"QSTN")?;
             stream.save(&1u32)?;
-            stream.save(value)?;
+            stream.save(&(*value as u8))?;
         }
         // QSTF
         if let Some(value) = &self.quest_finish {
             stream.save(b"QSTF")?;
             stream.save(&1u32)?;
-            stream.save(value)?;
+            stream.save(&(*value as u8))?;
         }
         // QSTR
         if let Some(value) = &self.quest_restart {
             stream.save(b"QSTR")?;
             stream.save(&1u32)?;
-            stream.save(value)?;
+            stream.save(&(*value as u8))?;
         }
         //
-        for filter in self.filters.iter().flatten() {
+        for filter in &self.filters {
             // SCVR
             stream.save(b"SCVR")?;
             stream.save(filter)?;
             match &filter.value {
-                Some(FilterValue::Float(value)) => {
+                FilterValue::Float(value) => {
                     // FLTV
                     stream.save(b"FLTV")?;
                     stream.save(&4u32)?;
                     stream.save(value)?;
                 }
-                Some(FilterValue::Integer(value)) => {
+                FilterValue::Integer(value) => {
                     // INTV
                     stream.save(b"INTV")?;
                     stream.save(&4u32)?;
                     stream.save(value)?;
                 }
-                _ => {}
             }
         }
         // BNAM
-        if let Some(value) = &self.script_text {
+        if !self.script_text.is_empty() {
             stream.save(b"BNAM")?;
-            stream.save(value)?;
+            stream.save(&self.script_text)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
@@ -297,7 +290,7 @@ impl Load for Filter {
         let function = stream.load()?;
         let comparison = stream.load()?;
         let id = stream.load_string(len as usize - 5)?;
-        let value = None;
+        let value = default();
         Ok(Self {
             slot,
             kind,

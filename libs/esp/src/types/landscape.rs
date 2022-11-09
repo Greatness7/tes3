@@ -10,11 +10,11 @@ pub struct Landscape {
     pub flags: ObjectFlags,
     pub grid: (i32, i32),
     pub landscape_flags: LandscapeFlags,
-    pub vertex_normals: Option<VertexNormals>,
-    pub vertex_heights: Option<VertexHeights>,
-    pub world_map_data: Option<WorldMapData>,
-    pub vertex_colors: Option<VertexColors>,
-    pub texture_indices: Option<TextureIndices>,
+    pub vertex_normals: VertexNormals,
+    pub vertex_heights: VertexHeights,
+    pub world_map_data: WorldMapData,
+    pub vertex_colors: VertexColors,
+    pub texture_indices: TextureIndices,
 }
 
 #[esp_meta]
@@ -71,23 +71,23 @@ impl Load for Landscape {
                 }
                 b"VNML" => {
                     stream.expect(12675u32)?;
-                    this.vertex_normals = Some(stream.load()?);
+                    this.vertex_normals = stream.load()?;
                 }
                 b"VHGT" => {
                     stream.expect(4232u32)?;
-                    this.vertex_heights = Some(stream.load()?);
+                    this.vertex_heights = stream.load()?;
                 }
                 b"WNAM" => {
                     stream.expect(81u32)?;
-                    this.world_map_data = Some(stream.load()?);
+                    this.world_map_data = stream.load()?;
                 }
                 b"VCLR" => {
                     stream.expect(12675u32)?;
-                    this.vertex_colors = Some(stream.load()?);
+                    this.vertex_colors = stream.load()?;
                 }
                 b"VTEX" => {
                     stream.expect(512u32)?;
-                    this.texture_indices = Some(stream.load()?);
+                    this.texture_indices = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -115,35 +115,37 @@ impl Save for Landscape {
         stream.save(b"DATA")?;
         stream.save(&4u32)?;
         stream.save(&self.landscape_flags)?;
-        // VNML
-        if let Some(value) = &self.vertex_normals {
+        //
+        if self
+            .landscape_flags
+            .intersects(LandscapeFlags::USES_VERTEX_HEIGHTS_AND_NORMALS)
+        {
+            // VNML
             stream.save(b"VNML")?;
             stream.save(&12675u32)?;
-            stream.save(value)?;
-        }
-        // VHGT
-        if let Some(value) = &self.vertex_heights {
+            stream.save(&self.vertex_normals)?;
+            // VHGT
             stream.save(b"VHGT")?;
             stream.save(&4232u32)?;
-            stream.save(value)?;
+            stream.save(&self.vertex_heights)?;
         }
         // WNAM
-        if let Some(value) = &self.world_map_data {
+        if self.landscape_flags.uses_world_map_data() {
             stream.save(b"WNAM")?;
             stream.save(&81u32)?;
-            stream.save(value)?;
+            stream.save(&self.world_map_data)?;
         }
         // VCLR
-        if let Some(value) = &self.vertex_colors {
+        if self.landscape_flags.intersects(LandscapeFlags::USES_VERTEX_COLORS) {
             stream.save(b"VCLR")?;
             stream.save(&12675u32)?;
-            stream.save(value)?;
+            stream.save(&self.vertex_colors)?;
         }
         // VTEX
-        if let Some(value) = &self.texture_indices {
+        if self.landscape_flags.intersects(LandscapeFlags::USES_TEXTURES) {
             stream.save(b"VTEX")?;
             stream.save(&512u32)?;
-            stream.save(value)?;
+            stream.save(&self.texture_indices)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

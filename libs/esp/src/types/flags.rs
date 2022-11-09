@@ -9,6 +9,7 @@ bitflags! {
     #[derive(LoadSave, Default)]
     #[repr(transparent)]
     pub struct ObjectFlags: u32 {
+        const MODIFIED = 0x0002;
         const DELETED = 0x0020;
         const PERSISTENT = 0x0400;
         const IGNORED = 0x1000;

@@ -8,7 +8,7 @@ use crate::prelude::*;
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Cell {
     pub flags: ObjectFlags,
-    pub id: String,
+    pub name: String,
     pub data: CellData,
     pub region: Option<String>,
     pub map_color: Option<[u8; 4]>,
@@ -45,7 +45,7 @@ impl Load for Cell {
         while let Ok(tag) = stream.load() {
             match &tag {
                 b"NAME" => {
-                    this.id = stream.load()?;
+                    this.name = stream.load()?;
                 }
                 b"DATA" => {
                     stream.expect(12u32)?;
@@ -131,9 +131,8 @@ impl Load for Cell {
                 // copies the associated reference to the plugin, which prevents this from
                 // happening. Other tools may not be so nice.
                 Reader::error(format!(
-                    "Unable to resolve moved reference {:?} for cell {:?}",
-                    indices,
-                    format!("{} {:?}", this.id, this.data.grid),
+                    "Unable to resolve moved reference {:?} for cell {} {:?}",
+                    indices, this.name, this.data.grid
                 ))?;
             }
         }
@@ -147,7 +146,7 @@ impl Save for Cell {
         stream.save(&self.flags)?;
         // NAME
         stream.save(b"NAME")?;
-        stream.save(&self.id)?;
+        stream.save(&self.name)?;
         // DATA
         stream.save(b"DATA")?;
         stream.save(&12u32)?;

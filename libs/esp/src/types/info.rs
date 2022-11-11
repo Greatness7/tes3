@@ -17,9 +17,7 @@ pub struct Info {
     pub player_faction: String,
     pub sound_path: String,
     pub text: String,
-    pub quest_name: Option<bool>, // TODO: do these with flags
-    pub quest_finish: Option<bool>,
-    pub quest_restart: Option<bool>,
+    pub quest_state: Option<QuestState>,
     pub filters: Vec<Filter>,
     pub script_text: String,
 }
@@ -51,6 +49,14 @@ pub enum FilterValue {
     #[default]
     Float(f32),
     Integer(i32),
+}
+
+#[esp_meta]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum QuestState {
+    Name,
+    Finished,
+    Restart,
 }
 
 impl Load for Info {
@@ -99,28 +105,29 @@ impl Load for Info {
                     this.text = stream.load()?;
                 }
                 b"QSTN" => {
-                    stream.expect(1u32)?;
-                    this.quest_name = Some(stream.load::<u8>()? != 0);
+                    let size: u32 = stream.load()?;
+                    stream.skip(size)?;
+                    this.quest_state = Some(QuestState::Name);
                 }
                 b"QSTF" => {
-                    stream.expect(1u32)?;
-                    this.quest_finish = Some(stream.load::<u8>()? != 0);
+                    let size: u32 = stream.load()?;
+                    stream.skip(size)?;
+                    this.quest_state = Some(QuestState::Finished);
                 }
                 b"QSTR" => {
-                    stream.expect(1u32)?;
-                    this.quest_restart = Some(stream.load::<u8>()? != 0);
+                    let size: u32 = stream.load()?;
+                    stream.skip(size)?;
+                    this.quest_state = Some(QuestState::Restart);
                 }
                 b"SCVR" => {
                     this.filters.push(stream.load()?);
                 }
                 b"FLTV" => {
-                    // TODO these most likely follow immmediately after
                     stream.expect(4u32)?;
                     let filter = this.filters.last_mut().ok_or_else(err)?;
                     filter.value = FilterValue::Float(stream.load()?);
                 }
                 b"INTV" => {
-                    // TODO these most likely follow immmediately after
                     stream.expect(4u32)?;
                     let filter = this.filters.last_mut().ok_or_else(err)?;
                     filter.value = FilterValue::Integer(stream.load()?);
@@ -199,23 +206,27 @@ impl Save for Info {
             stream.save(b"NAME")?;
             stream.save(&self.text)?;
         }
-        // QSTN
-        if let Some(value) = &self.quest_name {
-            stream.save(b"QSTN")?;
-            stream.save(&1u32)?;
-            stream.save(&(*value as u8))?;
-        }
-        // QSTF
-        if let Some(value) = &self.quest_finish {
-            stream.save(b"QSTF")?;
-            stream.save(&1u32)?;
-            stream.save(&(*value as u8))?;
-        }
-        // QSTR
-        if let Some(value) = &self.quest_restart {
-            stream.save(b"QSTR")?;
-            stream.save(&1u32)?;
-            stream.save(&(*value as u8))?;
+        //
+        match self.quest_state {
+            // QSTN
+            Some(QuestState::Name) => {
+                stream.save(b"QSTN")?;
+                stream.save(&1u32)?;
+                stream.save(&1u8)?;
+            }
+            // QSTF
+            Some(QuestState::Finished) => {
+                stream.save(b"QSTF")?;
+                stream.save(&1u32)?;
+                stream.save(&1u8)?;
+            }
+            // QSTR
+            Some(QuestState::Restart) => {
+                stream.save(b"QSTR")?;
+                stream.save(&1u32)?;
+                stream.save(&1u8)?;
+            }
+            _ => {}
         }
         //
         for filter in &self.filters {

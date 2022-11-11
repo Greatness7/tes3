@@ -20,7 +20,7 @@ pub struct Cell {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CellData {
-    pub flags: u32,
+    pub flags: CellFlags,
     pub grid: (i32, i32),
 }
 
@@ -214,7 +214,7 @@ impl Save for Cell {
 
 impl Cell {
     pub const fn is_interior(&self) -> bool {
-        self.data.flags & 0x01 != 0
+        self.data.flags.contains(CellFlags::IS_INTERIOR)
     }
 
     pub const fn is_exterior(&self) -> bool {

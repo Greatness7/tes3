@@ -28,3 +28,15 @@ bitflags! {
         const UNKNOWN = 0x08;
     }
 }
+
+bitflags! {
+    #[esp_meta]
+    #[derive(LoadSave, Default)]
+    #[repr(transparent)]
+    pub struct CellFlags: u32 {
+        const IS_INTERIOR = 0x01;
+        const HAS_WATER = 0x02;
+        const RESTING_IS_ILLEGAL = 0x04;
+        const BEHAVES_LIKE_EXTERIOR = 0x80;
+    }
+}

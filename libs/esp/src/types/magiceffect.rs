@@ -6,7 +6,6 @@ use crate::prelude::*;
 pub struct MagicEffect {
     pub flags: ObjectFlags,
     pub effect_id: EffectId,
-    pub data: MagicEffectData,
     pub icon: String,
     pub texture: String,
     pub bolt_sound: String,
@@ -18,6 +17,7 @@ pub struct MagicEffect {
     pub hit_visual: String,
     pub area_visual: String,
     pub description: String,
+    pub data: MagicEffectData,
 }
 
 #[esp_meta]

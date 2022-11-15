@@ -7,8 +7,8 @@ pub struct Spell {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub data: SpellData,
     pub effects: Vec<Effect>,
+    pub data: SpellData,
 }
 
 #[esp_meta]

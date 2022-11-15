@@ -6,13 +6,13 @@ use crate::prelude::*;
 pub struct Armor {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: ArmorData,
     pub name: String,
+    pub script: String,
     pub mesh: String,
     pub icon: String,
-    pub script: String,
     pub enchanting: String,
     pub biped_objects: Vec<BipedObject>,
+    pub data: ArmorData,
 }
 
 #[esp_meta]

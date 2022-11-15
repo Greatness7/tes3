@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub struct Enchanting {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: EnchantingData,
     pub effects: Vec<Effect>,
+    pub data: EnchantingData,
 }
 
 #[esp_meta]

@@ -6,12 +6,12 @@ use crate::prelude::*;
 pub struct Alchemy {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: AlchemyData,
     pub name: String,
+    pub script: String,
     pub mesh: String,
     pub icon: String,
-    pub script: String,
     pub effects: Vec<Effect>,
+    pub data: AlchemyData,
 }
 
 #[esp_meta]

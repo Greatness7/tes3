@@ -6,11 +6,11 @@ use crate::prelude::*;
 pub struct Probe {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: ProbeData,
     pub name: String,
+    pub script: String,
     pub mesh: String,
     pub icon: String,
-    pub script: String,
+    pub data: ProbeData,
 }
 
 #[esp_meta]

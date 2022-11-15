@@ -7,8 +7,8 @@ pub struct Door {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub mesh: String,
     pub script: String,
+    pub mesh: String,
     pub open_sound: String,
     pub close_sound: String,
 }

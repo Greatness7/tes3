@@ -6,13 +6,13 @@ use crate::prelude::*;
 pub struct Book {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: BookData,
     pub name: String,
+    pub script: String,
     pub mesh: String,
     pub icon: String,
-    pub script: String,
     pub enchanting: String,
     pub text: String,
+    pub data: BookData,
 }
 
 #[esp_meta]

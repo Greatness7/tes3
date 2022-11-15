@@ -15,14 +15,14 @@ pub trait Load: Sized {
 
 impl Load for String {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len = stream.load::<u32>()? as usize;
+        let len = stream.load_as::<u32, _>()?;
         stream.load_string(len)
     }
 }
 
 impl Load for BString {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len = stream.load::<u32>()? as usize;
+        let len = stream.load_as::<u32, _>()?;
         Ok(stream.load_bytes(len)?.into())
     }
 }
@@ -35,7 +35,7 @@ impl<L: Load> Load for Box<L> {
 
 impl<L: Load> Load for Vec<L> {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len = stream.load::<u32>()?;
+        let len: u32 = stream.load()?;
         (0..len).map(|_| stream.load()).collect()
     }
 }

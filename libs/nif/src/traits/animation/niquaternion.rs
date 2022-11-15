@@ -2,7 +2,7 @@
 
 type Quat = nalgebra::Quaternion<f32>;
 
-pub(crate) fn isqrt_approx_in_neighborhood(s: f32) -> f32 {
+fn isqrt_approx_in_neighborhood(s: f32) -> f32 {
     const NEIGHBORHOOD: f32 = 0.959066;
     const NEIGHBORHOOD_SQRT: f32 = 0.979319;
     const SCALE: f32 = 1.000311;
@@ -11,7 +11,7 @@ pub(crate) fn isqrt_approx_in_neighborhood(s: f32) -> f32 {
     (s - NEIGHBORHOOD).mul_add(FACTOR, ADDITIVE_CONSTANT)
 }
 
-pub(crate) fn fast_normalize(q: &mut Quat) {
+fn fast_normalize(q: &mut Quat) {
     let s = q.dot(q);
     let mut k = isqrt_approx_in_neighborhood(s);
     if s <= 0.915212 {
@@ -23,7 +23,7 @@ pub(crate) fn fast_normalize(q: &mut Quat) {
     q.coords.scale_mut(k);
 }
 
-pub(crate) fn counter_warp(t: f32, cos: f32) -> f32 {
+fn counter_warp(t: f32, cos: f32) -> f32 {
     const ATTENUATION: f32 = 0.8227969;
     const WORST_SLOPE: f32 = 0.5854922;
 
@@ -35,7 +35,7 @@ pub(crate) fn counter_warp(t: f32, cos: f32) -> f32 {
     t * (f * t).mul_add(2f32.mul_add(t, -3.0), 1.0 + f)
 }
 
-pub(crate) fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
+pub fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
     let cos = q0.dot(&q1);
 
     let t = {
@@ -52,13 +52,13 @@ pub(crate) fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
     q
 }
 
-pub(crate) fn intermediate(prev: Quat, this: Quat, next: Quat) -> Quat {
+pub fn intermediate(prev: Quat, this: Quat, next: Quat) -> Quat {
     let inv = this.conjugate();
     let mut q = (inv * prev).ln() + (inv * next).ln();
     q.coords.scale_mut(-0.25);
     this * q.exp()
 }
 
-pub(crate) fn squad(q0: Quat, i0: Quat, i1: Quat, q1: Quat, t: f32) -> Quat {
+pub fn squad(q0: Quat, i0: Quat, i1: Quat, q1: Quat, t: f32) -> Quat {
     slerp(slerp(q0, q1, t), slerp(i0, i1, t), 2.0 * t * (1.0 - t))
 }

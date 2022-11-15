@@ -1,5 +1,3 @@
-#![allow(clippy::many_single_char_names, clippy::wildcard_imports)]
-
 // external imports
 use nalgebra as na;
 use nalgebra::constraint::{DimEq, ShapeConstraint};
@@ -7,16 +5,17 @@ use nalgebra::Const;
 
 // internal imports
 use crate::prelude::*;
+use crate::traits::animation::niquaternion::*;
 
-// aliased generics
+#[allow(unreachable_pub)]
 mod private {
     use nalgebra::*;
-    pub(crate) type Key<const K: usize> = OVector<f32, Const<K>>;
-    pub(crate) type KeySlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, U1, U1, Const<K>>;
-    pub(crate) type KeySliceMut<'a, const K: usize, const V: usize> = MatrixSliceMut<'a, f32, Const<V>, U1, U1, Const<K>>;
-    pub(crate) type Keys<const K: usize, const V: usize> = OMatrix<f32, Const<K>, Dynamic>;
-    pub(crate) type KeysSlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
-    pub(crate) type KeysSliceMut<'a, const K: usize, const V: usize> =
+    pub type Key<const K: usize> = OVector<f32, Const<K>>;
+    pub type KeySlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, U1, U1, Const<K>>;
+    pub type KeySliceMut<'a, const K: usize, const V: usize> = MatrixSliceMut<'a, f32, Const<V>, U1, U1, Const<K>>;
+    pub type Keys<const K: usize, const V: usize> = OMatrix<f32, Const<K>, Dynamic>;
+    pub type KeysSlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
+    pub type KeysSliceMut<'a, const K: usize, const V: usize> =
         MatrixSliceMut<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
 }
 use private::*;
@@ -617,6 +616,7 @@ impl KeysExt<5, 4> for BezRotKeys {
         &mut self.data
     }
 
+    #[allow(clippy::many_single_char_names)]
     fn bez_interp(&self, time: f32, start_index: usize) -> Option<(usize, f32, Self::Key)> {
         let (i, j) = self.position(time, start_index)?;
         if i == j {
@@ -663,6 +663,7 @@ impl KeysExt<8, 4> for TCBRotKeys {
         &mut self.data
     }
 
+    #[allow(clippy::many_single_char_names)]
     fn tcb_in_tan(&self, i: usize) -> Key<4> {
         let p = self.prev_index(i);
         let n = self.next_index(i);
@@ -687,6 +688,7 @@ impl KeysExt<8, 4> for TCBRotKeys {
         (this_value * (0.5 * (prev_len - r)).exp()).coords
     }
 
+    #[allow(clippy::many_single_char_names)]
     fn tcb_out_tan(&self, i: usize) -> Key<4> {
         let p = self.prev_index(i);
         let n = self.next_index(i);

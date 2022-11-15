@@ -13,14 +13,14 @@ impl NiObject {
 }
 
 impl Load for NiObject {
-    #![allow(unused_variables)]
+    #[allow(unused_variables)]
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         Ok(Self)
     }
 }
 
 impl Save for NiObject {
-    #![allow(unused_variables)]
+    #[allow(unused_variables)]
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         Ok(())
     }

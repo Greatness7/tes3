@@ -295,12 +295,12 @@ impl Save for InfoData {
 
 impl Load for Filter {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len: u32 = stream.load()?;
+        let len = stream.load_as::<u32, usize>()?;
         let slot = stream.load()?;
         let kind = stream.load()?;
         let function = stream.load()?;
         let comparison = stream.load()?;
-        let id = stream.load_string(len as usize - 5)?;
+        let id = stream.load_string(len - 5)?;
         let value = default();
         Ok(Self {
             slot,

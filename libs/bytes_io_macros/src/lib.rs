@@ -1,6 +1,7 @@
 use proc_macro::TokenStream;
 use quote::quote;
 
+#[doc(hidden)]
 #[proc_macro_derive(LoadSave)]
 pub fn derive_load_save(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
@@ -85,7 +86,7 @@ fn impl_load_save_for_enum(input: &syn::DeriveInput) -> TokenStream {
             }
 
             impl Save for #self_ident {
-                #![allow(trivial_numeric_casts, clippy::unnecessary_cast)]
+                #[allow(trivial_numeric_casts, clippy::unnecessary_cast)]
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
                     match self {
                         #(

@@ -53,11 +53,10 @@ warn = [
 
 allow = [
     "clippy::cargo_common_metadata", # TODO
-    "clippy::enum_glob_use",
     "clippy::missing_errors_doc", # TODO
     "clippy::module_name_repetitions",
     "clippy::must_use_candidate",
-    "clippy::redundant_pub_crate",
+    # "clippy::redundant_pub_crate",
     "clippy::unreadable_literal",
     "clippy::use_self",
     "clippy::wildcard-imports",

@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 
 #[allow(clippy::missing_const_for_fn)] // false positive
+#[doc(hidden)]
 #[proc_macro_attribute]
 pub fn esp_meta(_args: TokenStream, input: TokenStream) -> TokenStream {
     input

@@ -82,7 +82,7 @@ where
             return;
         }
 
-        // evaluate new keys for all times that not already present
+        // evaluate new keys for all times not already present
         let mut keys = Self::zeros(self.num_keys() + times.len());
         let max_time = times.last().unwrap().max(self.last_time());
 

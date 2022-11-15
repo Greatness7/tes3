@@ -7,8 +7,8 @@ pub struct Activator {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub mesh: String,
     pub script: String,
+    pub mesh: String,
 }
 
 impl Load for Activator {

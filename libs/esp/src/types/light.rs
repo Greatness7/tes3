@@ -6,12 +6,12 @@ use crate::prelude::*;
 pub struct Light {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: LightData,
     pub name: String,
+    pub script: String,
     pub mesh: String,
     pub icon: String,
-    pub script: String,
     pub sound: String,
+    pub data: LightData,
 }
 
 #[esp_meta]

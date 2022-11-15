@@ -7,8 +7,8 @@ pub struct Class {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub data: ClassData,
     pub description: String,
+    pub data: ClassData,
 }
 
 #[esp_meta]

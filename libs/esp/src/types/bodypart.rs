@@ -6,9 +6,9 @@ use crate::prelude::*;
 pub struct Bodypart {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: BodypartData,
     pub name: String,
     pub mesh: String,
+    pub data: BodypartData,
 }
 
 #[esp_meta]

@@ -6,11 +6,11 @@ use crate::prelude::*;
 pub struct RepairItem {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: RepairItemData,
     pub name: String,
+    pub script: String,
     pub mesh: String,
     pub icon: String,
-    pub script: String,
+    pub data: RepairItemData,
 }
 
 #[esp_meta]

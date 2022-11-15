@@ -8,8 +8,8 @@ pub struct Faction {
     pub id: String,
     pub name: String,
     pub rank_names: Vec<FixedString<32>>,
-    pub data: FactionData,
     pub reactions: Vec<FactionReaction>,
+    pub data: FactionData,
 }
 
 #[esp_meta]

@@ -6,18 +6,18 @@ use crate::prelude::*;
 pub struct Creature {
     pub flags: ObjectFlags,
     pub id: String,
-    pub data: CreatureData,
     pub name: String,
-    pub mesh: String,
     pub script: String,
-    pub sound: String,
-    pub creature_flags: u32,
-    pub scale: f32,
+    pub mesh: String,
     pub inventory: Vec<(i32, FixedString<32>)>,
     pub spells: Vec<String>,
     pub ai_data: AiData,
     pub ai_packages: Vec<AiPackage>,
     pub travel_destinations: Vec<TravelDestination>,
+    pub sound: String,
+    pub scale: f32,
+    pub creature_flags: u32,
+    pub data: CreatureData,
 }
 
 #[esp_meta]

@@ -7,9 +7,9 @@ pub struct Race {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub data: RaceData,
     pub spells: Vec<String>,
     pub description: String,
+    pub data: RaceData,
 }
 
 #[esp_meta]

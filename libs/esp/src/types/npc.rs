@@ -7,8 +7,13 @@ pub struct Npc {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub mesh: String,
     pub script: String,
+    pub mesh: String,
+    pub inventory: Vec<(i32, FixedString<32>)>,
+    pub spells: Vec<String>,
+    pub ai_data: AiData,
+    pub ai_packages: Vec<AiPackage>,
+    pub travel_destinations: Vec<TravelDestination>,
     pub race: String,
     pub class: String,
     pub faction: String,
@@ -16,11 +21,6 @@ pub struct Npc {
     pub hair: String,
     pub npc_flags: u32,
     pub data: NpcData,
-    pub inventory: Vec<(i32, FixedString<32>)>,
-    pub spells: Vec<String>,
-    pub ai_data: AiData,
-    pub ai_packages: Vec<AiPackage>,
-    pub travel_destinations: Vec<TravelDestination>,
 }
 
 #[esp_meta]

@@ -2,7 +2,7 @@
 use crate::prelude::*;
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum FileType {
     #[default]
@@ -12,7 +12,7 @@ pub enum FileType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum GlobalType {
     #[default]
@@ -22,7 +22,7 @@ pub enum GlobalType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum AttributeId {
     #[default]
@@ -38,7 +38,7 @@ pub enum AttributeId {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i8)]
 pub enum AttributeId2 {
     #[default]
@@ -54,7 +54,7 @@ pub enum AttributeId2 {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum Specialization {
     #[default]
@@ -65,7 +65,7 @@ pub enum Specialization {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum SkillId {
     #[default]
@@ -100,7 +100,7 @@ pub enum SkillId {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i8)]
 pub enum SkillId2 {
     #[default]
@@ -135,7 +135,7 @@ pub enum SkillId2 {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum EffectId {
     #[default]
@@ -286,7 +286,7 @@ pub enum EffectId {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i16)]
 pub enum EffectId2 {
     #[default]
@@ -437,7 +437,7 @@ pub enum EffectId2 {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum EffectRange {
     #[default]
@@ -447,7 +447,7 @@ pub enum EffectRange {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum EffectSchool {
     #[default]
@@ -460,7 +460,7 @@ pub enum EffectSchool {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum ApparatusType {
     #[default]
@@ -471,7 +471,7 @@ pub enum ApparatusType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum ArmorType {
     #[default]
@@ -489,7 +489,7 @@ pub enum ArmorType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum ClothingType {
     #[default]
@@ -506,7 +506,7 @@ pub enum ClothingType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u16)]
 pub enum WeaponType {
     #[default]
@@ -527,7 +527,7 @@ pub enum WeaponType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum SpellType {
     #[default]
@@ -540,7 +540,7 @@ pub enum SpellType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum EnchantType {
     #[default]
@@ -551,7 +551,7 @@ pub enum EnchantType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum BodypartId {
     #[default]
@@ -573,7 +573,7 @@ pub enum BodypartId {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum BodypartType {
     #[default]
@@ -583,7 +583,7 @@ pub enum BodypartType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum BipedObjectType {
     #[default]
@@ -617,7 +617,7 @@ pub enum BipedObjectType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i8)]
 pub enum Sex {
     #[default]
@@ -627,7 +627,7 @@ pub enum Sex {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum DialogueType {
     #[default]
@@ -639,7 +639,7 @@ pub enum DialogueType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum DialogueType2 {
     #[default]
@@ -651,7 +651,7 @@ pub enum DialogueType2 {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum FilterSlot {
     #[default]
@@ -665,7 +665,7 @@ pub enum FilterSlot {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum FilterType {
     #[default]
@@ -685,7 +685,7 @@ pub enum FilterType {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u16)]
 #[rustfmt::skip]
 pub enum FilterFunction {
@@ -780,7 +780,7 @@ pub enum FilterFunction {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u8)]
 pub enum FilterComparison {
     #[default]
@@ -793,7 +793,7 @@ pub enum FilterComparison {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(u32)]
 pub enum SoundGenType {
     #[default]

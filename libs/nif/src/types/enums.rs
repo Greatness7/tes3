@@ -1,7 +1,7 @@
 // internal imports
 use crate::prelude::*;
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum BoundType {
     #[default]
@@ -13,7 +13,7 @@ pub enum BoundType {
     Halfspace = 5,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum KeyContent {
     #[default]
@@ -25,7 +25,7 @@ pub enum KeyContent {
     VisKey = 5,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum KeyType {
     #[default]
@@ -36,7 +36,7 @@ pub enum KeyType {
     EulerKey = 4,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum ForceType {
     #[default]
@@ -44,7 +44,7 @@ pub enum ForceType {
     Spherical = 1,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum ColorField {
     #[default]
@@ -54,7 +54,7 @@ pub enum ColorField {
     Emissive = 3,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum DecayType {
     #[default]
@@ -63,7 +63,7 @@ pub enum DecayType {
     Exponential = 2,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum SymmetryType {
     #[default]
@@ -72,7 +72,7 @@ pub enum SymmetryType {
     Planar = 2,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum BankDirection {
     Negative = -1,
@@ -80,7 +80,7 @@ pub enum BankDirection {
     Positive = 1,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum PixelFormat {
     #[default]
@@ -96,7 +96,7 @@ pub enum PixelFormat {
     BumpLuma = 9,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum AxisOrder {
     #[default]
@@ -111,7 +111,7 @@ pub enum AxisOrder {
     ZXZ = 8,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum SortingMode {
     #[default]
@@ -120,7 +120,7 @@ pub enum SortingMode {
     Subsort = 2,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum PixelLayout {
     Palettized8 = 0,
@@ -133,7 +133,7 @@ pub enum PixelLayout {
     Default = 6,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum UseMipMaps {
     No = 0,
@@ -142,7 +142,7 @@ pub enum UseMipMaps {
     Default = 2,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum AlphaFormat {
     None = 0,
@@ -152,7 +152,7 @@ pub enum AlphaFormat {
     Default = 3,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum TestFunction {
     #[default]
@@ -166,7 +166,7 @@ pub enum TestFunction {
     Always = 7,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum Action {
     #[default]
@@ -178,7 +178,7 @@ pub enum Action {
     Invert = 5,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum DrawMode {
     #[default]
@@ -188,7 +188,7 @@ pub enum DrawMode {
     Both = 3,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum TextureType {
     #[default]
@@ -198,7 +198,7 @@ pub enum TextureType {
     FogMap = 3,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum CoordGenType {
     #[default]
@@ -209,7 +209,7 @@ pub enum CoordGenType {
     DiffuseCubeMap = 4,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum ClampMode {
     ClampSClampT = 0,
@@ -219,7 +219,7 @@ pub enum ClampMode {
     WrapSWrapT = 3,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum FilterMode {
     Nearest = 0,
@@ -231,7 +231,7 @@ pub enum FilterMode {
     BilerpMipNearest = 5,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum ApplyMode {
     Replace = 0,
@@ -242,7 +242,7 @@ pub enum ApplyMode {
     Hilight2 = 4,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum SourceVertexMode {
     #[default]
@@ -251,7 +251,7 @@ pub enum SourceVertexMode {
     AmbientDiffuse = 2,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 #[repr(i32)]
 pub enum LightingMode {
     Emissive = 0,

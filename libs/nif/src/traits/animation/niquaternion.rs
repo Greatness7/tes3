@@ -35,7 +35,7 @@ fn counter_warp(t: f32, cos: f32) -> f32 {
     t * (f * t).mul_add(2f32.mul_add(t, -3.0), 1.0 + f)
 }
 
-pub fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
+pub(crate) fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
     let cos = q0.dot(&q1);
 
     let t = {
@@ -52,13 +52,13 @@ pub fn slerp(q0: Quat, q1: Quat, t: f32) -> Quat {
     q
 }
 
-pub fn intermediate(prev: Quat, this: Quat, next: Quat) -> Quat {
+pub(crate) fn intermediate(prev: Quat, this: Quat, next: Quat) -> Quat {
     let inv = this.conjugate();
     let mut q = (inv * prev).ln() + (inv * next).ln();
     q.coords.scale_mut(-0.25);
     this * q.exp()
 }
 
-pub fn squad(q0: Quat, i0: Quat, i1: Quat, q1: Quat, t: f32) -> Quat {
+pub(crate) fn squad(q0: Quat, i0: Quat, i1: Quat, q1: Quat, t: f32) -> Quat {
     slerp(slerp(q0, q1, t), slerp(i0, i1, t), 2.0 * t * (1.0 - t))
 }

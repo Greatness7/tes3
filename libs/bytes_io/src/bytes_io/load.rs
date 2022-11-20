@@ -33,8 +33,17 @@ impl<L: Load> Load for Box<L> {
     }
 }
 
+#[cfg(not(feature = "nightly"))]
 impl<L: Load> Load for Vec<L> {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+        let len: u32 = stream.load()?;
+        (0..len).map(|_| stream.load()).collect()
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl<L: Load> Load for Vec<L> {
+    default fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let len: u32 = stream.load()?;
         (0..len).map(|_| stream.load()).collect()
     }
@@ -100,6 +109,16 @@ macro_rules! impl_load {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let mut this = Self::zeroed();
                     stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    Ok(this)
+                }
+            }
+            #[cfg(feature = "nightly")]
+            impl Load for Vec<$T> {
+                fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+                    use bytemuck::{cast_slice_mut, zeroed_vec};
+                    let len = stream.load_as::<u32, _>()?;
+                    let mut this = zeroed_vec(len);
+                    stream.cursor.read_exact(cast_slice_mut(&mut this))?;
                     Ok(this)
                 }
             }

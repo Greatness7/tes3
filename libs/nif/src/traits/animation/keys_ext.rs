@@ -7,15 +7,14 @@ use nalgebra::Const;
 use crate::prelude::*;
 use crate::traits::animation::niquaternion::*;
 
-#[allow(unreachable_pub)]
 mod private {
     use nalgebra::*;
-    pub type Key<const K: usize> = OVector<f32, Const<K>>;
-    pub type KeySlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, U1, U1, Const<K>>;
-    pub type KeySliceMut<'a, const K: usize, const V: usize> = MatrixSliceMut<'a, f32, Const<V>, U1, U1, Const<K>>;
-    pub type Keys<const K: usize, const V: usize> = OMatrix<f32, Const<K>, Dynamic>;
-    pub type KeysSlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
-    pub type KeysSliceMut<'a, const K: usize, const V: usize> =
+    pub(crate) type Key<const K: usize> = OVector<f32, Const<K>>;
+    pub(crate) type KeySlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, U1, U1, Const<K>>;
+    pub(crate) type KeySliceMut<'a, const K: usize, const V: usize> = MatrixSliceMut<'a, f32, Const<V>, U1, U1, Const<K>>;
+    pub(crate) type Keys<const K: usize, const V: usize> = OMatrix<f32, Const<K>, Dynamic>;
+    pub(crate) type KeysSlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
+    pub(crate) type KeysSliceMut<'a, const K: usize, const V: usize> =
         MatrixSliceMut<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
 }
 use private::*;

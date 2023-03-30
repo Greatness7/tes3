@@ -1,19 +1,24 @@
 [package]
 name = "bytes_io"
-version = "0.0.0"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
-bstr = { version = "^1.0", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.12", features = ["derive", "extern_crate_alloc", "min_const_generics", "zeroable_maybe_uninit"] }
+bstr = { version = "^1.4", default-features = false, features = ["std"] }
+bytemuck = { version = "^1.13", features = ["derive", "extern_crate_alloc", "min_const_generics", "zeroable_maybe_uninit"] }
 bytes_io_macros = { path = "../bytes_io_macros" }
 copyless = "^0.1"
-encoding_rs = { version = "^0.8" }
-hashbrown = { version = "^0.12", features = ["rayon"] }
+encoding_rs = "^0.8"
+hashbrown = { version = "^0.12" }
 memchr = "^2.5"
-nalgebra = { version = "^0.31", features = ["convert-bytemuck"], optional = true }
+nalgebra = { version = "^0.32", features = ["convert-bytemuck"], optional = true }
 smart-default = "^0.6"
 
 [features]
 default = []
-nightly = ["hashbrown/nightly", "encoding_rs/simd-accel"]
+nightly = ["hashbrown/nightly"]
+rayon = ["hashbrown/rayon"]
+simd = ["encoding_rs/simd-accel", "bytemuck/wasm_simd", "bytemuck/nightly_stdsimd"]

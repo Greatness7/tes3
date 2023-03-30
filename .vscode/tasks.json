@@ -10,6 +10,14 @@
             }
         },
         {
+            "label": "cargo check --feature-powerset",
+            "type": "shell",
+            "command": "cargo hack check --feature-powerset --no-dev-deps",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
             "label": "cargo clippy",
             "type": "shell",
             "command": "cargo cranky --workspace --no-deps --all-features --all-targets",
@@ -28,7 +36,7 @@
         {
             "label": "cargo test",
             "type": "shell",
-            "command": "cargo test --workspace --all-features",
+            "command": "cargo nextest run --workspace --all-features",
             "presentation": {
                 "clear": true
             }

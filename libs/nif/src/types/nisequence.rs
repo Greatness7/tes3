@@ -29,11 +29,11 @@ impl Load for NiSequence {
 impl Save for NiSequence {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save(&self.sequence_name)?;
+        stream.save_string_without_null_terminator(&self.sequence_name)?;
         stream.save(&self.sequence_target)?;
         stream.save_as::<_, u32>(self.name_controller_pairs.len())?;
         for (name, controller) in &self.name_controller_pairs {
-            stream.save(name)?;
+            stream.save_string_without_null_terminator(name)?;
             stream.save(controller)?;
         }
         Ok(())
@@ -63,7 +63,7 @@ impl Save for SequenceTarget {
         match self {
             SequenceTarget::External(file_name) => {
                 stream.save(&1_u8)?; // has_external
-                stream.save(file_name)?;
+                stream.save_string_without_null_terminator(file_name)?;
             }
             SequenceTarget::Internal(unknown1, unknown2) => {
                 stream.save(&0_u8)?; // has_external

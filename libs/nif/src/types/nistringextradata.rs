@@ -18,7 +18,7 @@ impl Load for NiStringExtraData {
 impl Save for NiStringExtraData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save(&self.value)?;
+        stream.save_string_without_null_terminator(&self.value)?;
         Ok(())
     }
 }

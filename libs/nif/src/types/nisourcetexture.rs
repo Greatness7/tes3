@@ -70,7 +70,7 @@ impl Save for Source {
         match self {
             Source::External(file_name) => {
                 stream.save(&1u8)?;
-                stream.save(file_name)?;
+                stream.save_string_without_null_terminator(file_name)?;
             }
             Source::Internal(pixel_data) => {
                 stream.save(&0u8)?;

@@ -11,7 +11,7 @@ pub struct Cell {
     pub map_color: Option<[u8; 4]>,
     pub water_height: Option<f32>,
     pub atmosphere_data: Option<AtmosphereData>,
-    pub references: HashMap<(u32, u32), Reference>, // no option, to prevent auto merge
+    pub references: HashMap<(u32, u32), Reference>,
 }
 
 #[esp_meta]
@@ -63,7 +63,7 @@ impl Load for Cell {
                     let size: u32 = stream.load()?;
                     this.atmosphere_data = Some(stream.load()?);
                     // Apparently some editors may add extra padding to this subrecord.
-                    // see: https://www.nexusmods.com/morrowind/mods/50999 (version: 1.02, offset:196017)
+                    // see: https://www.nexusmods.com/morrowind/mods/50999 (version: 1.02, offset: 196017)
                     stream.skip(size - 16)?;
                 }
                 b"NAM0" => {
@@ -218,13 +218,16 @@ impl Cell {
         !self.is_interior()
     }
 
-    pub fn exterior_coords(&self) -> Option<(i32, i32)> {
-        self.is_exterior().then_some(self.data.grid)
+    pub const fn exterior_coords(&self) -> Option<(i32, i32)> {
+        if self.is_exterior() {
+            Some(self.data.grid)
+        } else {
+            None
+        }
     }
 
     pub fn get_region(&self) -> &str {
-        // NOTE: "Wilderness" should really be the GMST sDefaultCellname
-        self.region.as_deref().unwrap_or("Wilderness")
+        self.region.as_deref().unwrap_or("{ Exterior }")
     }
 
     fn references_sorted(&self) -> Vec<(&(u32, u32), &Reference)> {

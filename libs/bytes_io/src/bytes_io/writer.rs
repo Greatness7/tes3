@@ -46,7 +46,7 @@ impl Writer {
         S: Save + TryFrom<T>,
     {
         S::try_from(value).map_or_else(
-            |_| Self::error("Invalid Save Conversion"), // err
+            |_| Self::error("Invalid Save Conversion"), //
             |value| value.save(self),
         )
     }

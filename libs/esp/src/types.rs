@@ -108,7 +108,7 @@ pub use weapon::*;
 
 #[rustfmt::skip]
 #[esp_meta]
-#[derive(TES3Object, Clone, Debug, PartialEq)]
+#[derive(TES3Object, Clone, Debug, From, PartialEq)]
 pub enum TES3Object {
     #[tag(b"TES3")] Header(Header),
     #[tag(b"GMST")] GameSetting(GameSetting),

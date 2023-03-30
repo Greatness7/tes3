@@ -6,7 +6,7 @@ use bitflags::bitflags;
 
 bitflags! {
     #[esp_meta]
-    #[derive(LoadSave, Default)]
+    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     #[repr(transparent)]
     pub struct ObjectFlags: u32 {
         const MODIFIED = 0x0002;
@@ -19,7 +19,7 @@ bitflags! {
 
 bitflags! {
     #[esp_meta]
-    #[derive(LoadSave, Default)]
+    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     #[repr(transparent)]
     pub struct LandscapeFlags: u32 {
         const USES_VERTEX_HEIGHTS_AND_NORMALS = 0x01;
@@ -31,7 +31,7 @@ bitflags! {
 
 bitflags! {
     #[esp_meta]
-    #[derive(LoadSave, Default)]
+    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     #[repr(transparent)]
     pub struct CellFlags: u32 {
         const IS_INTERIOR = 0x01;

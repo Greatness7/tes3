@@ -258,7 +258,7 @@ pub use nizbufferproperty::*;
 pub use rootcollisionnode::*;
 pub use tes3objectextradata::*;
 
-#[derive(NiType, Clone, Debug, PartialEq)]
+#[derive(NiType, Clone, Debug, From, PartialEq)]
 pub enum NiType {
     AvoidNode(AvoidNode),
     BrickNiExtraData(BrickNiExtraData),

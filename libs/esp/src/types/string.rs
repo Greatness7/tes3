@@ -3,14 +3,13 @@ use std::borrow::Borrow;
 
 // external imports
 use bytemuck::TransparentWrapper;
-use derive_more::{Deref, DerefMut, From, Into};
 
 // internal imports
 use crate::prelude::*;
 
+#[esp_meta]
 #[derive(TransparentWrapper)]
-#[derive(Deref, DerefMut, From, Into)]
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Deref, DerefMut, Eq, From, Into, PartialEq)]
 #[repr(transparent)]
 pub struct FixedString<const N: usize>(pub String);
 

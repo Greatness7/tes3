@@ -72,7 +72,7 @@ impl Load for Reference {
                 }
                 b"NAM9" => {
                     stream.expect(4u32)?;
-                    this.stack_size = Some(stream.load()?).filter(|x| *x > 1);
+                    this.stack_size = Some(stream.load()?);
                 }
                 b"DODT" => {
                     stream.expect(24u32)?;
@@ -172,7 +172,9 @@ impl Save for Reference {
         }
         // NAM9
         if let Some(value) = &self.stack_size {
-            if *value > 1 {
+            // if the reference is local (it's not from a master file)
+            // then we can skip serializing this when stack_size is 1
+            if !(*value == 1 && self.mast_index == 0) {
                 stream.save(b"NAM9")?;
                 stream.save(&4u32)?;
                 stream.save(value)?;

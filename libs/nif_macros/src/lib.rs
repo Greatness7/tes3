@@ -10,7 +10,7 @@ use once_cell::sync::Lazy as LazyLock;
 
 type LazyMap<K, V> = LazyLock<DashMap<K, V, S>>;
 
-static RELATIONS: LazyMap<String, String> = LazyMap::new(Default::default);
+static RELATIONS: LazyMap<String, String> = LazyMap::new(DashMap::default);
 
 /// Internal derive macro for use with `NiObject` structs in `nif.rs`.
 #[doc(hidden)]
@@ -52,7 +52,7 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
             #[inline(always)]
             fn visitor<'a, F>(&self, f: &mut F)
             where
-                F: FnMut(DefaultKey)
+                F: FnMut(NiKey)
             {
                 #(
                     (&self.#fields).visitor(f);
@@ -134,7 +134,7 @@ pub fn derive_nitype(input: TokenStream) -> TokenStream {
                 #[inline(always)]
                 fn visitor<'a, F>(&self, f: &mut F)
                 where
-                    F: FnMut(DefaultKey)
+                    F: FnMut(NiKey)
                 {
                     match self {
                         #(
@@ -184,11 +184,6 @@ fn impl_try_from_nitype(idents: &[&Ident]) -> impl ToTokens {
             }
         }
         #(
-            impl From<#idents> for NiType {
-                fn from(value: #idents) -> Self {
-                    Self::#idents(value)
-                }
-            }
             impl TryFrom<NiType> for #idents {
                 type Error = ();
                 fn try_from(value: NiType) -> Result<Self, Self::Error> {

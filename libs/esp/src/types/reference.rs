@@ -31,7 +31,7 @@ pub struct Reference {
 
 impl Load for Reference {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self::default();
+        let mut this: Self = default();
 
         while let Ok(tag) = stream.load() {
             match &tag {

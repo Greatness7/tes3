@@ -16,7 +16,7 @@ pub struct Plugin {
 
 impl Plugin {
     pub fn new() -> Self {
-        Self::default()
+        default()
     }
 
     pub fn load_path(&mut self, path: impl AsRef<Path>) -> io::Result<()> {

@@ -20,7 +20,7 @@ impl NiStream {
     pub const VERSION: u32 = 0x4000002;
 
     pub fn new() -> Self {
-        Self::default()
+        default()
     }
 
     pub fn from_path(path: impl AsRef<Path>) -> io::Result<Self> {

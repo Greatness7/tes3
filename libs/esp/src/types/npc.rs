@@ -257,7 +257,7 @@ impl Save for Npc {
 
 impl Load for NpcData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self::default();
+        let mut this: Self = default();
 
         let len: u32 = stream.load()?;
         match len {

@@ -11,7 +11,7 @@ pub struct BipedObject {
 
 impl Load for BipedObject {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let mut this = Self::default();
+        let mut this: Self = default();
         // INDX
         stream.expect(1u32)?;
         this.kind = stream.load()?;

@@ -19,4 +19,9 @@ pub(crate) mod prelude {
     pub(crate) use std::io;
 
     pub(crate) use slotmap::DefaultKey;
+
+    // use [`std::default::default`] when stable
+    pub(crate) fn default<T: Default>() -> T {
+        Default::default()
+    }
 }

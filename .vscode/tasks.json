@@ -10,9 +10,9 @@
             }
         },
         {
-            "label": "cargo lints",
+            "label": "cargo clippy",
             "type": "shell",
-            "command": "cargo lints clippy --workspace --all-features --no-deps",
+            "command": "cargo cranky --workspace --no-deps --all-features --all-targets",
             "presentation": {
                 "clear": true
             }

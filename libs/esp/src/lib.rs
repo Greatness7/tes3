@@ -3,6 +3,9 @@
 pub mod types;
 pub use types::*;
 
+pub mod traits;
+pub use traits::*;
+
 #[allow(unused_imports)]
 pub(crate) mod prelude {
     pub(crate) use super::*;
@@ -13,6 +16,7 @@ pub(crate) mod prelude {
 
     // external imports
     pub(crate) use bstr::{BString, ByteSlice, ByteVec};
+    pub(crate) use cow_utils::CowUtils;
     pub(crate) use hashbrown::{HashMap, HashSet};
     pub(crate) use smart_default::SmartDefault;
     pub(crate) use std::io;

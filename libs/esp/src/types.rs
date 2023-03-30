@@ -16,6 +16,7 @@ mod clothing;
 mod container;
 mod creature;
 mod dialogue;
+mod dialogueinfo;
 mod door;
 mod effect;
 mod enchanting;
@@ -25,7 +26,6 @@ mod flags;
 mod gamesetting;
 mod globalvariable;
 mod header;
-mod info;
 mod ingredient;
 mod landscape;
 mod landscapetexture;
@@ -69,6 +69,7 @@ pub use clothing::*;
 pub use container::*;
 pub use creature::*;
 pub use dialogue::*;
+pub use dialogueinfo::*;
 pub use door::*;
 pub use effect::*;
 pub use enchanting::*;
@@ -78,7 +79,6 @@ pub use flags::*;
 pub use gamesetting::*;
 pub use globalvariable::*;
 pub use header::*;
-pub use info::*;
 pub use ingredient::*;
 pub use landscape::*;
 pub use landscapetexture::*;
@@ -152,5 +152,5 @@ pub enum TES3Object {
     #[tag("LAND")] Landscape(Landscape),
     #[tag("PGRD")] PathGrid(PathGrid),
     #[tag("DIAL")] Dialogue(Dialogue),
-    #[tag("INFO")] Info(Info),
+    #[tag("INFO")] DialogueInfo(DialogueInfo),
 }

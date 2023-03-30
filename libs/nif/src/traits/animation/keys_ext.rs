@@ -441,19 +441,19 @@ where
 
     #[doc(hidden)]
     /// Swap quaternion layout from wxyz to xyzw, or vice-versa.
-    fn swap_quaternion_layout(&mut self, reverse: bool)
+    fn swap_quaternion_layout(&mut self, loading: bool)
     where
         ShapeConstraint: DimEq<Const<VALUE_SIZE>, Const<4>>,
     {
-        let (w, x, y, z) = if reverse { (4, 3, 2, 1) } else { (1, 2, 3, 4) };
+        let (w, x, y, z) = if loading { (1, 2, 3, 4) } else { (4, 3, 2, 1) };
 
         for mut v in self.data_mut().column_iter_mut() {
             // Safety: ensured by the ShapeConstraint bound
             unsafe {
                 use nalgebra::RawStorageMut;
-                v.data.swap_unchecked_linear(w, x); // wxyz -> xwyz | xyzw -> xywz
-                v.data.swap_unchecked_linear(x, y); // xwyz -> xywz | xywz -> xwyz
-                v.data.swap_unchecked_linear(y, z); // xywz -> xyzw | xwyz -> wxyz
+                v.data.swap_unchecked_linear(w, x);
+                v.data.swap_unchecked_linear(x, y);
+                v.data.swap_unchecked_linear(y, z);
             }
         }
     }
@@ -837,6 +837,29 @@ where
 mod tests {
     use super::*;
     use test_case::test_case;
+
+    #[test]
+    #[rustfmt::skip]
+    fn swap_quaternion_layouts() {
+        let mut keys = LinRotKeys::from_vec(vec![
+            /*time*/ 0.0, /*value*/ 1.0, 2.0, 3.0, 4.0,
+            /*time*/ 5.0, /*value*/ 6.0, 7.0, 8.0, 9.0,
+        ]);
+
+        let initial = keys.clone();
+        let swapped = LinRotKeys::from_vec(vec![
+            /*time*/ 0.0, /*value*/ 2.0, 3.0, 4.0, 1.0,
+            /*time*/ 5.0, /*value*/ 7.0, 8.0, 9.0, 6.0,
+        ]);
+
+        // wxyz -> xwyz
+        keys.swap_quaternion_layout(true);
+        assert_eq!(keys.values(), swapped.values());
+
+        // xyzw -> wxyz
+        keys.swap_quaternion_layout(false);
+        assert_eq!(keys.values(), initial.values());
+    }
 
     #[test]
     fn position_works() {

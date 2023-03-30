@@ -3,14 +3,14 @@ use crate::prelude::*;
 
 #[esp_meta]
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct Info {
+pub struct DialogueInfo {
     pub flags: ObjectFlags,
     pub id: String,
     pub prev_id: String,
     pub next_id: String,
-    pub data: InfoData,
+    pub data: DialogueData,
     pub speaker_id: String,
-    pub speaker_rank: String,
+    pub speaker_race: String,
     pub speaker_class: String,
     pub speaker_faction: String,
     pub speaker_cell: String,
@@ -24,7 +24,7 @@ pub struct Info {
 
 #[esp_meta]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct InfoData {
+pub struct DialogueData {
     pub kind: DialogueType,
     pub disposition: i32,
     pub speaker_rank: i8,
@@ -59,7 +59,7 @@ pub enum QuestState {
     Restart,
 }
 
-impl Load for Info {
+impl Load for DialogueInfo {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let mut this: Self = default();
 
@@ -84,7 +84,7 @@ impl Load for Info {
                     this.speaker_id = stream.load()?;
                 }
                 b"RNAM" => {
-                    this.speaker_rank = stream.load()?;
+                    this.speaker_race = stream.load()?;
                 }
                 b"CNAM" => {
                     this.speaker_class = stream.load()?;
@@ -150,7 +150,7 @@ impl Load for Info {
     }
 }
 
-impl Save for Info {
+impl Save for DialogueInfo {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.flags)?;
         // INAM
@@ -172,9 +172,9 @@ impl Save for Info {
             stream.save(&self.speaker_id)?;
         }
         // RNAM
-        if !self.speaker_rank.is_empty() {
+        if !self.speaker_race.is_empty() {
             stream.save(b"RNAM")?;
-            stream.save(&self.speaker_rank)?;
+            stream.save(&self.speaker_race)?;
         }
         // CNAM
         if !self.speaker_class.is_empty() {
@@ -204,7 +204,9 @@ impl Save for Info {
         // NAME
         if !self.text.is_empty() {
             stream.save(b"NAME")?;
-            stream.save(&self.text)?;
+            // There's an engine limit of 512 characters for this field.
+            // Don't include null terminators as they might push us over the limit.
+            stream.save_string_without_null_terminator(&self.text)?;
         }
         //
         match self.quest_state {
@@ -263,7 +265,7 @@ impl Save for Info {
     }
 }
 
-impl Load for InfoData {
+impl Load for DialogueData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let kind = stream.load()?;
         let disposition = stream.load()?;
@@ -281,7 +283,7 @@ impl Load for InfoData {
     }
 }
 
-impl Save for InfoData {
+impl Save for DialogueData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.kind)?;
         stream.save(&self.disposition)?;

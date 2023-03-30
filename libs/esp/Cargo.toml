@@ -1,21 +1,29 @@
 [package]
 name = "esp"
-version = "0.0.0"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
-bitflags = "^1.3"
-bstr = { version = "^1.0", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.12", features = ["derive", "extern_crate_alloc"] }
+bitflags = { version = "^2.0" }
+bstr = { version = "^1.4", default-features = false, features = ["std"] }
+bytemuck = { version = "^1.13", features = ["derive", "extern_crate_alloc", "min_const_generics", "zeroable_maybe_uninit"] }
 bytes_io = { path = "../bytes_io" }
 cow-utils = "^0.1"
 derive_more = "^0.99"
 esp_macros = { path = "../esp_macros" }
-hashbrown = { version = "^0.12", features = ["rayon"] }
+hashbrown = { version = ">=0.12, <1.0" }
 itoa = "^1.0"
-rayon = "^1.6"
+rayon = "^1.7"
 smart-default = "^0.6"
+
+[dev-dependencies]
+tempfile = "^3.4"
+test-case = "^3.0"
 
 [features]
 default = []
 nightly = ["bytes_io/nightly", "hashbrown/nightly"]
+simd = ["bytes_io/simd", "bytemuck/wasm_simd", "bytemuck/nightly_stdsimd"]

@@ -1,14 +1,17 @@
 [package]
 name = "tes3"
-version = "0.0.1"
-authors = ["Greatness7 <Greatness7@gmail.com>"]
-edition = "2021"
 description = "A library for working with TES3 content"
-repository = "https://github.com/Greatness7/tes3"
-readme = "README.md"
-license = "MIT OR Apache-2.0"
 keywords = ["TES3", "Morrowind"]
 categories = ["Game development"]
+version.workspace = true
+edition.workspace = true
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+authors = ["Greatness7 <Greatness7@gmail.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Greatness7/tes3"
 
 [workspace]
 members = ["libs/*"]
@@ -17,11 +20,7 @@ members = ["libs/*"]
 esp = { path = "libs/esp", optional = true }
 nif = { path = "libs/nif", optional = true }
 
-[dev-dependencies]
-rayon = "^1.6"
-tempfile = "^3.3"
-walkdir = "^2.3"
-
 [features]
 default = ["esp", "nif"]
-nightly = ["esp/nightly", "nif/nightly"]
+nightly = ["esp?/nightly", "nif?/nightly"]
+simd = ["esp?/simd", "nif?/simd"]

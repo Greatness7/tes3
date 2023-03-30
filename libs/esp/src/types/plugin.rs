@@ -2,9 +2,6 @@
 use std::io::{self, Write};
 use std::path::Path;
 
-// external imports
-use rayon::prelude::*;
-
 // internal imports
 use crate::prelude::*;
 
@@ -69,10 +66,23 @@ impl Plugin {
         }
 
         // now visit each chunk and decode them all in parellel
-        self.objects = offsets
-            .into_par_iter()
-            .map(|range| Reader::new(&bytes[range]).load())
-            .collect::<io::Result<_>>()?;
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            use rayon::prelude::*;
+            self.objects = offsets
+                .into_par_iter()
+                .map(|range| Reader::new(&bytes[range]).load())
+                .collect::<io::Result<_>>()?;
+        }
+
+        // wasm32 architecture currently does not support rayon
+        #[cfg(target_arch = "wasm32")]
+        {
+            self.objects = offsets
+                .into_iter()
+                .map(|range| Reader::new(&bytes[range]).load())
+                .collect::<io::Result<_>>()?;
+        }
 
         Ok(())
     }

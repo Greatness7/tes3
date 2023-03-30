@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dmatrix, dvector, Dynamic, OMatrix, OVector, U3};
+use nalgebra::{dmatrix, dvector, Dyn, OMatrix, OVector, U3};
 
 // internal imports
 use crate::prelude::*;
@@ -30,18 +30,18 @@ impl Save for NiSkinPartition {
 pub struct Partition {
     pub base: NiObject,
     #[default(dvector![])]
-    pub bones: OVector<u16, Dynamic>,
+    pub bones: OVector<u16, Dyn>,
     #[default(dvector![])]
-    pub vertex_map: OVector<u16, Dynamic>,
+    pub vertex_map: OVector<u16, Dyn>,
     #[default(dmatrix![])]
-    pub weights: OMatrix<f32, Dynamic, Dynamic>,
-    #[default(OMatrix::<u16, U3, Dynamic>::zeros(0))]
-    pub triangles: OMatrix<u16, U3, Dynamic>,
+    pub weights: OMatrix<f32, Dyn, Dyn>,
+    #[default(Empty::empty())]
+    pub triangles: OMatrix<u16, U3, Dyn>,
     #[default(dvector![])]
-    pub strip_lengths: OVector<u16, Dynamic>,
+    pub strip_lengths: OVector<u16, Dyn>,
     #[default(dvector![])]
-    pub strips: OVector<u16, Dynamic>,
-    pub bone_palette: Option<OMatrix<u8, Dynamic, Dynamic>>,
+    pub strips: OVector<u16, Dyn>,
+    pub bone_palette: Option<OMatrix<u8, Dyn, Dyn>>,
 }
 
 impl Load for Partition {

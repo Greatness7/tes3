@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, OVector, U3};
+use nalgebra::{Dyn, OMatrix, OVector, U3};
 
 // internal imports
 use crate::prelude::*;
@@ -7,9 +7,9 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiTriShapeData {
     pub base: NiTriBasedGeomData,
-    #[default(OMatrix::<u16, U3, Dynamic>::zeros(0))]
-    pub triangles: OMatrix<u16, U3, Dynamic>,
-    pub shared_normals: Vec<OVector<u16, Dynamic>>,
+    #[default(Empty::empty())]
+    pub triangles: OMatrix<u16, U3, Dyn>,
+    pub shared_normals: Vec<OVector<u16, Dyn>>,
 }
 
 impl Load for NiTriShapeData {

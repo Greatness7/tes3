@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, U3};
+use nalgebra::{Dyn, OMatrix, U3};
 
 // internal imports
 use crate::prelude::*;
@@ -44,8 +44,8 @@ impl Save for NiMorphData {
 pub struct MorphTarget {
     pub base: NiObject,
     pub keys: NiFloatKey,
-    #[default(OMatrix::<f32, U3, Dynamic>::zeros(0))]
-    pub vertices: OMatrix<f32, U3, Dynamic>,
+    #[default(Empty::empty())]
+    pub vertices: OMatrix<f32, U3, Dyn>,
 }
 
 impl MorphTarget {

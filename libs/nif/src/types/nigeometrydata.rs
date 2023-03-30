@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, U2, U3, U4};
+use nalgebra::{Dyn, OMatrix, U2, U3, U4};
 
 // internal imports
 use crate::prelude::*;
@@ -7,14 +7,14 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiGeometryData {
     pub base: NiObject,
-    #[default(OMatrix::<f32, U3, Dynamic>::zeros(0))]
-    pub vertices: OMatrix<f32, U3, Dynamic>,
-    #[default(OMatrix::<f32, U3, Dynamic>::zeros(0))]
-    pub normals: OMatrix<f32, U3, Dynamic>,
+    #[default(Empty::empty())]
+    pub vertices: OMatrix<f32, U3, Dyn>,
+    #[default(Empty::empty())]
+    pub normals: OMatrix<f32, U3, Dyn>,
     pub bound: NiBound,
-    #[default(OMatrix::<f32, U4, Dynamic>::zeros(0))]
-    pub vertex_colors: OMatrix<f32, U4, Dynamic>,
-    pub uv_sets: Vec<OMatrix<f32, U2, Dynamic>>,
+    #[default(Empty::empty())]
+    pub vertex_colors: OMatrix<f32, U4, Dyn>,
+    pub uv_sets: Vec<OMatrix<f32, U2, Dyn>>,
 }
 
 impl Load for NiGeometryData {

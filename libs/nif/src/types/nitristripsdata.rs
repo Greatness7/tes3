@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dvector, Dynamic, OVector};
+use nalgebra::{dvector, Dyn, OVector};
 
 // internal imports
 use crate::prelude::*;
@@ -9,9 +9,9 @@ pub struct NiTriStripsData {
     pub base: NiTriBasedGeomData,
     pub num_triangles: u16,
     #[default(dvector![])]
-    pub strip_lengths: OVector<u16, Dynamic>,
+    pub strip_lengths: OVector<u16, Dyn>,
     #[default(dvector![])]
-    pub strips: OVector<u16, Dynamic>,
+    pub strips: OVector<u16, Dyn>,
 }
 
 impl Load for NiTriStripsData {

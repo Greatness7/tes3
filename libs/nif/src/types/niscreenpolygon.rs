@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, U2, U3, U4};
+use nalgebra::{Dyn, OMatrix, U2, U3, U4};
 
 // internal imports
 use crate::prelude::*;
@@ -7,12 +7,12 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiScreenPolygon {
     pub base: NiObject,
-    #[default(OMatrix::<f32, U3, Dynamic>::zeros(0))]
-    pub vertices: OMatrix<f32, U3, Dynamic>,
-    #[default(OMatrix::<f32, U2, Dynamic>::zeros(0))]
-    pub uv_coords: OMatrix<f32, U2, Dynamic>,
-    #[default(OMatrix::<f32, U4, Dynamic>::zeros(0))]
-    pub vertex_colors: OMatrix<f32, U4, Dynamic>,
+    #[default(Empty::empty())]
+    pub vertices: OMatrix<f32, U3, Dyn>,
+    #[default(Empty::empty())]
+    pub uv_coords: OMatrix<f32, U2, Dyn>,
+    #[default(Empty::empty())]
+    pub vertex_colors: OMatrix<f32, U4, Dyn>,
     pub property_states: Vec<i32>,
 }
 

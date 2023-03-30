@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dvector, Dynamic, OVector};
+use nalgebra::{dvector, Dyn, OVector};
 
 // internal imports
 use crate::prelude::*;
@@ -11,7 +11,7 @@ pub struct NiParticlesData {
     pub particle_radius: f32,
     pub num_active: u16,
     #[default(dvector![])]
-    pub sizes: OVector<f32, Dynamic>,
+    pub sizes: OVector<f32, Dyn>,
 }
 
 impl Load for NiParticlesData {

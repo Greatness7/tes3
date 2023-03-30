@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dvector, Dynamic, OMatrix, OVector, U3};
+use nalgebra::{dvector, Dyn, OMatrix, OVector, U3};
 
 // internal imports
 use crate::prelude::*;
@@ -10,10 +10,10 @@ pub struct NiPixelData {
     pub pixel_format: NiPixelFormat,
     pub palette: NiLink<NiPalette>,
     pub pixel_stride: u32,
-    #[default(OMatrix::<u32, U3, Dynamic>::zeros(0))]
-    pub mipmaps: OMatrix<u32, U3, Dynamic>,
+    #[default(Empty::empty())]
+    pub mipmaps: OMatrix<u32, U3, Dyn>,
     #[default(dvector![])]
-    pub pixel_data: OVector<u8, Dynamic>,
+    pub pixel_data: OVector<u8, Dyn>,
 }
 
 impl Load for NiPixelData {

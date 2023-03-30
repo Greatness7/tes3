@@ -40,7 +40,7 @@ impl Load for NiTextKey {
 impl Save for NiTextKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.time)?;
-        stream.save(&self.value)?;
+        stream.save_string_without_null_terminator(&self.value)?;
         Ok(())
     }
 }

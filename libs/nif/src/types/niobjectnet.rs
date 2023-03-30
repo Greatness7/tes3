@@ -27,7 +27,7 @@ impl Load for NiObjectNET {
 impl Save for NiObjectNET {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save(&self.name)?;
+        stream.save_string_without_null_terminator(&self.name)?;
         stream.save(&self.extra_data)?;
         stream.save(&self.controller)?;
         Ok(())

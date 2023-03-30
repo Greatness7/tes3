@@ -86,6 +86,13 @@ impl Writer {
         Err(io::Error::new(io::ErrorKind::InvalidData, format!("encode error: {value}")))
     }
 
+    pub fn save_string_without_null_terminator(&mut self, value: &str) -> io::Result<()> {
+        let text = self.encode(value)?;
+        self.save_as::<_, u32>(text.len())?;
+        self.save_bytes(&text)?;
+        Ok(())
+    }
+
     pub fn encode<'a>(&self, str: &'a str) -> io::Result<Cow<'a, [u8]>> {
         if let (bytes, _, false) = self.encoding.encode(str) {
             Ok(match memchr(0, &bytes) {

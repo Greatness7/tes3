@@ -14,6 +14,7 @@ pub(crate) mod prelude {
 
     // external imports
     pub(crate) use bstr::{BString, ByteSlice, ByteVec};
+    pub(crate) use derive_more::{Deref, DerefMut, From, Into};
     pub(crate) use hashbrown::{HashMap, HashSet};
     pub(crate) use smart_default::SmartDefault;
     pub(crate) use std::io;

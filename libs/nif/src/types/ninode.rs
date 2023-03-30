@@ -1,3 +1,6 @@
+// rust std imports
+use std::collections::VecDeque;
+
 // internal imports
 use crate::prelude::*;
 
@@ -28,14 +31,14 @@ impl Save for NiNode {
 
 impl NiNode {
     pub fn children_recursive<'a>(&'a self, stream: &'a NiStream) -> impl 'a + Iterator<Item = NiLink<NiAVObject>> {
-        let mut stack = self.children.clone();
-        stack.reverse();
-
+        let mut stack: VecDeque<_> = self.children.iter().copied().collect();
         std::iter::from_fn(move || {
-            while let Some(link) = stack.pop() {
+            while let Some(link) = stack.pop_front() {
                 if !link.is_null() {
                     if let Some(node) = stream.get_as::<_, NiNode>(link) {
-                        stack.extend(node.children.iter().rev().copied());
+                        for child in &node.children {
+                            stack.push_front(*child);
+                        }
                     }
                     return Some(link);
                 }

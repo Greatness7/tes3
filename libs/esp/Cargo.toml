@@ -12,6 +12,7 @@ cow-utils = "^0.1"
 derive_more = "^0.99"
 esp_macros = { path = "../esp_macros" }
 hashbrown = { version = "^0.12", features = ["rayon"] }
+itoa = "^1.0"
 rayon = "^1.6"
 smart-default = "^0.6"
 

@@ -16,10 +16,38 @@ pub fn derive_load_save(input: TokenStream) -> TokenStream {
 fn impl_load_save_for_struct(input: &syn::DeriveInput) -> TokenStream {
     let ident = &input.ident;
     let fields: Vec<_> = get_struct_fields(&input.data).collect();
+    if fields.is_empty() {
+        impl_load_save_for_bitflags(ident).into()
+    } else {
+        impl_load_save_for_struct_with_named_fields(ident, &fields).into()
+    }
+}
 
-    let output = quote! {
+fn impl_load_save_for_bitflags(ident: &syn::Ident) -> impl Into<TokenStream> {
+    quote! {
         const _: () = {
             use crate::prelude::*;
+
+            impl Load for #ident {
+                fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+                    Ok(Self::from_bits_retain(stream.load()?))
+                }
+            }
+
+            impl Save for #ident {
+                fn save(&self, stream: &mut Writer) -> io::Result<()> {
+                    stream.save(&self.bits())
+                }
+            }
+        };
+    }
+}
+
+fn impl_load_save_for_struct_with_named_fields(ident: &syn::Ident, fields: &[&syn::Ident]) -> impl Into<TokenStream> {
+    quote! {
+        const _: () = {
+            use crate::prelude::*;
+
             impl Load for #ident {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     Ok(Self {
@@ -29,6 +57,7 @@ fn impl_load_save_for_struct(input: &syn::DeriveInput) -> TokenStream {
                     })
                 }
             }
+
             impl Save for #ident {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
                     #(
@@ -38,9 +67,7 @@ fn impl_load_save_for_struct(input: &syn::DeriveInput) -> TokenStream {
                 }
             }
         };
-    };
-
-    output.into()
+    }
 }
 
 fn impl_load_save_for_enum(input: &syn::DeriveInput) -> TokenStream {

@@ -130,7 +130,7 @@ fn get_repr(attributes: &[syn::Attribute]) -> syn::Ident {
     attributes
         .iter()
         .find_map(|attr| {
-            let outer_ident = attr.path.get_ident()?;
+            let outer_ident = attr.path().get_ident()?;
             let inner_ident: syn::Ident = attr.parse_args().ok()?;
             (*outer_ident == "repr").then_some(inner_ident)
         })

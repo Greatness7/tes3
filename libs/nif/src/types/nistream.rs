@@ -4,14 +4,16 @@ use std::path::Path;
 
 // external imports
 use hashbrown::HashSet;
-use slotmap::{DefaultKey, DenseSlotMap, Key};
+use slotmap::{new_key_type, DenseSlotMap, Key};
 
 // internal imports
 use crate::prelude::*;
 
+new_key_type! { pub struct NiKey; }
+
 #[derive(Clone, Debug, Default)]
 pub struct NiStream {
-    pub objects: DenseSlotMap<DefaultKey, NiType>,
+    pub objects: DenseSlotMap<NiKey, NiType>,
     pub roots: Vec<NiLink<NiObject>>,
 }
 
@@ -118,7 +120,7 @@ impl NiStream {
         Ok(stream.cursor.into_inner())
     }
 
-    fn objects(&self) -> impl Iterator<Item = (DefaultKey, &NiType)> {
+    fn objects(&self) -> impl Iterator<Item = (NiKey, &NiType)> {
         let mut seen = HashSet::new();
         let mut keys = Vec::new();
         self.roots.visitor(&mut |key| keys.push(key));
@@ -166,13 +168,6 @@ impl NiStream {
         T: TryFrom<NiType>,
     {
         self.objects.remove(link.key)?.try_into().ok()
-    }
-
-    pub fn is_link_valid<T>(&self, link: NiLink<T>) -> bool
-    where
-        for<'a> &'a T: TryFrom<&'a NiType>,
-    {
-        self.get(link).is_some()
     }
 
     /// Retrieve an object from the stream.
@@ -300,6 +295,15 @@ impl NiStream {
     {
         self.objects
             .iter()
+            .filter_map(|(key, object)| Some((NiLink::new(key), object.try_into().ok()?)))
+    }
+
+    pub fn objects_of_type_mut_with_link<'a, T>(&'a mut self) -> impl Iterator<Item = (NiLink<T>, &'a mut T)>
+    where
+        &'a mut T: 'a + TryFrom<&'a mut NiType>,
+    {
+        self.objects
+            .iter_mut()
             .filter_map(|(key, object)| Some((NiLink::new(key), object.try_into().ok()?)))
     }
 

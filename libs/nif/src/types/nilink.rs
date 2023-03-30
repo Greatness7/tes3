@@ -2,19 +2,19 @@
 use std::marker::PhantomData;
 
 // external imports
-use slotmap::{DefaultKey, Key, KeyData};
+use slotmap::{Key, KeyData};
 
 // internal imports
 use crate::prelude::*;
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct NiLink<T> {
-    pub key: DefaultKey,
+    pub key: NiKey,
     phantom: PhantomData<*const T>,
 }
 
 impl<T> NiLink<T> {
-    pub const fn new(key: DefaultKey) -> Self {
+    pub const fn new(key: NiKey) -> Self {
         Self {
             key,
             phantom: PhantomData,
@@ -22,7 +22,7 @@ impl<T> NiLink<T> {
     }
 
     pub fn null() -> Self {
-        Self::new(DefaultKey::null())
+        Self::new(NiKey::null())
     }
 
     pub fn is_null(&self) -> bool {
@@ -50,7 +50,7 @@ where
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let idx: i32 = stream.load()?;
         let key = match idx {
-            i if (i < 0) => DefaultKey::null(),
+            i if (i < 0) => NiKey::null(),
             i => KeyData::from_ffi((1 << 32) | (i as u64 + 1)).into(),
         };
         Ok(Self::new(key))
@@ -79,14 +79,14 @@ where
 pub trait Visitor {
     fn visitor<F>(&self, f: &mut F)
     where
-        F: FnMut(DefaultKey);
+        F: FnMut(NiKey);
 }
 
 impl<T> Visitor for &T {
     #[inline]
     fn visitor<F>(&self, _: &mut F)
     where
-        F: FnMut(DefaultKey),
+        F: FnMut(NiKey),
     {
     }
 }
@@ -95,7 +95,7 @@ impl<V: Visitor> Visitor for Option<V> {
     #[inline]
     fn visitor<F>(&self, f: &mut F)
     where
-        F: FnMut(DefaultKey),
+        F: FnMut(NiKey),
     {
         if let Some(inner) = self {
             inner.visitor(f);
@@ -107,7 +107,7 @@ impl<V: Visitor> Visitor for Vec<V> {
     #[inline]
     fn visitor<F>(&self, f: &mut F)
     where
-        F: FnMut(DefaultKey),
+        F: FnMut(NiKey),
     {
         for item in self.iter().rev() {
             item.visitor(f);
@@ -119,7 +119,7 @@ impl<T> Visitor for NiLink<T> {
     #[inline]
     fn visitor<F>(&self, f: &mut F)
     where
-        F: FnMut(DefaultKey),
+        F: FnMut(NiKey),
     {
         f(self.key);
     }
@@ -129,7 +129,7 @@ impl Visitor for TextureMap {
     #[inline]
     fn visitor<F>(&self, f: &mut F)
     where
-        F: FnMut(DefaultKey),
+        F: FnMut(NiKey),
     {
         match self {
             TextureMap::Map(inner) => inner.visitor(f),
@@ -142,7 +142,7 @@ impl Visitor for Source {
     #[inline]
     fn visitor<F>(&self, f: &mut F)
     where
-        F: FnMut(DefaultKey),
+        F: FnMut(NiKey),
     {
         match self {
             Source::External(inner) => inner.visitor(f),

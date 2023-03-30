@@ -2,8 +2,7 @@
 use crate::prelude::*;
 
 // external imports
-use derive_more::{Deref, DerefMut, From};
-use nalgebra::{Const, Dynamic, OMatrix, SVector};
+use nalgebra::{Const, Dyn, OMatrix, SVector};
 
 #[derive(Clone, Debug, Deref, DerefMut, From, PartialEq, SmartDefault)]
 pub struct NiAnimationKey<const KEY_SIZE: usize, const VALUE_SIZE: usize> {
@@ -13,8 +12,8 @@ pub struct NiAnimationKey<const KEY_SIZE: usize, const VALUE_SIZE: usize> {
 
 #[derive(Clone, Debug, Deref, DerefMut, From, PartialEq, SmartDefault)]
 pub struct NiAnimationKeys<const KEY_SIZE: usize, const VALUE_SIZE: usize> {
-    #[default(OMatrix::<_, Const<KEY_SIZE>, Dynamic>::zeros(0))]
-    pub data: OMatrix<f32, Const<KEY_SIZE>, Dynamic>,
+    #[default(Empty::empty())]
+    pub data: OMatrix<f32, Const<KEY_SIZE>, Dyn>,
 }
 
 #[doc(hidden)]

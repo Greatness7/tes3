@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, U4};
+use nalgebra::{Dyn, OMatrix, U4};
 
 // internal imports
 use crate::prelude::*;
@@ -8,8 +8,8 @@ use crate::prelude::*;
 pub struct NiPalette {
     pub base: NiObject,
     pub has_alpha: bool,
-    #[default(OMatrix::<u8, U4, Dynamic>::zeros(0))]
-    pub palettes: OMatrix<u8, U4, Dynamic>,
+    #[default(Empty::empty())]
+    pub palettes: OMatrix<u8, U4, Dyn>,
 }
 
 impl Load for NiPalette {

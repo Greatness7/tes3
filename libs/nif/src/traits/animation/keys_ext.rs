@@ -1,23 +1,19 @@
 // external imports
-use nalgebra as na;
-use nalgebra::constraint::{DimEq, ShapeConstraint};
-use nalgebra::Const;
+use nalgebra::{
+    constraint::{DimEq, ShapeConstraint},
+    Const, Dyn, Matrix4, MatrixView, MatrixViewMut, OMatrix, OVector, Quaternion, SMatrix, Vector4, U1,
+};
 
 // internal imports
 use crate::prelude::*;
 use crate::traits::animation::niquaternion::*;
 
-mod private {
-    use nalgebra::*;
-    pub(crate) type Key<const K: usize> = OVector<f32, Const<K>>;
-    pub(crate) type KeySlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, U1, U1, Const<K>>;
-    pub(crate) type KeySliceMut<'a, const K: usize, const V: usize> = MatrixSliceMut<'a, f32, Const<V>, U1, U1, Const<K>>;
-    pub(crate) type Keys<const K: usize, const V: usize> = OMatrix<f32, Const<K>, Dynamic>;
-    pub(crate) type KeysSlice<'a, const K: usize, const V: usize> = MatrixSlice<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
-    pub(crate) type KeysSliceMut<'a, const K: usize, const V: usize> =
-        MatrixSliceMut<'a, f32, Const<V>, Dynamic, U1, Const<K>>;
-}
-use private::*;
+type Key<const K: usize> = OVector<f32, Const<K>>;
+type KeySlice<'a, const K: usize, const V: usize> = MatrixView<'a, f32, Const<V>, U1, U1, Const<K>>;
+type KeySliceMut<'a, const K: usize, const V: usize> = MatrixViewMut<'a, f32, Const<V>, U1, U1, Const<K>>;
+type Keys<const K: usize, const V: usize> = OMatrix<f32, Const<K>, Dyn>;
+type KeysSlice<'a, const K: usize, const V: usize> = MatrixView<'a, f32, Const<V>, Dyn, U1, Const<K>>;
+type KeysSliceMut<'a, const K: usize, const V: usize> = MatrixViewMut<'a, f32, Const<V>, Dyn, U1, Const<K>>;
 
 pub trait KeysExt<const KEY_SIZE: usize, const VALUE_SIZE: usize>
 where
@@ -43,7 +39,7 @@ where
     // Domain Constants
 
     #[rustfmt::skip]
-    const HERMITE_BASIS: na::Matrix4<f32> = na::Matrix4::new(
+    const HERMITE_BASIS: Matrix4<f32> = Matrix4::new(
         2.0, -3.0, 0.0, 1.0,
         -2.0, 3.0, 0.0, 0.0,
         1.0, -2.0, 1.0, 0.0,
@@ -109,19 +105,19 @@ where
     }
 
     fn value(&self, i: usize) -> KeySlice<'_, KEY_SIZE, VALUE_SIZE> {
-        self.data().fixed_slice(Self::VALUES_ROW, i)
+        self.data().fixed_view(Self::VALUES_ROW, i)
     }
 
     fn in_tan(&self, i: usize) -> KeySlice<'_, KEY_SIZE, VALUE_SIZE> {
-        self.data().fixed_slice(Self::IN_TANS_ROW, i)
+        self.data().fixed_view(Self::IN_TANS_ROW, i)
     }
 
     fn out_tan(&self, i: usize) -> KeySlice<'_, KEY_SIZE, VALUE_SIZE> {
-        self.data().fixed_slice(Self::OUT_TANS_ROW, i)
+        self.data().fixed_view(Self::OUT_TANS_ROW, i)
     }
 
     fn tcb_param(&self, i: usize) -> KeySlice<'_, KEY_SIZE, 3> {
-        self.data().fixed_slice(Self::TCB_PARAMS_ROW, i)
+        self.data().fixed_view(Self::TCB_PARAMS_ROW, i)
     }
 
     //
@@ -135,19 +131,19 @@ where
     }
 
     fn value_mut(&mut self, i: usize) -> KeySliceMut<'_, KEY_SIZE, VALUE_SIZE> {
-        self.data_mut().fixed_slice_mut(Self::VALUES_ROW, i)
+        self.data_mut().fixed_view_mut(Self::VALUES_ROW, i)
     }
 
     fn in_tan_mut(&mut self, i: usize) -> KeySliceMut<'_, KEY_SIZE, VALUE_SIZE> {
-        self.data_mut().fixed_slice_mut(Self::IN_TANS_ROW, i)
+        self.data_mut().fixed_view_mut(Self::IN_TANS_ROW, i)
     }
 
     fn out_tan_mut(&mut self, i: usize) -> KeySliceMut<'_, KEY_SIZE, VALUE_SIZE> {
-        self.data_mut().fixed_slice_mut(Self::OUT_TANS_ROW, i)
+        self.data_mut().fixed_view_mut(Self::OUT_TANS_ROW, i)
     }
 
     fn tcb_param_mut(&mut self, i: usize) -> KeySliceMut<'_, KEY_SIZE, 3> {
-        self.data_mut().fixed_slice_mut(Self::TCB_PARAMS_ROW, i)
+        self.data_mut().fixed_view_mut(Self::TCB_PARAMS_ROW, i)
     }
 
     //
@@ -273,7 +269,7 @@ where
         if start_index >= length || time >= self.last_time() {
             return Some((length - 1, length - 1));
         }
-        let times = self.data().slice_range(Self::TIMES_ROW, start_index..);
+        let times = self.data().view_range(Self::TIMES_ROW, start_index..);
         let next_index = start_index + times.iter().position(|t| *t >= time)?;
         let prev_index = self.prev_index(next_index);
         Some((prev_index, next_index))
@@ -346,9 +342,9 @@ where
         let t2 = t * t;
         let t3 = t2 * t;
 
-        let v = na::Vector4::<f32>::new(t3, t2, t, 1.0);
-        let s = na::Vector4::<f32>::new(3.0 * t2, 2.0 * t, 1.0, 0.0);
-        let c = na::SMatrix::<f32, VALUE_SIZE, 4>::from_columns(&[prev_value, next_value, in_tan, out_tan]);
+        let v = Vector4::<f32>::new(t3, t2, t, 1.0);
+        let s = Vector4::<f32>::new(3.0 * t2, 2.0 * t, 1.0, 0.0);
+        let c = SMatrix::<f32, VALUE_SIZE, 4>::from_columns(&[prev_value, next_value, in_tan, out_tan]);
 
         let value = c * (Self::HERMITE_BASIS * v);
         let tan_u = c * (Self::HERMITE_BASIS * s);
@@ -386,8 +382,8 @@ where
         let t2 = t * t;
         let t3 = t2 * t;
 
-        let v = na::Vector4::<f32>::new(t3, t2, t, 1.0);
-        let c = na::SMatrix::<f32, VALUE_SIZE, 4>::from_columns(&[prev_value, next_value, in_tan, out_tan]);
+        let v = Vector4::<f32>::new(t3, t2, t, 1.0);
+        let c = SMatrix::<f32, VALUE_SIZE, 4>::from_columns(&[prev_value, next_value, in_tan, out_tan]);
 
         let value = c * (Self::HERMITE_BASIS * v);
 
@@ -671,9 +667,9 @@ impl KeysExt<8, 4> for TCBRotKeys {
         let this_time = self.time(i);
         let next_time = self.time(n);
 
-        let prev_value: na::Quaternion<f32> = self.value(p).into_owned().into();
-        let this_value: na::Quaternion<f32> = self.value(i).into_owned().into();
-        let next_value: na::Quaternion<f32> = self.value(n).into_owned().into();
+        let prev_value: Quaternion<f32> = self.value(p).into_owned().into();
+        let this_value: Quaternion<f32> = self.value(i).into_owned().into();
+        let next_value: Quaternion<f32> = self.value(n).into_owned().into();
 
         let prev_len = (prev_value.conjugate() * this_value).ln();
         let next_len = (this_value.conjugate() * next_value).ln();
@@ -696,9 +692,9 @@ impl KeysExt<8, 4> for TCBRotKeys {
         let this_time = self.time(i);
         let next_time = self.time(n);
 
-        let prev_value: na::Quaternion<f32> = self.value(p).into_owned().into();
-        let this_value: na::Quaternion<f32> = self.value(i).into_owned().into();
-        let next_value: na::Quaternion<f32> = self.value(n).into_owned().into();
+        let prev_value: Quaternion<f32> = self.value(p).into_owned().into();
+        let this_value: Quaternion<f32> = self.value(i).into_owned().into();
+        let next_value: Quaternion<f32> = self.value(n).into_owned().into();
 
         let prev_len = (prev_value.conjugate() * this_value).ln();
         let next_len = (this_value.conjugate() * next_value).ln();

@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dvector, Dynamic, OVector};
+use nalgebra::{dvector, Dyn, OVector};
 
 // internal imports
 use crate::prelude::*;
@@ -8,7 +8,7 @@ use crate::prelude::*;
 pub struct NiDynamicEffect {
     pub base: NiAVObject,
     #[default(dvector![])]
-    pub affected_nodes: OVector<i32, Dynamic>, // Invalid Links
+    pub affected_nodes: OVector<i32, Dyn>, // Invalid Links
 }
 
 impl Load for NiDynamicEffect {

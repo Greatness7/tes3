@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dvector, Dynamic, OVector};
+use nalgebra::{dvector, Dyn, OVector};
 
 // internal imports
 use crate::prelude::*;
@@ -8,7 +8,7 @@ use crate::prelude::*;
 pub struct NiVertWeightsExtraData {
     pub base: NiExtraData,
     #[default(dvector![])]
-    pub weights: OVector<f32, Dynamic>,
+    pub weights: OVector<f32, Dyn>,
 }
 
 impl Load for NiVertWeightsExtraData {

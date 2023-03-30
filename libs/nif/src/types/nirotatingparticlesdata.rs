@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, U4};
+use nalgebra::{Dyn, OMatrix, U4};
 
 // internal imports
 use crate::prelude::*;
@@ -7,8 +7,8 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiRotatingParticlesData {
     pub base: NiParticlesData,
-    #[default(OMatrix::<f32, U4, Dynamic>::zeros(0))]
-    pub rotations: OMatrix<f32, U4, Dynamic>,
+    #[default(Empty::empty())]
+    pub rotations: OMatrix<f32, U4, Dyn>,
 }
 
 impl Load for NiRotatingParticlesData {

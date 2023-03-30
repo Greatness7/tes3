@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{dvector, Dynamic, OVector};
+use nalgebra::{dvector, Dyn, OVector};
 
 // internal imports
 use crate::prelude::*;
@@ -8,7 +8,7 @@ use crate::prelude::*;
 pub struct NiLinesData {
     pub base: NiGeometryData,
     #[default(dvector![])]
-    pub vertex_connectivity_flags: OVector<u8, Dynamic>,
+    pub vertex_connectivity_flags: OVector<u8, Dyn>,
 }
 
 impl Load for NiLinesData {

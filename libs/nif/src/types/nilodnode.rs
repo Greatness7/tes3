@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dynamic, OMatrix, Vector3, U2};
+use nalgebra::{Dyn, OMatrix, Vector3, U2};
 
 // internal imports
 use crate::prelude::*;
@@ -8,8 +8,8 @@ use crate::prelude::*;
 pub struct NiLODNode {
     pub base: NiSwitchNode,
     pub lod_center: Vector3<f32>,
-    #[default(OMatrix::<f32, U2, Dynamic>::zeros(0))]
-    pub lod_levels: OMatrix<f32, U2, Dynamic>,
+    #[default(Empty::empty())]
+    pub lod_levels: OMatrix<f32, U2, Dyn>,
 }
 
 impl Load for NiLODNode {

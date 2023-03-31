@@ -210,7 +210,7 @@ mod serde_impls {
                         "String"
                     ) {
                         return quote! {
-                            #[serde(tag = "type", content = "value")]
+                            #[serde(tag = "type", content = "data")]
                         };
                     }
                 }

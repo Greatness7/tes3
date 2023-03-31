@@ -6,6 +6,9 @@ pub use types::*;
 pub mod traits;
 pub use traits::*;
 
+#[cfg(feature = "serde")]
+pub(crate) mod features;
+
 #[allow(unused_imports)]
 pub(crate) mod prelude {
     pub(crate) use super::*;

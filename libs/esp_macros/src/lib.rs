@@ -219,84 +219,11 @@ mod serde_impls {
         }
     }
 
-    /// Convert all idents in a path to underscores (type inferred).
-    ///
-    fn convert_idents_to_underscores(args: &mut syn::PathArguments) {
-        use syn::visit_mut::VisitMut;
-
-        struct Visitor;
-
-        impl VisitMut for Visitor {
-            fn visit_ident_mut(&mut self, ident: &mut syn::Ident) {
-                *ident = syn::Ident::new("_", ident.span());
-            }
-        }
-
-        Visitor.visit_path_arguments_mut(args);
-    }
-
-    /// This is used to enable the `serde_with` crate to serialize arrays.
-    ///
-    /// <https://docs.rs/serde_with/latest/serde_with/#large-and-const-generic-arrays>
-    ///
-    fn patch_serde_array_support(data: &mut syn::Data) {
-        let syn::Data::Struct(data_struct) = data else {
-            return;
-        };
-
-        for field in &mut data_struct.fields {
-            use syn::{spanned::Spanned, *};
-
-            // Is it a Box<T>?
-            let Type::Path(ty) = &field.ty else {
-                continue;
-            };
-            let Some(segment) = ty.path.segments.last() else {
-                continue;
-            };
-            if segment.ident != "Box" {
-                continue;
-            };
-
-            // Is <T> a <[_; N]>?
-            let PathArguments::AngleBracketed(bracketed) = &segment.arguments else {
-                continue;
-            };
-            let Some(GenericArgument::Type(Type::Array(_))) = bracketed.args.first() else {
-                continue;
-            };
-            if bracketed.args.len() != 1 {
-                continue;
-            };
-
-            // Construct new field attribute
-            let attr = {
-                // Convert from [T; N] to [_; N].
-                let mut segment = segment.clone();
-                convert_idents_to_underscores(&mut segment.arguments);
-
-                // Convert into a literal string.
-                let string = quote!(#segment).to_string();
-                let lit_str = syn::LitStr::new(&string, field.span());
-
-                // Convert to a syntax Attribute.
-                syn::parse_quote! {
-                    #[serde_as(as = #lit_str)]
-                }
-            };
-
-            field.attrs.push(attr);
-        }
-    }
-
     pub fn impl_serialize_deserialize(input: TokenStream) -> TokenStream {
-        let mut input = syn::parse_macro_input!(input as syn::DeriveInput);
-        patch_serde_array_support(&mut input.data);
-
+        let input = syn::parse_macro_input!(input as syn::DeriveInput);
         let attrs = get_serde_tag_attr(&input.data);
 
         let output = quote! {
-            #[serde_with::serde_as]
             #[derive(serde::Serialize, serde::Deserialize)]
             #attrs
             #input

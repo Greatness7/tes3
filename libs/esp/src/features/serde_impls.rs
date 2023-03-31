@@ -16,7 +16,7 @@ pub mod base64_zstd_compress {
         let compressed = zstd::encode_all(&*bytes, 0).unwrap();
 
         let base64 = base64_simd::STANDARD;
-        let encoded = base64.encode_to_string(&compressed);
+        let encoded = base64.encode_to_string(compressed);
 
         serializer.serialize_str(&encoded)
     }
@@ -29,20 +29,17 @@ pub mod base64_zstd_compress {
         let encoded: String = serde::Deserialize::deserialize(deserializer)?;
 
         let base64 = base64_simd::STANDARD;
-        let compressed = match base64.decode_to_vec(encoded.as_bytes()) {
-            Ok(v) => v,
-            _ => return Err(serde::de::Error::custom("esp deserialize decode error")),
+        let Ok(compressed) = base64.decode_to_vec(encoded.as_bytes()) else {
+            return Err(serde::de::Error::custom("esp deserialize decode error"));
         };
 
-        let decompressed = match zstd::stream::decode_all(&*compressed) {
-            Ok(v) => v,
-            _ => return Err(serde::de::Error::custom("esp deserialize decompress error")),
+        let Ok(decompressed) = zstd::stream::decode_all(&*compressed) else {
+            return Err(serde::de::Error::custom("esp deserialize decompress error"));
         };
 
         let mut stream = Reader::new(&decompressed);
-        let value = match stream.load() {
-            Ok(v) => v,
-            _ => return Err(serde::de::Error::custom("esp deserialize load error")),
+        let Ok(value) = stream.load() else {
+            return Err(serde::de::Error::custom("esp deserialize load error"));
         };
 
         Ok(value)

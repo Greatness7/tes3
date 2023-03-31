@@ -23,4 +23,5 @@ nif = { path = "libs/nif", optional = true }
 [features]
 default = ["esp", "nif"]
 nightly = ["esp?/nightly", "nif?/nightly"]
+serde = ["esp?/serde", "nif?/serde"]
 simd = ["esp?/simd", "nif?/simd"]

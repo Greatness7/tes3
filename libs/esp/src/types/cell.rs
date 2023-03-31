@@ -11,7 +11,7 @@ pub struct Cell {
     pub map_color: Option<[u8; 4]>,
     pub water_height: Option<f32>,
     pub atmosphere_data: Option<AtmosphereData>,
-    #[cfg_attr(feature = "serde", serde(with = "crate::serde_cell_refs"))]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::cell_references"))]
     pub references: HashMap<(u32, u32), Reference>,
 }
 
@@ -265,45 +265,4 @@ const fn pack(packed_indices: (u32, u32)) -> u32 {
     debug_assert!(mast_index <= 0xFF);
     debug_assert!(refr_index <= 0xFFFFFF);
     refr_index | (mast_index << 24)
-}
-
-#[cfg(feature = "serde")]
-pub mod serde_cell_refs {
-    use super::*;
-
-    type T = HashMap<(u32, u32), Reference>;
-
-    pub fn serialize<S>(data: &T, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut references: Vec<_> = data.values().collect();
-
-        references.sort_by_key(|reference| {
-            (
-                reference.temporary,
-                match reference.mast_index {
-                    0 => u32::MAX,
-                    i => i,
-                },
-                reference.refr_index,
-            )
-        });
-
-        serializer.collect_seq(references)
-    }
-
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<T, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let references: Vec<Reference> = serde::Deserialize::deserialize(deserializer)?;
-
-        let hashmap = references
-            .into_iter()
-            .map(|reference| ((reference.mast_index, reference.refr_index), reference))
-            .collect();
-
-        Ok(hashmap)
-    }
 }

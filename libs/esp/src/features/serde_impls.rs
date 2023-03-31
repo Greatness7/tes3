@@ -48,3 +48,44 @@ pub mod base64_zstd_compress {
         Ok(value)
     }
 }
+
+/// special handling for cell references list, remove this later
+pub mod cell_references {
+    use crate::prelude::*;
+
+    type T = HashMap<(u32, u32), Reference>;
+
+    pub fn serialize<S>(data: &T, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut references: Vec<_> = data.values().collect();
+
+        references.sort_by_key(|reference| {
+            (
+                reference.temporary,
+                match reference.mast_index {
+                    0 => u32::MAX,
+                    i => i,
+                },
+                reference.refr_index,
+            )
+        });
+
+        serializer.collect_seq(references)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<T, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let references: Vec<Reference> = serde::Deserialize::deserialize(deserializer)?;
+
+        let hashmap = references
+            .into_iter()
+            .map(|reference| ((reference.mast_index, reference.refr_index), reference))
+            .collect();
+
+        Ok(hashmap)
+    }
+}

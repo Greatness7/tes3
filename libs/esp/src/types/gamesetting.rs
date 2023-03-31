@@ -13,9 +13,9 @@ pub struct GameSetting {
 #[derive(Clone, Debug, PartialEq, SmartDefault)]
 pub enum GameSettingValue {
     #[default]
-    String(String),
     Float(f32),
     Integer(i32),
+    String(String),
 }
 
 impl Load for GameSetting {

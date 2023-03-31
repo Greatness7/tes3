@@ -4,7 +4,7 @@ impl Plugin {
     pub fn sort_objects(&mut self) {
         let mut indices = vec![];
 
-        // Objects are ordered their types, sort hint, and editor ids.
+        // Objects will be ordered by type, sort hint, and editor id.
         // Dialogue/DialogueInfo sorting is not currently implemented.
         #[rustfmt::skip]
         isort(&mut indices, &self.objects, |object| {

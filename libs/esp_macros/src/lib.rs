@@ -197,16 +197,17 @@ mod serde_impls {
         };
 
         // Internally tagged representation doesn't work on enums that have
-        // variants which are numeric primitives. For those cases fall back
-        // to default (externally tagged) representation.
+        // variants which do not have any internal structure (no fields).
+        // For those cases use an adjacently tagged representation.
         for variant in &e.variants {
             if let syn::Fields::Unnamed(fields) = &variant.fields {
                 for field in &fields.unnamed {
                     if matches!(
                         quote!(#field).to_string().as_ref(),
-                        "i8"  | "i16"  | "i32" | "i64" | "i128" | "isize" |
-                        "u8"  | "u16"  | "u32" | "u64" | "u128" | "usize" |
-                        "f32" | "f64"
+                        "i8"  | "i16" | "i32" | "i64" | "i128" | "isize" |
+                        "u8"  | "u16" | "u32" | "u64" | "u128" | "usize" |
+                        "f32" | "f64" |
+                        "String"
                     ) {
                         return quote! {
                             #[serde(tag = "type", content = "value")]

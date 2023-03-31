@@ -21,6 +21,7 @@ pub struct Landscape {
 #[derive(LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct VertexNormals {
     #[default(zeroed_box())]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::base64_zstd_compress"))]
     pub data: Box<[[[i8; 3]; 65]; 65]>,
 }
 
@@ -29,6 +30,7 @@ pub struct VertexNormals {
 pub struct VertexHeights {
     pub offset: f32,
     #[default(zeroed_box())]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::base64_zstd_compress"))]
     pub data: Box<[[i8; 65]; 65]>,
 }
 
@@ -36,6 +38,7 @@ pub struct VertexHeights {
 #[derive(LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct WorldMapData {
     #[default(zeroed_box())]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::base64_zstd_compress"))]
     pub data: Box<[[u8; 9]; 9]>,
 }
 
@@ -43,6 +46,7 @@ pub struct WorldMapData {
 #[derive(LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct VertexColors {
     #[default(zeroed_box())]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::base64_zstd_compress"))]
     pub data: Box<[[[u8; 3]; 65]; 65]>,
 }
 
@@ -50,6 +54,7 @@ pub struct VertexColors {
 #[derive(LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct TextureIndices {
     #[default(zeroed_box())]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::base64_zstd_compress"))]
     pub data: Box<[[u16; 16]; 16]>,
 }
 

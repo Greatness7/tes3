@@ -10,7 +10,7 @@ pub struct Creature {
     pub script: String,
     pub mesh: String,
     pub inventory: Vec<(i32, FixedString<32>)>,
-    pub spells: Vec<String>,
+    pub spells: Vec<(i32, FixedString<32>)>,
     pub ai_data: AiData,
     pub ai_packages: Vec<AiPackage>,
     pub travel_destinations: Vec<TravelDestination>,

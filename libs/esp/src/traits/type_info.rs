@@ -41,7 +41,7 @@ impl TypeInfo for TES3Object {
     fn type_name(&self) -> &'static str {
         delegate! {
             match self {
-                inner => inner.tag_str()
+                inner => inner.type_name()
             }
         }
     }

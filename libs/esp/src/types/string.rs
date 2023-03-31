@@ -10,6 +10,7 @@ use crate::prelude::*;
 #[esp_meta]
 #[derive(TransparentWrapper)]
 #[derive(Clone, Debug, Default, Deref, DerefMut, Eq, From, Into, PartialEq)]
+#[cfg_attr(feature = "serde", serde(transparent))]
 #[repr(transparent)]
 pub struct FixedString<const N: usize>(pub String);
 

@@ -203,12 +203,14 @@ mod serde_impls {
             if let syn::Fields::Unnamed(fields) = &variant.fields {
                 for field in &fields.unnamed {
                     if matches!(
-                        quote!(#field).to_string().as_str(),
-                        "i8"    | "i16"  | "i32" | "i64" | "i128" | "isize" |
-                        "u8"    | "u16"  | "u32" | "u64" | "u128" | "usize" |
-                        "f32"   | "f64"
+                        quote!(#field).to_string().as_ref(),
+                        "i8"  | "i16"  | "i32" | "i64" | "i128" | "isize" |
+                        "u8"  | "u16"  | "u32" | "u64" | "u128" | "usize" |
+                        "f32" | "f64"
                     ) {
-                        return quote!();
+                        return quote! {
+                            #[serde(tag = "type", content = "value")]
+                        };
                     }
                 }
             }

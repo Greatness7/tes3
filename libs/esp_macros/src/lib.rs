@@ -27,8 +27,8 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
 
     let variants = match &input.data {
-        syn::Data::Enum(e) => &e.variants,
-        _ => panic!("derive(TES3Object): item must be an enum"),
+        syn::Data::Enum(e) if input.ident == "TES3Object" => &e.variants,
+        _ => panic!("derive(TES3Object) must be on the TES3Object enum"),
     };
 
     let idents = parse_variant_idents(variants);

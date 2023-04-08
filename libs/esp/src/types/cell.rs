@@ -180,8 +180,8 @@ impl Save for Cell {
         }
         //
         let mut num_temp_refs = 0;
-        for (i, (key, reference)) in self.references_sorted().into_iter().enumerate() {
-            let packed_indices = pack(*key);
+        for (i, reference) in self.references_sorted().into_iter().enumerate() {
+            let packed_indices = pack(reference.mast_index, reference.refr_index);
             // NAM0
             if (num_temp_refs == 0) && reference.temporary {
                 num_temp_refs = self.references.len() - i;
@@ -228,25 +228,25 @@ impl Cell {
     }
 
     pub fn get_region(&self) -> &str {
-        self.region.as_deref().unwrap_or("{ Exterior }")
+        self.region.as_deref().unwrap_or("(Exterior)")
     }
 
-    fn references_sorted(&self) -> Vec<(&(u32, u32), &Reference)> {
-        let mut references: Vec<_> = self.references.iter().collect();
+    fn references_sorted(&self) -> Vec<&Reference> {
+        let mut references: Vec<_> = self.references.values().collect();
 
         // sort references such that:
         // 1. persistent references come before temporary references
         // 2. master-defined references come before plugin-defined references
         // 3. references from the same source file are sorted by object index
 
-        references.sort_by_key(|((mast_index, refr_index), reference)| {
+        references.sort_by_key(|r| {
             (
-                reference.temporary,
-                match *mast_index {
+                r.temporary,
+                match r.mast_index {
                     0 => u32::MAX,
                     i => i,
                 },
-                *refr_index,
+                r.refr_index,
             )
         });
 
@@ -260,8 +260,7 @@ const fn unpack(packed_indices: u32) -> (u32, u32) {
     (mast_index, refr_index)
 }
 
-const fn pack(packed_indices: (u32, u32)) -> u32 {
-    let (mast_index, refr_index) = packed_indices;
+const fn pack(mast_index: u32, refr_index: u32) -> u32 {
     debug_assert!(mast_index <= 0xFF);
     debug_assert!(refr_index <= 0xFFFFFF);
     refr_index | (mast_index << 24)

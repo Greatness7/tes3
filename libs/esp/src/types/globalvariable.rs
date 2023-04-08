@@ -28,8 +28,7 @@ impl Load for GlobalVariable {
                 b"FLTV" => {
                     stream.expect(4u32)?;
                     let value: f32 = stream.load()?;
-                    // Ignore NaN values. They cause issues with serde.
-                    // (known example: "ratskilled" in "Morrowind.esm")
+                    // Ignore NaNs, see "ratskilled" in "Morrowind.esm".
                     this.value = if value.is_nan() { 0.0 } else { value };
                 }
                 b"DELE" => {

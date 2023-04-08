@@ -2,6 +2,14 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "cargo build",
+            "type": "shell",
+            "command": "cargo build --all-features",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
             "label": "cargo check",
             "type": "shell",
             "command": "cargo check --workspace --all-features",
@@ -60,7 +68,7 @@
         {
             "label": "cargo udeps",
             "type": "shell",
-            "command": "cargo udeps --workspace --all-features",
+            "command": "cargo udeps --workspace --all-features  --all-targets",
             "presentation": {
                 "clear": true
             }

@@ -6,8 +6,8 @@ use bitflags::bitflags;
 
 bitflags! {
     #[esp_meta]
-    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     #[repr(transparent)]
+    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     pub struct ObjectFlags: u32 {
         const MODIFIED = 0x0002;
         const DELETED = 0x0020;
@@ -19,8 +19,8 @@ bitflags! {
 
 bitflags! {
     #[esp_meta]
-    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     #[repr(transparent)]
+    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     pub struct LandscapeFlags: u32 {
         const USES_VERTEX_HEIGHTS_AND_NORMALS = 0x01;
         const USES_VERTEX_COLORS = 0x02;
@@ -31,8 +31,8 @@ bitflags! {
 
 bitflags! {
     #[esp_meta]
-    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     #[repr(transparent)]
+    #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
     pub struct CellFlags: u32 {
         const IS_INTERIOR = 0x01;
         const HAS_WATER = 0x02;

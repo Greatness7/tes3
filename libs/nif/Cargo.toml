@@ -20,8 +20,8 @@ slotmap = "^1.0"
 smart-default = "^0.6"
 
 [dev-dependencies]
-tempfile = "^3.4"
-test-case = "^3.0"
+tempfile = "^3.5"
+test-case = "^3.1"
 
 [features]
 default = []

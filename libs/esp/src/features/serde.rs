@@ -1,6 +1,8 @@
-/// base64 encode + zstd compression
-pub mod base64_zstd_compress {
+// base64 bytes (with optional zstd compression)
+pub mod base64_bytes {
     use crate::prelude::*;
+
+    const BASE64: base64_simd::Base64 = base64_simd::STANDARD_NO_PAD;
 
     pub fn serialize<T, S>(data: &T, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -9,14 +11,18 @@ pub mod base64_zstd_compress {
     {
         let mut stream = Writer::new(vec![]);
         if stream.save(data).is_err() {
-            return Err(serde::ser::Error::custom("esp serialize error"));
+            return Err(serde::ser::Error::custom("esp serialize save error"));
         }
 
-        let bytes = stream.cursor.into_inner();
-        let compressed = zstd::encode_all(&*bytes, 0).unwrap();
+        #[allow(unused_mut)]
+        let mut bytes = stream.cursor.into_inner();
 
-        let base64 = base64_simd::STANDARD;
-        let encoded = base64.encode_to_string(compressed);
+        #[cfg(feature = "zstd")]
+        {
+            bytes = zstd::encode_all(&*bytes, 0).unwrap();
+        }
+
+        let encoded = BASE64.encode_to_string(bytes);
 
         serializer.serialize_str(&encoded)
     }
@@ -28,25 +34,29 @@ pub mod base64_zstd_compress {
     {
         let encoded: String = serde::Deserialize::deserialize(deserializer)?;
 
-        let base64 = base64_simd::STANDARD;
-        let Ok(compressed) = base64.decode_to_vec(encoded.as_bytes()) else {
+        #[allow(unused_mut)]
+        let Ok(mut decoded) = BASE64.decode_to_vec(encoded.as_bytes()) else {
             return Err(serde::de::Error::custom("esp deserialize decode error"));
         };
 
-        let Ok(decompressed) = zstd::stream::decode_all(&*compressed) else {
-            return Err(serde::de::Error::custom("esp deserialize decompress error"));
-        };
+        #[cfg(feature = "zstd")]
+        {
+            let Ok(decompressed) = zstd::stream::decode_all(&*decoded) else {
+                return Err(serde::de::Error::custom("esp deserialize decompress error"));
+            };
+            decoded = decompressed;
+        }
 
-        let mut stream = Reader::new(&decompressed);
-        let Ok(value) = stream.load() else {
+        let mut stream = Reader::new(&decoded);
+        let Ok(data) = stream.load() else {
             return Err(serde::de::Error::custom("esp deserialize load error"));
         };
 
-        Ok(value)
+        Ok(data)
     }
 }
 
-/// special handling for cell references list, remove this later
+// special handling for cell references list
 pub mod cell_references {
     use crate::prelude::*;
 

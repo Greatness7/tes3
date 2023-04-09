@@ -20,7 +20,6 @@ rayon = "^1.7"
 smart-default = "^0.6"
 # serde-related features
 serde = { version = "^1.0", features = ["derive"], optional = true }
-base64 = { version = "^0.21", optional = true }
 base64-simd = { version = "^0.8", optional = true }
 zstd = { version = "^0.12", optional = true }
 
@@ -31,14 +30,20 @@ serde_json = "^1.0"
 
 [features]
 default = []
-nightly = ["bytes_io/nightly", "hashbrown/nightly"]
-simd = ["bytes_io/simd", "bytemuck/wasm_simd", "bytemuck/nightly_stdsimd"]
+nightly = [
+    "bytes_io/nightly",
+    "hashbrown/nightly"
+]
+simd = [
+    "bytes_io/simd",
+    "bytemuck/wasm_simd",
+    "bytemuck/nightly_stdsimd"
+]
 serde = [
     "dep:serde",
-    "dep:base64",
     "dep:base64-simd",
-    "dep:zstd",
     "bitflags/serde",
+    "bstr/serde",
     "esp_macros/serde",
-    "hashbrown/serde"
+    "hashbrown/serde",
 ]

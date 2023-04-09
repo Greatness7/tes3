@@ -14,7 +14,7 @@ pub struct Cell {
     pub map_color: Option<[u8; 4]>,
     pub water_height: Option<f32>,
     pub atmosphere_data: Option<AtmosphereData>,
-    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::cell_references"))]
+    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde::cell_references"))]
     pub references: HashMap<(u32, u32), Reference>,
 }
 

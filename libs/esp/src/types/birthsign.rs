@@ -74,7 +74,8 @@ impl Save for Birthsign {
         // NPCS
         for value in &self.spells {
             stream.save(b"NPCS")?;
-            stream.save(value)?;
+            stream.save(&32u32)?;
+            stream.save::<FixedString<32>>(value.as_ref())?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

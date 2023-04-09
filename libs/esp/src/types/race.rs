@@ -105,7 +105,8 @@ impl Save for Race {
         // NPCS
         for value in &self.spells {
             stream.save(b"NPCS")?;
-            stream.save(value)?;
+            stream.save(&32u32)?;
+            stream.save::<FixedString<32>>(value.as_ref())?;
         }
         // DESC
         if !self.description.is_empty() {

@@ -54,8 +54,16 @@ fn insert_struct_field_attrs(field: &mut syn::Field) {
         _ => return,
     };
 
-    // Currently we only care about Box/Vec types.
     let ident = segment.ident.to_string();
+
+    // Skip serializing `None` for smaller jsons.
+    if ident == "Option" {
+        field.attrs.push(syn::parse_quote! {
+            #[serde(skip_serializing_if = "Option::is_none")]
+        });
+    }
+
+    // Otherwise we only care about Box/Vec types.
     if ident != "Box" && ident != "Vec" {
         return;
     }

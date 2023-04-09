@@ -1,17 +1,24 @@
-use cfg_if::cfg_if;
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
+
+mod features;
 
 #[doc(hidden)]
 #[proc_macro_attribute]
 pub fn esp_meta(_args: TokenStream, input: TokenStream) -> TokenStream {
-    cfg_if! {
-        if #[cfg(feature = "serde")] {
-            serde_impls::impl_serialize_deserialize(input)
-        } else {
-            input
-        }
+    #[allow(unused_mut)]
+    let mut input = syn::parse_macro_input!(input as syn::DeriveInput);
+
+    #[cfg(feature = "serde")]
+    {
+        features::serde::impl_serialize_deserialize(&mut input);
     }
+
+    let output = quote! {
+        #input
+    };
+
+    output.into()
 }
 
 #[doc(hidden)]
@@ -178,59 +185,4 @@ where
     I: IntoIterator<Item = &'a syn::Variant>,
 {
     variants.into_iter().map(|v| v.ident.clone()).collect()
-}
-
-#[cfg(feature = "serde")]
-mod serde_impls {
-    use super::*;
-
-    /// See: <https://serde.rs/enum-representations.html>
-    ///
-    /// We use "internally tagged" representations when possible.
-    ///
-    #[rustfmt::skip]
-    fn get_serde_tag_attr(data: &syn::Data) -> impl ToTokens {
-        // Only interested in enums.
-        let syn::Data::Enum(e) = data else {
-            return quote!();
-        };
-
-        // Internally tagged representation doesn't work on enums that have
-        // variants which do not have any internal structure (no fields).
-        // For those cases use an adjacently tagged representation.
-        for variant in &e.variants {
-            if let syn::Fields::Unnamed(fields) = &variant.fields {
-                for field in &fields.unnamed {
-                    if matches!(
-                        quote!(#field).to_string().as_ref(),
-                        "i8"  | "i16" | "i32" | "i64" | "i128" | "isize" |
-                        "u8"  | "u16" | "u32" | "u64" | "u128" | "usize" |
-                        "f32" | "f64" |
-                        "String"
-                    ) {
-                        return quote! {
-                            #[serde(tag = "type", content = "data")]
-                        };
-                    }
-                }
-            }
-        }
-
-        quote! {
-            #[serde(tag = "type")]
-        }
-    }
-
-    pub fn impl_serialize_deserialize(input: TokenStream) -> TokenStream {
-        let input = syn::parse_macro_input!(input as syn::DeriveInput);
-        let attrs = get_serde_tag_attr(&input.data);
-
-        let output = quote! {
-            #[derive(serde::Serialize, serde::Deserialize)]
-            #attrs
-            #input
-        };
-
-        output.into()
-    }
 }

@@ -8,7 +8,6 @@ pub struct Script {
     pub id: String,
     pub header: ScriptHeader,
     pub variables: Vec<u8>,
-    #[cfg_attr(feature = "serde", serde(with = "crate::features::serde_impls::base64_zstd_compress"))]
     pub bytecode: Vec<u8>,
     pub script_text: String,
 }

@@ -90,7 +90,8 @@ impl Save for Faction {
         // RNAM
         for value in &self.rank_names {
             stream.save(b"RNAM")?;
-            stream.save(value)?;
+            stream.save(&32u32)?;
+            stream.save::<FixedString<32>>(value.as_ref())?;
         }
         // FADT
         stream.save(b"FADT")?;

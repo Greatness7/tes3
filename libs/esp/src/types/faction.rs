@@ -7,7 +7,7 @@ pub struct Faction {
     pub flags: ObjectFlags,
     pub id: String,
     pub name: String,
-    pub rank_names: Vec<FixedString<32>>,
+    pub rank_names: Vec<String>,
     pub reactions: Vec<FactionReaction>,
     pub data: FactionData,
 }
@@ -52,7 +52,6 @@ impl Load for Faction {
                     this.name = stream.load()?;
                 }
                 b"RNAM" => {
-                    stream.expect(32u32)?;
                     this.rank_names.push(stream.load()?);
                 }
                 b"FADT" => {
@@ -91,7 +90,6 @@ impl Save for Faction {
         // RNAM
         for value in &self.rank_names {
             stream.save(b"RNAM")?;
-            stream.save(&32u32)?;
             stream.save(value)?;
         }
         // FADT

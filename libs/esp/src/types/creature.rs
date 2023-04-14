@@ -15,7 +15,7 @@ pub struct Creature {
     pub ai_packages: Vec<AiPackage>,
     pub travel_destinations: Vec<TravelDestination>,
     pub sound: String,
-    pub scale: f32,
+    pub scale: Option<f32>,
     pub creature_flags: u32,
     pub data: CreatureData,
 }
@@ -79,7 +79,7 @@ impl Load for Creature {
                 }
                 b"XSCL" => {
                     stream.expect(4u32)?;
-                    this.scale = stream.load()?;
+                    this.scale = Some(stream.load()?);
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
@@ -166,9 +166,15 @@ impl Save for Creature {
         stream.save(&4u32)?;
         stream.save(&self.creature_flags)?;
         // XSCL
-        stream.save(b"XSCL")?;
-        stream.save(&4u32)?;
-        stream.save(&self.scale)?;
+        if let Some(value) = &self.scale {
+            let scale = value.clamp(0.5, 2.0);
+            let scale_is_default = (scale - 1.0).abs() < 1e-6;
+            if !scale_is_default {
+                stream.save(b"XSCL")?;
+                stream.save(&4u32)?;
+                stream.save(&scale)?;
+            }
+        }
         // NPCO
         for value in &self.inventory {
             stream.save(b"NPCO")?;

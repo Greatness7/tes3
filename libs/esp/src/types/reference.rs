@@ -126,10 +126,12 @@ impl Save for Reference {
         }
         // XSCL
         if let Some(value) = &self.scale {
-            if (value - 1.0).abs() > 1e-6 {
+            let scale = value.clamp(0.5, 2.0);
+            let scale_is_default = (scale - 1.0).abs() < 1e-6;
+            if !scale_is_default || (self.mast_index != 0) {
                 stream.save(b"XSCL")?;
                 stream.save(&4u32)?;
-                stream.save(value)?;
+                stream.save(&scale)?;
             }
         }
         // ANAM

@@ -19,7 +19,7 @@ pub struct Reference {
     pub owner_faction_rank: Option<u32>,
     pub charge_left: Option<u32>,
     pub health_left: Option<i32>,
-    pub stack_size: Option<u32>,
+    pub object_count: Option<u32>,
     pub door_destination_coords: Option<[f32; 6]>,
     pub door_destination_cell: Option<String>,
     pub lock_level: Option<u32>,
@@ -72,7 +72,7 @@ impl Load for Reference {
                 }
                 b"NAM9" => {
                     stream.expect(4u32)?;
-                    this.stack_size = Some(stream.load()?);
+                    this.object_count = Some(stream.load()?);
                 }
                 b"DODT" => {
                     stream.expect(24u32)?;
@@ -171,10 +171,9 @@ impl Save for Reference {
             stream.save(value)?;
         }
         // NAM9
-        if let Some(value) = &self.stack_size {
-            // if the reference is local (it's not from a master file)
-            // then we can skip serializing this when stack_size is 1
-            if !(*value == 1 && self.mast_index == 0) {
+        if let Some(value) = &self.object_count {
+            let object_count_is_default = *value == 1;
+            if !object_count_is_default || (self.mast_index != 0) {
                 stream.save(b"NAM9")?;
                 stream.save(&4u32)?;
                 stream.save(value)?;

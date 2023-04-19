@@ -87,28 +87,28 @@ macro_rules! impl_load {
             impl Load for $T {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let mut this = Self::zeroed();
-                    stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    stream.read_exact(bytes_of_mut(&mut this))?;
                     Ok(this)
                 }
             }
             impl<const N: usize> Load for [$T; N] {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let mut this = Self::zeroed();
-                    stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    stream.read_exact(bytes_of_mut(&mut this))?;
                     Ok(this)
                 }
             }
             impl<const M: usize, const N: usize> Load for [[$T; M]; N] {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let mut this = Self::zeroed();
-                    stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    stream.read_exact(bytes_of_mut(&mut this))?;
                     Ok(this)
                 }
             }
             impl<const M: usize, const N: usize, const O: usize> Load for [[[$T; M]; N]; O] {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let mut this = Self::zeroed();
-                    stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+                    stream.read_exact(bytes_of_mut(&mut this))?;
                     Ok(this)
                 }
             }
@@ -118,7 +118,7 @@ macro_rules! impl_load {
                     use bytemuck::{cast_slice_mut, zeroed_vec};
                     let len = stream.load_as::<u32, _>()?;
                     let mut this = zeroed_vec(len);
-                    stream.cursor.read_exact(cast_slice_mut(&mut this))?;
+                    stream.read_exact(cast_slice_mut(&mut this))?;
                     Ok(this)
                 }
             }
@@ -155,7 +155,7 @@ const _: () = {
     {
         fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
             let mut this = Self::zeroed();
-            stream.cursor.read_exact(bytes_of_mut(&mut this))?;
+            stream.read_exact(bytes_of_mut(&mut this))?;
             Ok(this)
         }
     }

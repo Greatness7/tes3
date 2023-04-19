@@ -21,7 +21,7 @@ impl Save for String {
 impl Save for BString {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save_as::<_, u32>(self.len())?;
-        stream.cursor.write_all(self.as_slice())
+        stream.write_all(self.as_slice())
     }
 }
 
@@ -95,22 +95,22 @@ macro_rules! impl_save {
         $(
             impl Save for $T {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.cursor.write_all(bytes_of(self))
+                    stream.write_all(bytes_of(self))
                 }
             }
             impl<const N: usize> Save for [$T; N] {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.cursor.write_all(bytes_of(self))
+                    stream.write_all(bytes_of(self))
                 }
             }
             impl<const M: usize, const N: usize> Save for [[$T; M]; N] {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.cursor.write_all(bytes_of(self))
+                    stream.write_all(bytes_of(self))
                 }
             }
             impl<const M: usize, const N: usize, const O: usize> Save for [[[$T; M]; N]; O] {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.cursor.write_all(bytes_of(self))
+                    stream.write_all(bytes_of(self))
                 }
             }
             #[cfg(feature = "nightly")]
@@ -118,7 +118,7 @@ macro_rules! impl_save {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
                     use bytemuck::cast_slice;
                     stream.save_as::<_, u32>(self.len())?;
-                    stream.cursor.write_all(cast_slice(self))
+                    stream.write_all(cast_slice(self))
                 }
             }
         )*
@@ -140,7 +140,7 @@ const _: () = {
         DefaultAllocator: Allocator<S, R, C>,
     {
         fn save(&self, stream: &mut Writer) -> io::Result<()> {
-            stream.cursor.write_all(bytes_of(self))?;
+            stream.write_all(bytes_of(self))?;
             Ok(())
         }
     }

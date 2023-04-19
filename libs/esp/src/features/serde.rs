@@ -1,8 +1,7 @@
-// base64 bytes (with optional zstd compression)
 pub mod base64_bytes {
     use crate::prelude::*;
 
-    const BASE64: base64_simd::Base64 = base64_simd::STANDARD_NO_PAD;
+    const BASE64: base64_simd::Base64 = base64_simd::STANDARD;
 
     pub fn serialize<T, S>(data: &T, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -56,7 +55,6 @@ pub mod base64_bytes {
     }
 }
 
-// special handling for cell references list
 pub mod cell_references {
     use crate::prelude::*;
 

@@ -31,7 +31,7 @@ impl Save for NiMorphData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save_as::<_, u32>(self.targets.len())?;
-        stream.save_as::<_, u32>(self.targets.get(0).map_or(0, |t| t.vertices.ncols()))?;
+        stream.save_as::<_, u32>(self.targets.first().map_or(0, |target| target.vertices.ncols()))?;
         stream.save_as::<_, u8>(self.relative_targets)?;
         for target in &self.targets {
             stream.save(target)?;

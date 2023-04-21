@@ -23,7 +23,7 @@ impl Save for NiVisData {
     }
 }
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiVisKey {
     pub time: f32,
     pub value: u8,

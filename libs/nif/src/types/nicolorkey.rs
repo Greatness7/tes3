@@ -4,7 +4,7 @@ use derive_more::From;
 // internal imports
 use crate::prelude::*;
 
-#[derive(Clone, Debug, From, PartialEq, SmartDefault)]
+#[derive(Meta, Clone, Debug, From, PartialEq, SmartDefault)]
 pub enum NiColorKey {
     #[default]
     LinKey(Vec<NiLinColKey>),

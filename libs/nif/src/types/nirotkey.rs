@@ -4,7 +4,7 @@ use derive_more::From;
 // internal imports
 use crate::prelude::*;
 
-#[derive(Clone, Debug, From, PartialEq, SmartDefault)]
+#[derive(Meta, Clone, Debug, From, PartialEq, SmartDefault)]
 pub enum NiRotKey {
     #[default]
     LinKey(Vec<NiLinRotKey>),
@@ -64,7 +64,7 @@ impl Save for NiRotKey {
     }
 }
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct EulerRotKey {
     pub axis_order: AxisOrder,
     pub axes: [NiFloatData; 3],

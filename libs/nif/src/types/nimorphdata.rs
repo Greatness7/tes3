@@ -58,7 +58,7 @@ impl MorphTarget {
             KeyType::LinKey | KeyType::NoInterp => LinFloatKeys::load(stream, num_keys)?.into(),
             KeyType::BezKey => BezFloatKeys::load(stream, num_keys)?.into(),
             KeyType::TCBKey => TCBFloatKeys::load(stream, num_keys)?.into(),
-            KeyType::EulerKey => panic!("MorphTarget does not support {key_type:?}"),
+            _ => Reader::error(format!("NiMorphData does not support {key_type:?}"))?,
         };
         let vertices = stream.load_matrix(3, num_vertices)?;
         Ok(Self { base, keys, vertices })

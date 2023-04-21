@@ -33,7 +33,7 @@ impl Load for NiBoundingVolume {
             BoundType::Box => BoundData::NiBoxBV(stream.load()?),
             BoundType::Sphere => BoundData::NiSphereBV(stream.load()?),
             BoundType::Union => BoundData::NiUnionBV(stream.load()?),
-            _ => panic!("invalid bound type"),
+            _ => Reader::error(format!("Invalid BoundType: {bound_type:?}"))?,
         };
         Ok(Self { base, bound_data })
     }

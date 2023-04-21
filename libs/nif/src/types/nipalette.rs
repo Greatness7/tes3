@@ -25,8 +25,8 @@ impl Load for NiPalette {
 impl Save for NiPalette {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u8>(self.has_alpha)?;
-        stream.save_as::<_, u32>(self.palettes.len())?;
+        stream.save_as::<u8>(self.has_alpha)?;
+        stream.save_as::<u32>(self.palettes.len())?;
         stream.save_vec(&self.palettes)?;
         Ok(())
     }

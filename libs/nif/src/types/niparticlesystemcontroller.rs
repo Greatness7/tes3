@@ -127,12 +127,12 @@ impl Save for NiParticleSystemController {
         stream.save(&self.initial_size)?;
         stream.save(&self.emit_start_time)?;
         stream.save(&self.emit_stop_time)?;
-        stream.save_as::<_, u8>(self.reset_particle_system)?;
+        stream.save_as::<u8>(self.reset_particle_system)?;
         stream.save(&self.birth_rate)?;
         stream.save(&self.lifespan)?;
         stream.save(&self.lifespan_variation)?;
-        stream.save_as::<_, u8>(self.use_birth_rate)?;
-        stream.save_as::<_, u8>(self.spawn_on_death)?;
+        stream.save_as::<u8>(self.use_birth_rate)?;
+        stream.save_as::<u8>(self.spawn_on_death)?;
         stream.save(&self.emitter_width)?;
         stream.save(&self.emitter_height)?;
         stream.save(&self.emitter_depth)?;
@@ -142,13 +142,13 @@ impl Save for NiParticleSystemController {
         stream.save(&self.spawn_multiplier)?;
         stream.save(&self.spawned_speed_chaos)?;
         stream.save(&self.spawned_direction_chaos)?;
-        stream.save_as::<_, u16>(self.particles.len())?;
+        stream.save_as::<u16>(self.particles.len())?;
         stream.save_seq(&self.particles)?;
         stream.save(&self.num_active_particles)?;
         stream.save(&self.emitter_modifier)?;
         stream.save(&self.particle_modifier)?;
         stream.save(&self.particle_collider)?;
-        stream.save_as::<_, u8>(self.compute_dynamic_bounding_volume)?;
+        stream.save_as::<u8>(self.compute_dynamic_bounding_volume)?;
         Ok(())
     }
 }

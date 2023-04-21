@@ -35,7 +35,7 @@ impl Save for NiParticlesData {
         stream.save(&self.num_particles)?;
         stream.save(&self.particle_radius)?;
         stream.save(&self.num_active)?;
-        stream.save_as::<_, u32>(!self.sizes.is_empty())?;
+        stream.save_as::<u32>(!self.sizes.is_empty())?;
         stream.save_vec(&self.sizes)?;
         Ok(())
     }

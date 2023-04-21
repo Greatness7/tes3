@@ -72,7 +72,7 @@ impl Save for NiRotKey {
             I: IntoIterator<Item = &'a S>,
             S: Save + 'a,
         {
-            stream.save_as::<_, u32>(len)?;
+            stream.save_as::<u32>(len)?;
             if len != 0 {
                 stream.save(&key_type)?;
                 stream.save_seq(keys)?;

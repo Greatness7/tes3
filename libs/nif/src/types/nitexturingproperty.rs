@@ -39,9 +39,9 @@ impl Save for NiTexturingProperty {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save(&self.apply_mode)?;
-        stream.save_as::<_, u32>(self.texture_maps.len())?;
+        stream.save_as::<u32>(self.texture_maps.len())?;
         for slot in &self.texture_maps {
-            stream.save_as::<_, u32>(slot.is_some())?;
+            stream.save_as::<u32>(slot.is_some())?;
             match &slot {
                 None => continue,
                 Some(TextureMap::Map(map)) => stream.save(map)?,
@@ -104,7 +104,7 @@ impl Save for Map {
         stream.save(&self.texture)?;
         stream.save(&self.clamp_mode)?;
         stream.save(&self.filter_mode)?;
-        stream.save_as::<_, u32>(self.texture_index)?;
+        stream.save_as::<u32>(self.texture_index)?;
         stream.save(&self.ps2_l)?;
         stream.save(&self.ps2_k)?;
         stream.save(&self.unknown_flag1)?;

@@ -30,7 +30,7 @@ impl Save for NiTriStripsData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save(&self.num_triangles)?;
-        stream.save_as::<_, u16>(self.strip_lengths.len())?;
+        stream.save_as::<u16>(self.strip_lengths.len())?;
         stream.save_vec(&self.strip_lengths)?;
         stream.save_vec(&self.strips)?;
         Ok(())

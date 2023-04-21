@@ -78,7 +78,7 @@ impl Save for PathGrid {
         // PGRP
         if !self.points.is_empty() {
             stream.save(b"PGRP")?;
-            stream.save_as::<_, u32>(self.points.len() * 16)?;
+            stream.save_as::<u32>(self.points.len() * 16)?;
             for value in &self.points {
                 stream.save(value)?;
             }
@@ -86,7 +86,7 @@ impl Save for PathGrid {
         // PGRC
         if !self.connections.is_empty() {
             stream.save(b"PGRC")?;
-            stream.save_as::<_, u32>(self.connections.len() * 4)?;
+            stream.save_as::<u32>(self.connections.len() * 4)?;
             for value in &self.connections {
                 stream.save(value)?;
             }

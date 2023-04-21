@@ -59,7 +59,7 @@ impl Save for NiPosKey {
             NiPosKey::BezKey(keys) => (keys.len(), KeyType::BezKey, cast_slice(keys)),
             NiPosKey::TCBKey(keys) => (keys.len(), KeyType::TCBKey, cast_slice(keys)),
         };
-        stream.save_as::<_, u32>(len)?;
+        stream.save_as::<u32>(len)?;
         if !bytes.is_empty() {
             stream.save(&key_type)?;
             stream.save_bytes(bytes)?;

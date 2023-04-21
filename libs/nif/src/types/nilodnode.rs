@@ -26,7 +26,7 @@ impl Save for NiLODNode {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save(&self.lod_center)?;
-        stream.save_as::<_, u32>(self.lod_levels.len())?;
+        stream.save_as::<u32>(self.lod_levels.len())?;
         stream.save_vec(&self.lod_levels)?;
         Ok(())
     }

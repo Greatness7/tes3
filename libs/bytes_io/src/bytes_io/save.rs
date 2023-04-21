@@ -20,7 +20,7 @@ impl Save for String {
 
 impl Save for BString {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save_as::<_, u32>(self.len())?;
+        stream.save_as::<u32>(self.len())?;
         stream.write_all(self.as_slice())
     }
 }
@@ -34,7 +34,7 @@ impl<S: Save> Save for Box<S> {
 #[cfg(not(feature = "nightly"))]
 impl<S: Save> Save for Vec<S> {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save_as::<_, u32>(self.len())?;
+        stream.save_as::<u32>(self.len())?;
         for item in self {
             stream.save(item)?;
         }
@@ -45,7 +45,7 @@ impl<S: Save> Save for Vec<S> {
 #[cfg(feature = "nightly")]
 impl<S: Save> Save for Vec<S> {
     default fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save_as::<_, u32>(self.len())?;
+        stream.save_as::<u32>(self.len())?;
         for item in self {
             stream.save(item)?;
         }
@@ -117,7 +117,7 @@ macro_rules! impl_save {
             impl Save for Vec<$T> {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
                     use bytemuck::cast_slice;
-                    stream.save_as::<_, u32>(self.len())?;
+                    stream.save_as::<u32>(self.len())?;
                     stream.write_all(cast_slice(self))
                 }
             }

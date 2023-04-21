@@ -318,7 +318,7 @@ impl Load for Filter {
 impl Save for Filter {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         let id = stream.encode(&self.id)?;
-        stream.save_as::<_, u32>(id.len() + 5)?;
+        stream.save_as::<u32>(id.len() + 5)?;
         stream.save(&self.slot)?;
         stream.save(&self.kind)?;
         stream.save(&self.function)?;

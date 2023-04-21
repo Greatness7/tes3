@@ -187,7 +187,7 @@ impl Save for Cell {
                 num_temp_refs = self.references.len() - i;
                 stream.save(b"NAM0")?;
                 stream.save(&4u32)?;
-                stream.save_as::<_, u32>(num_temp_refs)?;
+                stream.save_as::<u32>(num_temp_refs)?;
             }
             // MVRF
             if let Some(value) = &reference.moved_cell {

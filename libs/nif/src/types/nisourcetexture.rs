@@ -38,7 +38,7 @@ impl Save for NiSourceTexture {
         stream.save(&self.pixel_layout)?;
         stream.save(&self.use_mipmaps)?;
         stream.save(&self.alpha_format)?;
-        stream.save_as::<_, u8>(self.is_static)?;
+        stream.save_as::<u8>(self.is_static)?;
         Ok(())
     }
 }

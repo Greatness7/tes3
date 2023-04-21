@@ -43,7 +43,7 @@ impl Load for NiStencilProperty {
 impl Save for NiStencilProperty {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u8>(self.stencil_enabled)?;
+        stream.save_as::<u8>(self.stencil_enabled)?;
         stream.save(&self.stencil_function)?;
         stream.save(&self.stencil_ref)?;
         stream.save(&self.stencil_mask)?;

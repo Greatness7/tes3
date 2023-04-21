@@ -75,7 +75,7 @@ impl Save for LeveledItem {
         if !self.items.is_empty() {
             stream.save(b"INDX")?;
             stream.save(&4u32)?;
-            stream.save_as::<_, u32>(self.items.len())?;
+            stream.save_as::<u32>(self.items.len())?;
             //
             for (item, level) in &self.items {
                 // INAM

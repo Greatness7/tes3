@@ -19,7 +19,7 @@ impl Load for NiDynamicEffect {
 impl Save for NiDynamicEffect {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u32>(self.affected_nodes.len())?;
+        stream.save_as::<u32>(self.affected_nodes.len())?;
         stream.save_vec(&self.affected_nodes)?;
         Ok(())
     }

@@ -10,7 +10,43 @@ pub enum NiRotKey {
     LinKey(Vec<NiLinRotKey>),
     BezKey(Vec<NiBezRotKey>),
     TCBKey(Vec<NiTCBRotKey>),
-    EulerKey(EulerRotKey),
+    EulerKey(NiEulerRotKeys),
+}
+
+#[derive(Meta, LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
+pub struct NiLinColKey {
+    time: f32,
+    value: ColorA,
+}
+
+#[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+pub struct NiLinRotKey {
+    time: f32,
+    #[default(QUAT_IDENTITY)]
+    value: Quat,
+}
+
+#[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+pub struct NiBezRotKey {
+    time: f32,
+    #[default(QUAT_IDENTITY)]
+    value: Quat,
+}
+
+#[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+pub struct NiTCBRotKey {
+    time: f32,
+    #[default(QUAT_IDENTITY)]
+    value: Quat,
+    t: f32,
+    c: f32,
+    b: f32,
+}
+
+#[derive(Meta, Clone, Debug, Default, PartialEq)]
+pub struct NiEulerRotKeys {
+    pub axis_order: AxisOrder,
+    pub axes: [NiFloatData; 3],
 }
 
 impl Load for NiRotKey {
@@ -29,58 +65,45 @@ impl Load for NiRotKey {
 
 impl Save for NiRotKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
+        /// Helper function to reduce code duplication in the match statement below.
+        #[inline]
+        fn _save<'a, I, S>(stream: &mut Writer, len: usize, key_type: KeyType, keys: I) -> io::Result<()>
+        where
+            I: IntoIterator<Item = &'a S>,
+            S: Save + 'a,
+        {
+            stream.save_as::<_, u32>(len)?;
+            if len != 0 {
+                stream.save(&key_type)?;
+                stream.save_seq(keys)?;
+            }
+            Ok(())
+        }
         match self {
-            NiRotKey::LinKey(keys) => {
-                stream.save_as::<_, u32>(keys.len())?;
-                if !keys.is_empty() {
-                    stream.save(&KeyType::LinKey)?;
-                    stream.save_seq(keys)?;
-                }
-            }
-            NiRotKey::BezKey(keys) => {
-                stream.save_as::<_, u32>(keys.len())?;
-                if !keys.is_empty() {
-                    stream.save(&KeyType::BezKey)?;
-                    stream.save_seq(keys)?;
-                }
-            }
-            NiRotKey::TCBKey(keys) => {
-                stream.save_as::<_, u32>(keys.len())?;
-                if !keys.is_empty() {
-                    stream.save(&KeyType::TCBKey)?;
-                    stream.save_seq(keys)?;
-                }
-            }
-            NiRotKey::EulerKey(keys) => {
-                let is_empty = keys.is_empty();
-                stream.save_as::<_, u32>(!is_empty)?;
-                if !is_empty {
-                    stream.save(&KeyType::EulerKey)?;
-                    stream.save(keys)?;
-                }
-            }
-        };
-        Ok(())
+            NiRotKey::LinKey(keys) => _save(stream, keys.len(), KeyType::LinKey, keys),
+            NiRotKey::BezKey(keys) => _save(stream, keys.len(), KeyType::BezKey, keys),
+            NiRotKey::TCBKey(keys) => _save(stream, keys.len(), KeyType::TCBKey, keys),
+            NiRotKey::EulerKey(keys) => _save(stream, keys.len(), KeyType::EulerKey, [keys]),
+        }
     }
 }
 
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
-pub struct EulerRotKey {
-    pub axis_order: AxisOrder,
-    pub axes: [NiFloatData; 3],
-}
-
-impl EulerRotKey {
-    pub fn is_empty(&self) -> bool {
-        self.axes.iter().all(|axis| match &axis.keys {
-            NiFloatKey::LinKey(keys) => keys.is_empty(),
-            NiFloatKey::BezKey(keys) => keys.is_empty(),
-            NiFloatKey::TCBKey(keys) => keys.is_empty(),
-        })
+impl NiEulerRotKeys {
+    #[allow(clippy::len_without_is_empty)]
+    pub fn len(&self) -> usize {
+        self.axes
+            .iter()
+            .map(|axis| match &axis.keys {
+                NiFloatKey::LinKey(keys) => keys.len(),
+                NiFloatKey::BezKey(keys) => keys.len(),
+                NiFloatKey::TCBKey(keys) => keys.len(),
+            })
+            .max()
+            .unwrap_or(0)
     }
 }
 
-impl Load for EulerRotKey {
+impl Load for NiEulerRotKeys {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let axis_order = stream.load()?;
         let axes = [stream.load()?, stream.load()?, stream.load()?];
@@ -88,7 +111,7 @@ impl Load for EulerRotKey {
     }
 }
 
-impl Save for EulerRotKey {
+impl Save for NiEulerRotKeys {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.axis_order)?;
         stream.save_seq(&self.axes)?;

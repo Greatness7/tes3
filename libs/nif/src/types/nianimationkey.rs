@@ -4,14 +4,14 @@ use bytemuck::{Pod, Zeroable};
 // internal imports
 use crate::prelude::*;
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiLinFloatKey {
     time: f32,
     value: f32,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiBezFloatKey {
     time: f32,
@@ -20,7 +20,7 @@ pub struct NiBezFloatKey {
     out_an: f32,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiTCBFloatKey {
     time: f32,
@@ -30,14 +30,14 @@ pub struct NiTCBFloatKey {
     b: f32,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiLinPosKey {
     time: f32,
     value: Vec3,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiBezPosKey {
     time: f32,
@@ -46,7 +46,7 @@ pub struct NiBezPosKey {
     out_an: Vec3,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiTCBPosKey {
     time: f32,
@@ -56,27 +56,27 @@ pub struct NiTCBPosKey {
     b: f32,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
+#[derive(Meta, LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
 pub struct NiLinColKey {
     time: f32,
     value: ColorA,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+#[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiLinRotKey {
     time: f32,
     #[default(QUAT_IDENTITY)]
     value: Quat,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+#[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiBezRotKey {
     time: f32,
     #[default(QUAT_IDENTITY)]
     value: Quat,
 }
 
-#[derive(LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+#[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiTCBRotKey {
     time: f32,
     #[default(QUAT_IDENTITY)]

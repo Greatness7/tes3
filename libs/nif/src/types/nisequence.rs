@@ -40,7 +40,7 @@ impl Save for NiSequence {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, SmartDefault)]
+#[derive(Meta, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub enum SequenceTarget {
     #[default]
     External(String),

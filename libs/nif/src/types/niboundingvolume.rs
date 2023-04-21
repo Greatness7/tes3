@@ -7,7 +7,7 @@ pub struct NiBoundingVolume {
     pub bound_data: BoundData,
 }
 
-#[derive(Clone, Debug, PartialEq, SmartDefault)]
+#[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub enum BoundData {
     #[default]
     NiBoxBV(NiBoxBV),

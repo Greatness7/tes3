@@ -23,7 +23,7 @@ impl Save for NiTextKeyExtraData {
     }
 }
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiTextKey {
     pub time: f32,
     pub value: String,

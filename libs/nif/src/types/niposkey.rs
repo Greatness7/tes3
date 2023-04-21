@@ -13,6 +13,32 @@ pub enum NiPosKey {
     TCBKey(Vec<NiTCBPosKey>),
 }
 
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiLinPosKey {
+    time: f32,
+    value: Vec3,
+}
+
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiBezPosKey {
+    time: f32,
+    value: Vec3,
+    in_tan: Vec3,
+    out_an: Vec3,
+}
+
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiTCBPosKey {
+    time: f32,
+    value: Vec3,
+    t: f32,
+    c: f32,
+    b: f32,
+}
+
 impl Load for NiPosKey {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let num_keys = stream.load_as::<u32, _>()?;

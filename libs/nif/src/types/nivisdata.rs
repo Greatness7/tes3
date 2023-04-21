@@ -7,10 +7,17 @@ pub struct NiVisData {
     pub keys: Vec<NiVisKey>,
 }
 
+#[derive(Meta, LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
+pub struct NiVisKey {
+    pub time: f32,
+    pub value: u8,
+}
+
 impl Load for NiVisData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let keys = stream.load()?;
+        let num_keys = stream.load_as::<u32, _>()?;
+        let keys = stream.load_seq(num_keys)?;
         Ok(Self { base, keys })
     }
 }
@@ -18,29 +25,8 @@ impl Load for NiVisData {
 impl Save for NiVisData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save(&self.keys)?;
-        Ok(())
-    }
-}
-
-#[derive(Meta, Clone, Debug, Default, PartialEq)]
-pub struct NiVisKey {
-    pub time: f32,
-    pub value: u8,
-}
-
-impl Load for NiVisKey {
-    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let time = stream.load()?;
-        let value = stream.load()?;
-        Ok(Self { time, value })
-    }
-}
-
-impl Save for NiVisKey {
-    fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.time)?;
-        stream.save(&self.value)?;
+        stream.save_as::<_, u32>(self.keys.len())?;
+        stream.save_seq(&self.keys)?;
         Ok(())
     }
 }

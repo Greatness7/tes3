@@ -13,6 +13,32 @@ pub enum NiFloatKey {
     TCBKey(Vec<NiTCBFloatKey>),
 }
 
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiLinFloatKey {
+    time: f32,
+    value: f32,
+}
+
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiBezFloatKey {
+    time: f32,
+    value: f32,
+    in_tan: f32,
+    out_an: f32,
+}
+
+#[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiTCBFloatKey {
+    time: f32,
+    value: f32,
+    t: f32,
+    c: f32,
+    b: f32,
+}
+
 impl Load for NiFloatKey {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let num_keys = stream.load_as::<u32, _>()?;

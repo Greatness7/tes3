@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use std::io::{self, Write};
 
 // external imports
+use bytemuck::{cast_slice, Pod};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use hashbrown::HashMap;
 use memchr::memchr;
@@ -53,6 +54,24 @@ impl Writer {
 
     pub fn save_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
         self.write_all(bytes)
+    }
+
+    pub fn save_vec<P>(&mut self, value: &[P]) -> io::Result<()>
+    where
+        P: Pod,
+    {
+        self.write_all(cast_slice(value))
+    }
+
+    pub fn save_seq<'a, I, S>(&mut self, values: I) -> io::Result<()>
+    where
+        I: IntoIterator<Item = &'a S>,
+        S: Save + 'a,
+    {
+        for item in values {
+            item.save(self)?;
+        }
+        Ok(())
     }
 
     pub fn save_string(&mut self, value: &str) -> io::Result<()> {
@@ -123,7 +142,6 @@ impl Write for Writer {
 
 #[cfg(feature = "nalgebra")]
 const _: () = {
-    use bytemuck::{cast_slice, Pod};
     use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
 
     impl Writer {

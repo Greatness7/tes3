@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use std::io::{self, Read};
 
 // external imports
+use bytemuck::{cast_slice_mut, zeroed_vec, Pod};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use memchr::memchr;
 use smart_default::SmartDefault;
@@ -52,6 +53,23 @@ impl<'a> Reader<'a> {
         let mut bytes = vec![0; len];
         self.cursor.read_exact(&mut bytes)?;
         Ok(bytes)
+    }
+
+    pub fn load_vec<P>(&mut self, len: usize) -> io::Result<Vec<P>>
+    where
+        P: Pod,
+    {
+        let mut this = zeroed_vec(len);
+        self.read_exact(cast_slice_mut(&mut this))?;
+        Ok(this)
+    }
+
+    pub fn load_seq<T, L>(&mut self, len: usize) -> io::Result<T>
+    where
+        T: FromIterator<L>,
+        L: Load,
+    {
+        (0..len).map(|_| self.load()).collect()
     }
 
     pub fn load_string<T>(&mut self, len: usize) -> io::Result<T>
@@ -112,7 +130,6 @@ impl Read for Reader<'_> {
 
 #[cfg(feature = "nalgebra")]
 const _: () = {
-    use bytemuck::{cast_slice_mut, Pod};
     use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
 
     impl Reader<'_> {

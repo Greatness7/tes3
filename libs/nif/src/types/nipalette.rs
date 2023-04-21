@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::{Dyn, OMatrix, U4};
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,8 +5,7 @@ use crate::prelude::*;
 pub struct NiPalette {
     pub base: NiObject,
     pub has_alpha: bool,
-    #[default(Empty::empty())]
-    pub palettes: OMatrix<u8, U4, Dyn>,
+    pub palettes: Vec<[u8; 4]>, // [r, g, b, a]
 }
 
 impl Load for NiPalette {
@@ -17,7 +13,7 @@ impl Load for NiPalette {
         let base = stream.load()?;
         let has_alpha = stream.load::<u8>()? != 0;
         let num_palettes = stream.load_as::<u32, _>()?;
-        let palettes = stream.load_matrix(4, num_palettes)?;
+        let palettes = stream.load_vec(num_palettes)?;
         Ok(Self {
             base,
             has_alpha,
@@ -30,8 +26,8 @@ impl Save for NiPalette {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save_as::<_, u8>(self.has_alpha)?;
-        stream.save_as::<_, u32>(self.palettes.ncols())?;
-        stream.save_matrix(&self.palettes)?;
+        stream.save_as::<_, u32>(self.palettes.len())?;
+        stream.save_vec(&self.palettes)?;
         Ok(())
     }
 }

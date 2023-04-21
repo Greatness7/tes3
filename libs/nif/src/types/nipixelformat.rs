@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::SVector;
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,9 +5,9 @@ use crate::prelude::*;
 pub struct NiPixelFormat {
     pub base: NiObject,
     pub pixel_format: PixelFormat,
-    pub color_masks: SVector<u32, 4>,
+    pub color_masks: [u32; 4],
     pub bits_per_pixel: u32,
-    pub old_fast_compare: SVector<u8, 8>,
+    pub compare_bits: [u8; 8],
 }
 
 impl Load for NiPixelFormat {
@@ -19,13 +16,13 @@ impl Load for NiPixelFormat {
         let pixel_format = stream.load()?;
         let color_masks = stream.load()?;
         let bits_per_pixel = stream.load()?;
-        let old_fast_compare = stream.load()?;
+        let compare_bits = stream.load()?;
         Ok(Self {
             base,
             pixel_format,
             color_masks,
             bits_per_pixel,
-            old_fast_compare,
+            compare_bits,
         })
     }
 }
@@ -36,7 +33,7 @@ impl Save for NiPixelFormat {
         stream.save(&self.pixel_format)?;
         stream.save(&self.color_masks)?;
         stream.save(&self.bits_per_pixel)?;
-        stream.save(&self.old_fast_compare)?;
+        stream.save(&self.compare_bits)?;
         Ok(())
     }
 }

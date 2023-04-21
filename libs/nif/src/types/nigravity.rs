@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -10,8 +7,8 @@ pub struct NiGravity {
     pub decay: f32,
     pub strength: f32,
     pub force_type: ForceType,
-    pub position: Vector3<f32>,
-    pub direction: Vector3<f32>,
+    pub position: Vec3,
+    pub direction: Vec3,
 }
 
 impl Load for NiGravity {

@@ -1,14 +1,11 @@
-// external imports
-use nalgebra::{Vector4, Vector6};
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiCamera {
     pub base: NiAVObject,
-    pub view_frustum: Vector6<f32>, // NiFrustum
-    pub view_port: Vector4<f32>,    // NiRect
+    pub view_frustum: [f32; 6], // NiFrustum
+    pub view_port: [f32; 4],    // NiRect
     pub lod_adjust: f32,
     pub scene: NiLink<NiNode>,
     pub screen_polygons: Vec<NiLink<NiScreenPolygon>>,

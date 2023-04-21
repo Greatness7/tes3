@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::{dvector, Dyn, OVector};
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,10 +5,8 @@ use crate::prelude::*;
 pub struct NiTriStripsData {
     pub base: NiTriBasedGeomData,
     pub num_triangles: u16,
-    #[default(dvector![])]
-    pub strip_lengths: OVector<u16, Dyn>,
-    #[default(dvector![])]
-    pub strips: OVector<u16, Dyn>,
+    pub strip_lengths: Vec<u16>,
+    pub strips: Vec<u16>,
 }
 
 impl Load for NiTriStripsData {
@@ -19,9 +14,9 @@ impl Load for NiTriStripsData {
         let base = stream.load()?;
         let num_triangles = stream.load()?;
         let num_strip_lengths = stream.load_as::<u16, _>()?;
-        let strip_lengths = stream.load_matrix(num_strip_lengths, 1)?;
-        let strip_lengths_sum = OVector::sum(&strip_lengths) as usize;
-        let strips = stream.load_matrix(strip_lengths_sum, 1)?;
+        let strip_lengths: Vec<u16> = stream.load_vec(num_strip_lengths)?;
+        let strip_lengths_sum = strip_lengths.iter().map(|n| *n as usize).sum();
+        let strips = stream.load_vec(strip_lengths_sum)?;
         Ok(Self {
             base,
             num_triangles,
@@ -36,10 +31,8 @@ impl Save for NiTriStripsData {
         stream.save(&self.base)?;
         stream.save(&self.num_triangles)?;
         stream.save_as::<_, u16>(self.strip_lengths.len())?;
-        if !self.strip_lengths.is_empty() {
-            stream.save_matrix(&self.strip_lengths)?;
-            stream.save_matrix(&self.strips)?;
-        }
+        stream.save_vec(&self.strip_lengths)?;
+        stream.save_vec(&self.strips)?;
         Ok(())
     }
 }

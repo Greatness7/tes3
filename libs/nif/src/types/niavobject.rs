@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::{Matrix3, Vector3};
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,12 +5,12 @@ use crate::prelude::*;
 pub struct NiAVObject {
     pub base: NiObjectNET,
     pub flags: u16,
-    pub translation: Vector3<f32>,
-    #[default(Matrix3::identity())]
-    pub rotation: Matrix3<f32>,
+    pub translation: Vec3,
+    #[default(MAT3_IDENTITY)]
+    pub rotation: Mat3,
     #[default(1.0)]
     pub scale: f32,
-    pub velocity: Vector3<f32>,
+    pub velocity: Vec3,
     pub properties: Vec<NiLink<NiProperty>>,
     pub bounding_volume: Option<NiBoundingVolume>,
 }

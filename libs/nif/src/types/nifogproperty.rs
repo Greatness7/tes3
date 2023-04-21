@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,7 +5,7 @@ use crate::prelude::*;
 pub struct NiFogProperty {
     pub base: NiProperty,
     pub fog_depth: f32,
-    pub fog_color: Vector3<f32>,
+    pub fog_color: Vec3,
 }
 
 impl Load for NiFogProperty {

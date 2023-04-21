@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Matrix2;
-
 // internal imports
 use crate::prelude::*;
 
@@ -121,8 +118,8 @@ pub struct BumpMap {
     pub base: Map,
     pub luma_scale: f32,
     pub luma_offset: f32,
-    #[default(Matrix2::identity())]
-    pub displacement: Matrix2<f32>,
+    #[default(MAT2_IDENTITY)]
+    pub displacement: Mat2,
 }
 
 impl Load for BumpMap {

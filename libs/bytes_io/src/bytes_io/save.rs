@@ -125,23 +125,3 @@ macro_rules! impl_save {
     }
 }
 impl_save! { i8 u8 i16 u16 f32 i32 u32 f64 i64 u64 }
-
-#[cfg(feature = "nalgebra")]
-const _: () = {
-    use bytemuck::Pod;
-    use nalgebra::{allocator::Allocator, DefaultAllocator, DimName, OMatrix, Scalar};
-
-    impl<S, R, C> Save for OMatrix<S, R, C>
-    where
-        Self: Pod,
-        S: Scalar,
-        R: DimName,
-        C: DimName,
-        DefaultAllocator: Allocator<S, R, C>,
-    {
-        fn save(&self, stream: &mut Writer) -> io::Result<()> {
-            stream.write_all(bytes_of(self))?;
-            Ok(())
-        }
-    }
-};

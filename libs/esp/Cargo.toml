@@ -9,7 +9,7 @@ license.workspace = true
 [dependencies]
 bitflags = { version = "^2.1" }
 bstr = { version = "^1.4", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.13", features = ["derive", "extern_crate_alloc", "min_const_generics"] }
+bytemuck = { version = "^1.13", features = ["derive"] }
 bytes_io = { path = "../bytes_io" }
 cow-utils = "^0.1"
 derive_more = "^0.99"
@@ -25,7 +25,6 @@ zstd = { version = "^0.12", optional = true }
 
 [dev-dependencies]
 tempfile = "^3.5"
-test-case = "^3.1"
 serde_json = "^1.0"
 
 [features]

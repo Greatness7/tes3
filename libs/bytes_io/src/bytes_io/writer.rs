@@ -139,20 +139,3 @@ impl Write for Writer {
         self.cursor.flush()
     }
 }
-
-#[cfg(feature = "nalgebra")]
-const _: () = {
-    use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, Scalar};
-
-    impl Writer {
-        pub fn save_matrix<S, R, C>(&mut self, matrix: &OMatrix<S, R, C>) -> io::Result<()>
-        where
-            S: Scalar + Pod,
-            R: Dim,
-            C: Dim,
-            DefaultAllocator: Allocator<S, R, C>,
-        {
-            self.save_bytes(cast_slice(matrix.as_slice()))
-        }
-    }
-};

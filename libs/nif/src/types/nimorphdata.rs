@@ -1,5 +1,5 @@
 // external imports
-use nalgebra::{Dyn, OMatrix, U3};
+use bytemuck::cast_slice;
 
 // internal imports
 use crate::prelude::*;
@@ -31,11 +31,9 @@ impl Save for NiMorphData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save_as::<_, u32>(self.targets.len())?;
-        stream.save_as::<_, u32>(self.targets.first().map_or(0, |target| target.vertices.ncols()))?;
+        stream.save_as::<_, u32>(self.targets.first().map_or(0, |target| target.vertices.len()))?;
         stream.save_as::<_, u8>(self.relative_targets)?;
-        for target in &self.targets {
-            stream.save(target)?;
-        }
+        stream.save_seq(&self.targets)?;
         Ok(())
     }
 }
@@ -44,48 +42,40 @@ impl Save for NiMorphData {
 pub struct MorphTarget {
     pub base: NiObject,
     pub keys: NiFloatKey,
-    #[default(Empty::empty())]
-    pub vertices: OMatrix<f32, U3, Dyn>,
+    pub vertices: Vec<Vec3>,
 }
 
 impl MorphTarget {
+    #[allow(clippy::match_same_arms)]
     pub(crate) fn load(stream: &mut Reader<'_>, num_vertices: usize) -> io::Result<Self> {
         let base = stream.load()?;
         let num_keys = stream.load_as::<u32, _>()?;
         let key_type = stream.load()?;
         let keys = match key_type {
-            // `NoInterp` still uses linear key sizes, see: base_anim_female.1st.nif
-            KeyType::LinKey | KeyType::NoInterp => LinFloatKeys::load(stream, num_keys)?.into(),
-            KeyType::BezKey => BezFloatKeys::load(stream, num_keys)?.into(),
-            KeyType::TCBKey => TCBFloatKeys::load(stream, num_keys)?.into(),
+            // `NoInterp` still uses linear key sizes (see: base_anim_female.1st.nif)
+            KeyType::NoInterp => NiFloatKey::LinKey(stream.load_vec(num_keys)?),
+            KeyType::LinKey => NiFloatKey::LinKey(stream.load_vec(num_keys)?),
+            KeyType::BezKey => NiFloatKey::BezKey(stream.load_vec(num_keys)?),
+            KeyType::TCBKey => NiFloatKey::TCBKey(stream.load_vec(num_keys)?),
             _ => Reader::error(format!("NiMorphData does not support {key_type:?}"))?,
         };
-        let vertices = stream.load_matrix(3, num_vertices)?;
+        let vertices = stream.load_vec(num_vertices)?;
         Ok(Self { base, keys, vertices })
     }
 }
 
 impl Save for MorphTarget {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.base)?;
-        match &self.keys {
-            NiFloatKey::LinKey(keys) => {
-                stream.save_as::<_, u32>(keys.ncols())?;
-                stream.save(&KeyType::LinKey)?;
-                stream.save_matrix(keys)?;
-            }
-            NiFloatKey::BezKey(keys) => {
-                stream.save_as::<_, u32>(keys.ncols())?;
-                stream.save(&KeyType::BezKey)?;
-                stream.save_matrix(keys)?;
-            }
-            NiFloatKey::TCBKey(keys) => {
-                stream.save_as::<_, u32>(keys.ncols())?;
-                stream.save(&KeyType::TCBKey)?;
-                stream.save_matrix(keys)?;
-            }
+        let (len, key_type, bytes) = match &self.keys {
+            NiFloatKey::LinKey(keys) => (keys.len(), KeyType::LinKey, cast_slice(keys)),
+            NiFloatKey::BezKey(keys) => (keys.len(), KeyType::BezKey, cast_slice(keys)),
+            NiFloatKey::TCBKey(keys) => (keys.len(), KeyType::TCBKey, cast_slice(keys)),
         };
-        stream.save_matrix(&self.vertices)?;
+        stream.save(&self.base)?;
+        stream.save_as::<_, u32>(len)?;
+        stream.save(&key_type)?;
+        stream.save_bytes(bytes)?;
+        stream.save_vec(&self.vertices)?;
         Ok(())
     }
 }

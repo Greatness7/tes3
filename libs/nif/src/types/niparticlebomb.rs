@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -13,8 +10,8 @@ pub struct NiParticleBomb {
     pub start_time: f32,
     pub decay_type: DecayType,
     pub symmetry_type: SymmetryType,
-    pub position: Vector3<f32>,
-    pub direction: Vector3<f32>,
+    pub position: Vec3,
+    pub direction: Vec3,
 }
 
 impl Load for NiParticleBomb {

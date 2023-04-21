@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::{Vector3, Vector4};
-
 // internal imports
 use crate::prelude::*;
 
@@ -14,8 +11,8 @@ pub struct NiParticleSystemController {
     pub declination_variation: f32,
     pub planar_angle: f32,
     pub planar_angle_variation: f32,
-    pub initial_normal: Vector3<f32>,
-    pub initial_color: Vector4<f32>, // NiColorA
+    pub initial_normal: Vec3,
+    pub initial_color: ColorA,
     pub initial_size: f32,
     pub emit_start_time: f32,
     pub emit_stop_time: f32,
@@ -71,8 +68,8 @@ impl Load for NiParticleSystemController {
         let spawn_multiplier = stream.load()?;
         let spawned_speed_chaos = stream.load()?;
         let spawned_direction_chaos = stream.load()?;
-        let num_particles: u16 = stream.load()?;
-        let particles = (0..num_particles).load(|_| stream.load())?;
+        let num_particles = stream.load_as::<u16, _>()?;
+        let particles = stream.load_seq(num_particles)?;
         let num_active_particles = stream.load()?;
         let emitter_modifier = stream.load()?;
         let particle_modifier = stream.load()?;
@@ -146,9 +143,7 @@ impl Save for NiParticleSystemController {
         stream.save(&self.spawned_speed_chaos)?;
         stream.save(&self.spawned_direction_chaos)?;
         stream.save_as::<_, u16>(self.particles.len())?;
-        for particle in &self.particles {
-            stream.save(particle)?;
-        }
+        stream.save_seq(&self.particles)?;
         stream.save(&self.num_active_particles)?;
         stream.save(&self.emitter_modifier)?;
         stream.save(&self.particle_modifier)?;

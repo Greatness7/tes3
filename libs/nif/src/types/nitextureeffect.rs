@@ -1,22 +1,19 @@
-// external imports
-use nalgebra::{Matrix3, Vector3, Vector4};
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiTextureEffect {
     pub base: NiDynamicEffect,
-    #[default(Matrix3::identity())]
-    pub projection_matrix: Matrix3<f32>,
-    pub projection_translation: Vector3<f32>,
+    #[default(MAT3_IDENTITY)]
+    pub projection_matrix: Mat3,
+    pub projection_translation: Vec3,
     pub texture_filter: FilterMode,
     pub texture_clamp: ClampMode,
     pub texture_type: TextureType,
     pub coordinate_generation_type: CoordGenType,
     pub source_texture: NiLink<NiSourceTexture>,
     pub clipping_plane_enable: u8,
-    pub clipping_plane: Vector4<f32>, // NiPlane
+    pub clipping_plane: [f32; 4], // NiPlane
     pub ps2_l: i16,
     #[default((-75))]
     pub ps2_k: i16,

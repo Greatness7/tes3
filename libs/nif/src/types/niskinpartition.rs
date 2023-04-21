@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::{dmatrix, dvector, Dyn, OMatrix, OVector, U3};
-
 // internal imports
 use crate::prelude::*;
 
@@ -29,19 +26,14 @@ impl Save for NiSkinPartition {
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct Partition {
     pub base: NiObject,
-    #[default(dvector![])]
-    pub bones: OVector<u16, Dyn>,
-    #[default(dvector![])]
-    pub vertex_map: OVector<u16, Dyn>,
-    #[default(dmatrix![])]
-    pub weights: OMatrix<f32, Dyn, Dyn>,
-    #[default(Empty::empty())]
-    pub triangles: OMatrix<u16, U3, Dyn>,
-    #[default(dvector![])]
-    pub strip_lengths: OVector<u16, Dyn>,
-    #[default(dvector![])]
-    pub strips: OVector<u16, Dyn>,
-    pub bone_palette: Option<OMatrix<u8, Dyn, Dyn>>,
+    pub num_bones_per_vertex: usize,
+    pub bones: Vec<u16>,
+    pub vertex_indices: Vec<u16>,
+    pub weights: Vec<f32>,
+    pub triangles: Vec<[u16; 3]>,
+    pub strip_lengths: Vec<u16>,
+    pub strips: Vec<u16>,
+    pub bone_palette: Option<Vec<u8>>,
 }
 
 impl Load for Partition {
@@ -52,22 +44,24 @@ impl Load for Partition {
         let num_bones = stream.load_as::<u16, _>()?;
         let num_strip_lengths = stream.load_as::<u16, _>()?;
         let num_bones_per_vertex = stream.load_as::<u16, _>()?;
-        let bones = stream.load_matrix(num_bones, 1)?;
-        let vertex_map = stream.load_matrix(num_vertices, 1)?;
-        let weights = stream.load_matrix(num_vertices, num_bones_per_vertex)?;
-        let triangles = stream.load_matrix(3, num_triangles)?;
-        let strip_lengths = stream.load_matrix(num_strip_lengths, 1)?;
-        let strip_lengths_sum = OVector::sum(&strip_lengths) as usize;
-        let strips = stream.load_matrix(strip_lengths_sum, 1)?;
+        let num_weights = num_vertices * num_bones_per_vertex;
+        let bones = stream.load_vec(num_bones)?;
+        let vertex_indices = stream.load_vec(num_vertices)?;
+        let weights = stream.load_vec(num_weights)?;
+        let triangles = stream.load_vec(num_triangles)?;
+        let strip_lengths: Vec<u16> = stream.load_vec(num_strip_lengths)?;
+        let strip_lengths_sum = strip_lengths.iter().map(|n| *n as usize).sum();
+        let strips = stream.load_vec(strip_lengths_sum)?;
         let has_bone_palette: u8 = stream.load()?;
         let bone_palette = match has_bone_palette {
             0 => None,
-            _ => Some(stream.load_matrix(num_vertices, num_bones_per_vertex)?),
+            _ => Some(stream.load_vec(num_weights)?),
         };
         Ok(Self {
             base,
+            num_bones_per_vertex,
             bones,
-            vertex_map,
+            vertex_indices,
             weights,
             triangles,
             strip_lengths,
@@ -80,20 +74,20 @@ impl Load for Partition {
 impl Save for Partition {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u16>(self.vertex_map.len())?;
-        stream.save_as::<_, u16>(self.triangles.ncols())?;
+        stream.save_as::<_, u16>(self.vertex_indices.len())?;
+        stream.save_as::<_, u16>(self.triangles.len())?;
         stream.save_as::<_, u16>(self.bones.len())?;
         stream.save_as::<_, u16>(self.strip_lengths.len())?;
-        stream.save_as::<_, u16>(self.weights.ncols())?;
-        stream.save_matrix(&self.bones)?;
-        stream.save_matrix(&self.vertex_map)?;
-        stream.save_matrix(&self.weights)?;
-        stream.save_matrix(&self.triangles)?;
-        stream.save_matrix(&self.strip_lengths)?;
-        stream.save_matrix(&self.strips)?;
+        stream.save_as::<_, u16>(self.num_bones_per_vertex)?;
+        stream.save_vec(&self.bones)?;
+        stream.save_vec(&self.vertex_indices)?;
+        stream.save_vec(&self.weights)?;
+        stream.save_vec(&self.triangles)?;
+        stream.save_vec(&self.strip_lengths)?;
+        stream.save_vec(&self.strips)?;
         stream.save_as::<_, u8>(self.bone_palette.is_some())?;
         if let Some(bone_palette) = &self.bone_palette {
-            stream.save_matrix(bone_palette)?;
+            stream.save_vec(bone_palette)?;
         }
         Ok(())
     }

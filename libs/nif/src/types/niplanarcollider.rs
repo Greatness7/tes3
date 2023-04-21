@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -9,10 +6,10 @@ pub struct NiPlanarCollider {
     pub base: NiParticleCollider,
     pub height: f32,
     pub width: f32,
-    pub position: Vector3<f32>,
-    pub x_axis: Vector3<f32>,
-    pub y_axis: Vector3<f32>,
-    pub normal: Vector3<f32>,
+    pub position: Vec3,
+    pub x_axis: Vec3,
+    pub y_axis: Vec3,
+    pub normal: Vec3,
     pub constant: f32,
 }
 

@@ -25,7 +25,7 @@ impl Save for NiSkinPartition {
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct Partition {
-    pub num_bones_per_vertex: usize,
+    pub num_bones_per_vertex: u16,
     pub bones: Vec<u16>,
     pub vertex_indices: Vec<u16>,
     pub weights: Vec<f32>,
@@ -37,18 +37,18 @@ pub struct Partition {
 
 impl Load for Partition {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let num_vertices = stream.load_as::<u16, _>()?;
-        let num_triangles = stream.load_as::<u16, _>()?;
-        let num_bones = stream.load_as::<u16, _>()?;
-        let num_strip_lengths = stream.load_as::<u16, _>()?;
-        let num_bones_per_vertex = stream.load_as::<u16, _>()?;
+        let num_vertices: u16 = stream.load()?;
+        let num_triangles: u16 = stream.load()?;
+        let num_bones: u16 = stream.load()?;
+        let num_strip_lengths: u16 = stream.load()?;
+        let num_bones_per_vertex: u16 = stream.load()?;
         let num_weights = num_vertices * num_bones_per_vertex;
         let bones = stream.load_vec(num_bones)?;
         let vertex_indices = stream.load_vec(num_vertices)?;
         let weights = stream.load_vec(num_weights)?;
         let triangles = stream.load_vec(num_triangles)?;
         let strip_lengths: Vec<u16> = stream.load_vec(num_strip_lengths)?;
-        let strip_lengths_sum = strip_lengths.iter().map(|n| *n as usize).sum();
+        let strip_lengths_sum: usize = strip_lengths.iter().map(|n| *n as usize).sum();
         let strips = stream.load_vec(strip_lengths_sum)?;
         let has_bone_palette: u8 = stream.load()?;
         let bone_palette = match has_bone_palette {

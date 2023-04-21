@@ -63,7 +63,7 @@ impl NiStream {
         }
 
         // allocate objects
-        let num_objects = stream.load_as::<u32, _>()?;
+        let num_objects = stream.load_as::<u32, usize>()?;
         self.objects.reserve(num_objects);
 
         // populate objects
@@ -72,7 +72,7 @@ impl NiStream {
         }
 
         // allocate roots
-        let num_roots = stream.load_as::<u32, _>()?;
+        let num_roots = stream.load_as::<u32, usize>()?;
         self.roots.reserve(num_roots);
 
         // populate roots

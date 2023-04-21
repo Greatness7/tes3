@@ -10,7 +10,7 @@ pub struct NiVertWeightsExtraData {
 impl Load for NiVertWeightsExtraData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let num_weights = stream.load_as::<u16, _>()?;
+        let num_weights: u16 = stream.load()?;
         let weights = stream.load_vec(num_weights)?;
         Ok(Self { base, weights })
     }

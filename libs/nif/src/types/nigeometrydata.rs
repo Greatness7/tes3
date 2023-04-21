@@ -14,9 +14,9 @@ pub struct NiGeometryData {
 impl Load for NiGeometryData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let num_vertices = stream.load_as::<u16, _>()?;
+        let num_vertices: u16 = stream.load()?;
         let has_vertices = stream.load::<u32>()? != 0;
-        let num_vertices = if has_vertices { num_vertices } else { 0 };
+        let num_vertices = if has_vertices { num_vertices as usize } else { 0 };
         let vertices = stream.load_vec(num_vertices)?;
         let has_normals = stream.load::<u32>()? != 0;
         let num_normals = if has_normals { num_vertices } else { 0 };

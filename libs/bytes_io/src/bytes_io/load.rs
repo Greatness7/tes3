@@ -15,14 +15,14 @@ pub trait Load: Sized {
 
 impl Load for String {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len = stream.load_as::<u32, _>()?;
+        let len = stream.load_as::<u32, usize>()?;
         stream.load_string(len)
     }
 }
 
 impl Load for BString {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len = stream.load_as::<u32, _>()?;
+        let len = stream.load_as::<u32, usize>()?;
         Ok(stream.load_bytes(len)?.into())
     }
 }
@@ -116,7 +116,7 @@ macro_rules! impl_load {
             impl Load for Vec<$T> {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     use bytemuck::{cast_slice_mut, zeroed_vec};
-                    let len = stream.load_as::<u32, _>()?;
+                    let len = stream.load_as::<u32, usize>()?;
                     let mut this = zeroed_vec(len);
                     stream.read_exact(cast_slice_mut(&mut this))?;
                     Ok(this)

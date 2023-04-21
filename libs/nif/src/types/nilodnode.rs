@@ -12,7 +12,7 @@ impl Load for NiLODNode {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
         let lod_center = stream.load()?;
-        let num_lod_levels = stream.load_as::<u32, _>()?;
+        let num_lod_levels: u32 = stream.load()?;
         let lod_levels = stream.load_vec(num_lod_levels)?;
         Ok(Self {
             base,

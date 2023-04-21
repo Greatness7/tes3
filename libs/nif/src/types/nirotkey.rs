@@ -51,7 +51,7 @@ pub struct NiEulerRotKeys {
 
 impl Load for NiRotKey {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let num_keys = stream.load_as::<u32, _>()?;
+        let num_keys: u32 = stream.load()?;
         let key_type = if num_keys == 0 { KeyType::LinKey } else { stream.load()? };
         Ok(match key_type {
             KeyType::LinKey => NiRotKey::LinKey(stream.load_seq(num_keys)?),

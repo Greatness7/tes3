@@ -10,7 +10,7 @@ pub struct NiSwitchNode {
 impl Load for NiSwitchNode {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let active_index = stream.load_as::<u32, _>()?;
+        let active_index = stream.load_as::<u32, usize>()?;
         Ok(Self { base, active_index })
     }
 }

@@ -79,7 +79,7 @@ impl Load for Map {
         let texture = stream.load()?;
         let clamp_mode = stream.load()?;
         let filter_mode = stream.load()?;
-        let texture_index = stream.load_as::<u32, _>()?;
+        let texture_index = stream.load_as::<u32, usize>()?;
         let ps2_l = stream.load()?;
         let ps2_k = stream.load()?;
         let unknown_flag1 = stream.load()?;

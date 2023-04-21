@@ -17,7 +17,7 @@ warn = [
     "rust_2021_compatibility",
     "unused",
 
-    # https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html#keyword-idents
+    # https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html
 
     "absolute_paths_not_starting_with_crate",
     "elided_lifetimes_in_paths",
@@ -58,6 +58,7 @@ allow = [
     "clippy::cargo_common_metadata", # TODO
     "clippy::field_reassign_with_default",
     "clippy::inline_always",
+    "clippy::match_wildcard_for_single_variants",
     "clippy::missing_errors_doc", # TODO
     "clippy::module_name_repetitions",
     "clippy::multiple-crate-versions", # TODO

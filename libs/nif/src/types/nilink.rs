@@ -138,15 +138,15 @@ impl Visitor for TextureMap {
     }
 }
 
-impl Visitor for Source {
+impl Visitor for TextureSource {
     #[inline]
     fn visitor<F>(&self, f: &mut F)
     where
         F: FnMut(NiKey),
     {
         match self {
-            Source::External(inner) => inner.visitor(f),
-            Source::Internal(inner) => inner.visitor(f),
+            TextureSource::External(inner) => inner.visitor(f),
+            TextureSource::Internal(inner) => inner.visitor(f),
         }
     }
 }

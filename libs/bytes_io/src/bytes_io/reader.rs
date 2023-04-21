@@ -25,7 +25,7 @@ impl<'a> Reader<'a> {
         }
     }
 
-    pub fn error<M>(message: M) -> io::Result<()>
+    pub fn error<M, T>(message: M) -> io::Result<T>
     where
         M: Into<Cow<'static, str>>,
     {

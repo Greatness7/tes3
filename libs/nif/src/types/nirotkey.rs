@@ -22,7 +22,7 @@ impl Load for NiRotKey {
             KeyType::BezKey => BezRotKeys::load_q(stream, num_keys)?.into(),
             KeyType::TCBKey => TCBRotKeys::load_q(stream, num_keys)?.into(),
             KeyType::EulerKey => EulerRotKeys::load(stream)?.into(),
-            KeyType::NoInterp => panic!("NiRotKey does not support {key_type:?}"),
+            _ => Reader::error(format!("NiRotKey does not support {key_type:?}"))?,
         })
     }
 }

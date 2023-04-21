@@ -20,7 +20,7 @@ impl Load for NiFloatKey {
             KeyType::LinKey => LinFloatKeys::load(stream, num_keys)?.into(),
             KeyType::BezKey => BezFloatKeys::load(stream, num_keys)?.into(),
             KeyType::TCBKey => TCBFloatKeys::load(stream, num_keys)?.into(),
-            _ => panic!("NiFloatKey does not support {key_type:?}"),
+            _ => Reader::error(format!("NiFloatKey does not support {key_type:?}"))?,
         })
     }
 }

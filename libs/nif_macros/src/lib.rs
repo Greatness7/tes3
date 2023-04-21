@@ -86,7 +86,7 @@ pub fn derive_nitype(input: TokenStream) -> TokenStream {
 
     let variants = match &input.data {
         Data::Enum(e) => &e.variants,
-        _ => panic!("derive(NiTypeDerive): invalid input"),
+        _ => panic!("derive(NiType): invalid input"),
     };
 
     // the idents of all variants
@@ -110,7 +110,7 @@ pub fn derive_nitype(input: TokenStream) -> TokenStream {
                             #idents_bytes => Ok(Self::#idents(stream.load()?)),
                         )*
                         // TODO: more detailed error information!
-                        _ => Err(io::Error::new(io::ErrorKind::InvalidData, "invalid data")),
+                        _ => Reader::error(format!("Invalid Type: {}", type_name))?,
                     }
                 }
             }

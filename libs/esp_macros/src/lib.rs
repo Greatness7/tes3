@@ -113,10 +113,7 @@ fn tes3object_inherent_impls(idents: &[syn::Ident]) -> impl ToTokens {
                     #(
                         #idents::TAG => Ok(Self::#idents(stream.load()?)),
                     )*
-                    _ => Err(io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        format!("Unexpected Tag: {}", tag.to_str_lossy()),
-                    ))
+                    _ => Reader::error(format!("Unexpected Tag: {}", tag.to_str_lossy()))?,
                 }
             }
         }

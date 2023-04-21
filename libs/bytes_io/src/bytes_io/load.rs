@@ -4,7 +4,6 @@ use std::io::{self, Read};
 // external imports
 use bstr::BString;
 use bytemuck::{bytes_of_mut, Zeroable};
-use copyless::BoxHelper;
 
 // internal imports
 use crate::bytes_io::{AsRepr, Reader};
@@ -29,7 +28,7 @@ impl Load for BString {
 
 impl<L: Load> Load for Box<L> {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        Ok(Box::alloc().init(stream.load()?))
+        Ok(Box::new(stream.load()?))
     }
 }
 

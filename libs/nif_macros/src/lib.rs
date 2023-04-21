@@ -1,16 +1,14 @@
+use std::collections::HashMap;
+use std::sync::Mutex;
+
+use once_cell::sync::Lazy;
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{Data, DataStruct, DeriveInput, Fields, Ident, LitByteStr, Type};
 
-use dashmap::DashMap;
-use hashbrown::{hash_map::DefaultHashBuilder as S, HashMap};
+type LazyMap<K, V> = Lazy<Mutex<HashMap<K, V>>>;
 
-// use [`std::sync::LazyLock`] when stable
-use once_cell::sync::Lazy as LazyLock;
-
-type LazyMap<K, V> = LazyLock<DashMap<K, V, S>>;
-
-static RELATIONS: LazyMap<String, String> = LazyMap::new(DashMap::default);
+static RELATIONS: LazyMap<String, String> = Lazy::new(Default::default);
 
 /// Internal derive macro for use with `NiObject` structs in `nif.rs`.
 #[doc(hidden)]
@@ -55,7 +53,7 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
     };
 
     if let Some(ident) = base_id {
-        RELATIONS.insert(self_id.to_string(), ident.to_string());
+        RELATIONS.lock().unwrap().insert(self_id.to_string(), ident.to_string());
     }
 
     output.into()
@@ -152,15 +150,15 @@ fn impl_try_from_nitype(idents: &[&Ident]) -> impl ToTokens {
     // build a map that pairs structs with their "base" structs
     let mut structs_to_bases = HashMap::<&Ident, Vec<&Ident>>::with_capacity(idents.len());
 
-    for (mut ident_string, ident) in strings_to_idents.iter() {
+    for (mut ident_string, ident) in &strings_to_idents {
         // we include the struct itself in its own bases vector
         structs_to_bases.entry(ident).or_default().push(ident);
 
         // RELATIONS maps all structs to their immediate "base"
         // use it to enable traversal of the struct heirarchies
-        while let Some(r) = RELATIONS.get(ident_string) {
+        while let Some(r) = RELATIONS.lock().unwrap().get(ident_string) {
             // get the base struct's string and ident via our mapping
-            let (base_string, base_ident) = strings_to_idents.get_key_value(r.value()).unwrap();
+            let (base_string, base_ident) = strings_to_idents.get_key_value(r).unwrap();
             // add the base ident into our struct's sub-struct vector
             structs_to_bases.entry(base_ident).or_default().push(ident);
             ident_string = base_string;

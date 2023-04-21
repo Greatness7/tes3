@@ -10,7 +10,6 @@ license.workspace = true
 bstr = { version = "^1.4", default-features = false, features = ["std"] }
 bytemuck = { version = "^1.13", features = ["derive", "extern_crate_alloc", "min_const_generics"] }
 bytes_io_macros = { path = "../bytes_io_macros" }
-copyless = "^0.1"
 encoding_rs = "^0.8"
 hashbrown = { version = ">=0.12, <1.0", features = ["rayon"] }
 memchr = "^2.5"

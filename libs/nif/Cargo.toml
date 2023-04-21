@@ -8,6 +8,7 @@ license.workspace = true
 
 [dependencies]
 bstr = { version = "^1.4", default-features = false, features = ["std"] }
+bytemuck = { version = "^1.13", features = ["derive", "extern_crate_alloc", "min_const_generics"] }
 bytes_io = { path = "../bytes_io", features = ["nalgebra"] }
 derive_more = "^0.99"
 float_eq = "^1.0"

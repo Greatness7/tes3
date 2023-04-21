@@ -4,8 +4,8 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct NiBltSource {
     pub base: NiObject,
-    #[default(Source::Internal(NiLink::null()))]
-    pub source: Source,
+    #[default(TextureSource::Internal(NiLink::null()))]
+    pub source: TextureSource,
 }
 
 impl Load for NiBltSource {

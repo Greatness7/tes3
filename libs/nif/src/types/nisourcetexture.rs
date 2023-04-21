@@ -4,8 +4,7 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiSourceTexture {
     pub base: NiTexture,
-    #[default(Source::Internal(NiLink::null()))]
-    pub source: Source,
+    pub source: TextureSource,
     pub pixel_layout: PixelLayout,
     pub use_mipmaps: UseMipMaps,
     pub alpha_format: AlphaFormat,
@@ -45,34 +44,34 @@ impl Save for NiSourceTexture {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, SmartDefault)]
-pub enum Source {
-    #[default]
+pub enum TextureSource {
     External(String),
+    #[default]
     Internal(NiLink<NiPixelData>),
 }
 
-impl Load for Source {
+impl Load for TextureSource {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let has_external = stream.load::<u8>()? != 0;
         if has_external {
-            return Ok(Source::External(stream.load()?));
+            return Ok(TextureSource::External(stream.load()?));
         }
         let has_internal = stream.load::<u8>()? != 0;
         if has_internal {
-            return Ok(Source::Internal(stream.load()?));
+            return Ok(TextureSource::Internal(stream.load()?));
         }
-        Ok(Source::Internal(NiLink::null()))
+        Ok(TextureSource::Internal(NiLink::null()))
     }
 }
 
-impl Save for Source {
+impl Save for TextureSource {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         match self {
-            Source::External(file_name) => {
+            TextureSource::External(file_name) => {
                 stream.save(&1u8)?;
                 stream.save_string_without_null_terminator(file_name)?;
             }
-            Source::Internal(pixel_data) => {
+            TextureSource::Internal(pixel_data) => {
                 stream.save(&0u8)?;
                 if pixel_data.is_null() {
                     stream.save(&0u8)?;

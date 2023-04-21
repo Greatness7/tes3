@@ -18,7 +18,7 @@ impl Load for NiGeomMorpherController {
 impl Save for NiGeomMorpherController {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u8>(self.always_update)?;
+        stream.save_as::<u8>(self.always_update)?;
         Ok(())
     }
 }

@@ -43,16 +43,16 @@ impl Load for NiGeometryData {
 impl Save for NiGeometryData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u16>(self.vertices.len())?;
-        stream.save_as::<_, u32>(!self.vertices.is_empty())?;
+        stream.save_as::<u16>(self.vertices.len())?;
+        stream.save_as::<u32>(!self.vertices.is_empty())?;
         stream.save_vec(&self.vertices)?;
-        stream.save_as::<_, u32>(!self.normals.is_empty())?;
+        stream.save_as::<u32>(!self.normals.is_empty())?;
         stream.save_vec(&self.normals)?;
         stream.save(&self.bound)?;
-        stream.save_as::<_, u32>(!self.vertex_colors.is_empty())?;
+        stream.save_as::<u32>(!self.vertex_colors.is_empty())?;
         stream.save_vec(&self.vertex_colors)?;
-        stream.save_as::<_, u16>(self.uv_sets.len())?;
-        stream.save_as::<_, u32>(!self.uv_sets.is_empty())?;
+        stream.save_as::<u16>(self.uv_sets.len())?;
+        stream.save_as::<u32>(!self.uv_sets.is_empty())?;
         for uv_set in &self.uv_sets {
             stream.save_vec(uv_set)?;
         }

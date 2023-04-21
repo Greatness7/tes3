@@ -66,7 +66,7 @@ where
             stream.save(&-1i32)?;
         } else {
             let key = self.key.data().as_ffi();
-            stream.save_as::<_, i32>(stream.context[&key])?;
+            stream.save_as::<i32>(stream.context[&key])?;
         };
         Ok(())
     }

@@ -25,7 +25,7 @@ impl Save for NiColorKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         match self {
             NiColorKey::LinKey(keys) => {
-                stream.save_as::<_, u32>(keys.len())?;
+                stream.save_as::<u32>(keys.len())?;
                 if !keys.is_empty() {
                     stream.save(&KeyType::LinKey)?;
                     stream.save_seq(keys)?;

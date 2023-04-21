@@ -75,7 +75,7 @@ impl Save for LeveledCreature {
         if !self.creatures.is_empty() {
             stream.save(b"INDX")?;
             stream.save(&4u32)?;
-            stream.save_as::<_, u32>(self.creatures.len())?;
+            stream.save_as::<u32>(self.creatures.len())?;
             //
             for (item, level) in &self.creatures {
                 // CNAM

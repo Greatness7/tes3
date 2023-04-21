@@ -32,12 +32,12 @@ impl Load for NiTriShapeData {
 impl Save for NiTriShapeData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u16>(self.triangles.len())?;
-        stream.save_as::<_, u32>(self.triangles.len() * 3)?;
+        stream.save_as::<u16>(self.triangles.len())?;
+        stream.save_as::<u32>(self.triangles.len() * 3)?;
         stream.save_vec(&self.triangles)?;
-        stream.save_as::<_, u16>(self.shared_normals.len())?;
+        stream.save_as::<u16>(self.shared_normals.len())?;
         for indices in &self.shared_normals {
-            stream.save_as::<_, u16>(indices.len())?;
+            stream.save_as::<u16>(indices.len())?;
             stream.save_vec(indices)?;
         }
         Ok(())

@@ -39,7 +39,7 @@ impl Save for NiSkinData {
         stream.save(&self.rotation)?;
         stream.save(&self.translation)?;
         stream.save(&self.scale)?;
-        stream.save_as::<_, u32>(self.bone_data.len())?;
+        stream.save_as::<u32>(self.bone_data.len())?;
         stream.save(&self.skin_partition)?;
         stream.save_seq(&self.bone_data)?;
         Ok(())
@@ -81,7 +81,7 @@ impl Save for BoneData {
         stream.save(&self.translation)?;
         stream.save(&self.scale)?;
         stream.save(&self.bound)?;
-        stream.save_as::<_, u16>(self.vertex_weights.len())?;
+        stream.save_as::<u16>(self.vertex_weights.len())?;
         stream.save_seq(&self.vertex_weights)?;
         Ok(())
     }

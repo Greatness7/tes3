@@ -51,7 +51,7 @@ impl Save for NiAVObject {
         stream.save(&self.scale)?;
         stream.save(&self.velocity)?;
         stream.save(&self.properties)?;
-        stream.save_as::<_, u32>(self.bounding_volume.is_some())?;
+        stream.save_as::<u32>(self.bounding_volume.is_some())?;
         if let Some(bounding_volume) = &self.bounding_volume {
             stream.save(bounding_volume)?;
         }

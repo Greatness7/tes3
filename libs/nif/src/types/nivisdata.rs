@@ -25,7 +25,7 @@ impl Load for NiVisData {
 impl Save for NiVisData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u32>(self.keys.len())?;
+        stream.save_as::<u32>(self.keys.len())?;
         stream.save_seq(&self.keys)?;
         Ok(())
     }

@@ -70,18 +70,18 @@ impl Load for Partition {
 
 impl Save for Partition {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save_as::<_, u16>(self.vertex_indices.len())?;
-        stream.save_as::<_, u16>(self.triangles.len())?;
-        stream.save_as::<_, u16>(self.bones.len())?;
-        stream.save_as::<_, u16>(self.strip_lengths.len())?;
-        stream.save_as::<_, u16>(self.num_bones_per_vertex)?;
+        stream.save_as::<u16>(self.vertex_indices.len())?;
+        stream.save_as::<u16>(self.triangles.len())?;
+        stream.save_as::<u16>(self.bones.len())?;
+        stream.save_as::<u16>(self.strip_lengths.len())?;
+        stream.save_as::<u16>(self.num_bones_per_vertex)?;
         stream.save_vec(&self.bones)?;
         stream.save_vec(&self.vertex_indices)?;
         stream.save_vec(&self.weights)?;
         stream.save_vec(&self.triangles)?;
         stream.save_vec(&self.strip_lengths)?;
         stream.save_vec(&self.strips)?;
-        stream.save_as::<_, u8>(self.bone_palette.is_some())?;
+        stream.save_as::<u8>(self.bone_palette.is_some())?;
         if let Some(bone_palette) = &self.bone_palette {
             stream.save_vec(bone_palette)?;
         }

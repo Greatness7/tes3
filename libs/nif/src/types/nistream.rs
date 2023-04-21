@@ -99,7 +99,7 @@ impl NiStream {
         stream.save(&Self::VERSION)?;
 
         // objects count
-        stream.save_as::<_, u32>(self.objects.len())?;
+        stream.save_as::<u32>(self.objects.len())?;
 
         // parse objects
         let objects: Vec<_> = self.objects().collect();

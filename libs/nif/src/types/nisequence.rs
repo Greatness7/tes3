@@ -31,7 +31,7 @@ impl Save for NiSequence {
         stream.save(&self.base)?;
         stream.save_string_without_null_terminator(&self.sequence_name)?;
         stream.save(&self.sequence_target)?;
-        stream.save_as::<_, u32>(self.name_controller_pairs.len())?;
+        stream.save_as::<u32>(self.name_controller_pairs.len())?;
         for (name, controller) in &self.name_controller_pairs {
             stream.save_string_without_null_terminator(name)?;
             stream.save(controller)?;

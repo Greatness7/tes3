@@ -30,9 +30,9 @@ impl Load for NiMorphData {
 impl Save for NiMorphData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u32>(self.targets.len())?;
-        stream.save_as::<_, u32>(self.targets.first().map_or(0, |target| target.vertices.len()))?;
-        stream.save_as::<_, u8>(self.relative_targets)?;
+        stream.save_as::<u32>(self.targets.len())?;
+        stream.save_as::<u32>(self.targets.first().map_or(0, |target| target.vertices.len()))?;
+        stream.save_as::<u8>(self.relative_targets)?;
         stream.save_seq(&self.targets)?;
         Ok(())
     }
@@ -69,7 +69,7 @@ impl Save for MorphTarget {
             NiFloatKey::BezKey(keys) => (keys.len(), KeyType::BezKey, cast_slice(keys)),
             NiFloatKey::TCBKey(keys) => (keys.len(), KeyType::TCBKey, cast_slice(keys)),
         };
-        stream.save_as::<_, u32>(len)?;
+        stream.save_as::<u32>(len)?;
         stream.save(&key_type)?;
         stream.save_bytes(bytes)?;
         stream.save_vec(&self.vertices)?;

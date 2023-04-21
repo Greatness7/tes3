@@ -42,14 +42,14 @@ impl Writer {
         value.save(self)
     }
 
-    pub fn save_as<T, S>(&mut self, value: T) -> io::Result<()>
+    pub fn save_as<S>(&mut self, value: impl TryInto<S>) -> io::Result<()>
     where
-        S: Save + TryFrom<T>,
+        S: Save,
     {
-        S::try_from(value).map_or_else(
-            |_| Self::error("Invalid Save Conversion"), //
-            |value| value.save(self),
-        )
+        if let Ok(value) = value.try_into() {
+            return value.save(self);
+        }
+        Self::error("Invalid 'Save As' Conversion")
     }
 
     pub fn save_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
@@ -87,12 +87,12 @@ impl Writer {
             // scan for null terminator
             if let Some(index) = memchr(0, &bytes) {
                 // save the string size
-                self.save_as::<_, u32>(index)?;
+                self.save_as::<u32>(index)?;
                 // save the string data
                 self.save_bytes(&bytes[..index])?;
             } else {
                 // save the string size
-                self.save_as::<_, u32>(bytes.len() + 1)?;
+                self.save_as::<u32>(bytes.len() + 1)?;
                 // save the string data
                 self.save_bytes(&bytes)?;
                 // save null terminator
@@ -107,7 +107,7 @@ impl Writer {
 
     pub fn save_string_without_null_terminator(&mut self, value: &str) -> io::Result<()> {
         let text = self.encode(value)?;
-        self.save_as::<_, u32>(text.len())?;
+        self.save_as::<u32>(text.len())?;
         self.save_bytes(&text)?;
         Ok(())
     }

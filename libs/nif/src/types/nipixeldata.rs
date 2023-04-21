@@ -37,10 +37,10 @@ impl Save for NiPixelData {
         stream.save(&self.base)?;
         stream.save(&self.pixel_format)?;
         stream.save(&self.palette)?;
-        stream.save_as::<_, u32>(self.mipmaps.len())?;
+        stream.save_as::<u32>(self.mipmaps.len())?;
         stream.save(&self.pixel_stride)?;
         stream.save_vec(&self.mipmaps)?;
-        stream.save_as::<_, u32>(self.pixel_data.len())?;
+        stream.save_as::<u32>(self.pixel_data.len())?;
         stream.save_vec(&self.pixel_data)?;
         Ok(())
     }

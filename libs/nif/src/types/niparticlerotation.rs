@@ -27,7 +27,7 @@ impl Load for NiParticleRotation {
 impl Save for NiParticleRotation {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u8>(self.random_initial_axis)?;
+        stream.save_as::<u8>(self.random_initial_axis)?;
         stream.save(&self.initial_axis)?;
         stream.save(&self.rotation_speed)?;
         Ok(())

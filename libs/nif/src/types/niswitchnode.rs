@@ -18,7 +18,7 @@ impl Load for NiSwitchNode {
 impl Save for NiSwitchNode {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u32>(self.active_index)?;
+        stream.save_as::<u32>(self.active_index)?;
         Ok(())
     }
 }

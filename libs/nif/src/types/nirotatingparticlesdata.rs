@@ -20,7 +20,7 @@ impl Load for NiRotatingParticlesData {
 impl Save for NiRotatingParticlesData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
-        stream.save_as::<_, u32>(!self.rotations.is_empty())?;
+        stream.save_as::<u32>(!self.rotations.is_empty())?;
         stream.save_vec(&self.rotations)?;
         Ok(())
     }

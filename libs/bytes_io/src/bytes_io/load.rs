@@ -139,24 +139,3 @@ pub trait LoadFn: Iterator {
 
 impl LoadFn for std::ops::Range<u16> {}
 impl LoadFn for std::ops::Range<u32> {}
-
-#[cfg(feature = "nalgebra")]
-const _: () = {
-    use bytemuck::Pod;
-    use nalgebra::{allocator::Allocator, DefaultAllocator, DimName, OMatrix, Scalar};
-
-    impl<S, R, C> Load for OMatrix<S, R, C>
-    where
-        Self: Pod,
-        S: Scalar,
-        R: DimName,
-        C: DimName,
-        DefaultAllocator: Allocator<S, R, C>,
-    {
-        fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-            let mut this = Self::zeroed();
-            stream.read_exact(bytes_of_mut(&mut this))?;
-            Ok(this)
-        }
-    }
-};

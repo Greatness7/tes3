@@ -15,8 +15,8 @@ impl Load for NiSequence {
         let base = stream.load()?;
         let sequence_name = stream.load()?;
         let sequence_target = stream.load()?;
-        let num_name_controller_pairs: u32 = stream.load()?;
-        let name_controller_pairs = (0..num_name_controller_pairs).load(|_| Ok((stream.load()?, stream.load()?)))?;
+        let num_name_controller_pairs = stream.load_as::<u32, usize>()?;
+        let name_controller_pairs = stream.load_seq(num_name_controller_pairs)?;
         Ok(Self {
             base,
             sequence_name,

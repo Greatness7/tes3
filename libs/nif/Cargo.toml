@@ -8,19 +8,16 @@ license.workspace = true
 
 [dependencies]
 bstr = { version = "^1.4", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.13", features = ["derive", "extern_crate_alloc", "min_const_generics"] }
-bytes_io = { path = "../bytes_io", features = ["nalgebra"] }
+bytemuck = { version = "^1.13", features = ["derive"] }
+bytes_io = { path = "../bytes_io" }
 derive_more = "^0.99"
-float_eq = "^1.0"
-hashbrown = { version = ">=0.12, <1.0", features = ["rayon"] }
-nalgebra = { version = "^0.32", features = ["convert-bytemuck"] }
+hashbrown = { version = ">=0.12, <1.0" }
 nif_macros = { path = "../nif_macros" }
 slotmap = "^1.0"
 smart-default = "^0.6"
 
 [dev-dependencies]
 tempfile = "^3.5"
-test-case = "^3.1"
 
 [features]
 default = []

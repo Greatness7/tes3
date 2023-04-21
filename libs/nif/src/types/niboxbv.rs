@@ -1,16 +1,13 @@
-// external imports
-use nalgebra::{Matrix3, Vector3};
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiBoxBV {
     pub base: NiObject,
-    pub center: Vector3<f32>,
-    #[default(Matrix3::identity())]
-    pub axis: Matrix3<f32>,
-    pub extents: Vector3<f32>,
+    pub center: Vec3,
+    #[default(MAT3_IDENTITY)]
+    pub axis: Mat3,
+    pub extents: Vec3,
 }
 
 impl Load for NiBoxBV {

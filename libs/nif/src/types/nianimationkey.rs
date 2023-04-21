@@ -1,69 +1,87 @@
+// external imports
+use bytemuck::{Pod, Zeroable};
+
 // internal imports
 use crate::prelude::*;
 
-// external imports
-use nalgebra::{Const, Dyn, OMatrix, SVector};
-
-#[derive(Clone, Debug, Deref, DerefMut, From, PartialEq, SmartDefault)]
-pub struct NiAnimationKey<const KEY_SIZE: usize, const VALUE_SIZE: usize> {
-    #[default(SVector::<_, KEY_SIZE>::zeros())]
-    pub data: SVector<f32, KEY_SIZE>,
+#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiLinFloatKey {
+    time: f32,
+    value: f32,
 }
 
-#[derive(Clone, Debug, Deref, DerefMut, From, PartialEq, SmartDefault)]
-pub struct NiAnimationKeys<const KEY_SIZE: usize, const VALUE_SIZE: usize> {
-    #[default(Empty::empty())]
-    pub data: OMatrix<f32, Const<KEY_SIZE>, Dyn>,
+#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiBezFloatKey {
+    time: f32,
+    value: f32,
+    in_tan: f32,
+    out_an: f32,
 }
 
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinFloatKey(NiAnimationKey<2, 1>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct BezFloatKey(NiAnimationKey<4, 1>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct TCBFloatKey(NiAnimationKey<5, 1>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinPosKey(NiAnimationKey<4, 3>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct BezPosKey(NiAnimationKey<10, 3>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct TCBPosKey(NiAnimationKey<7, 3>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinColKey(NiAnimationKey<5, 4>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinRotKey(NiAnimationKey<5, 4>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct BezRotKey(NiAnimationKey<5, 4>);
-#[doc(hidden)]
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct TCBRotKey(NiAnimationKey<8, 4>);
+#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiTCBFloatKey {
+    time: f32,
+    value: f32,
+    t: f32,
+    c: f32,
+    b: f32,
+}
 
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinFloatKeys(NiAnimationKeys<2, 1>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct BezFloatKeys(NiAnimationKeys<4, 1>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct TCBFloatKeys(NiAnimationKeys<5, 1>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinPosKeys(NiAnimationKeys<4, 3>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct BezPosKeys(NiAnimationKeys<10, 3>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct TCBPosKeys(NiAnimationKeys<7, 3>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinColKeys(NiAnimationKeys<5, 4>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct LinRotKeys(NiAnimationKeys<5, 4>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct BezRotKeys(NiAnimationKeys<5, 4>);
-#[derive(Clone, Debug, Default, Deref, DerefMut, From, PartialEq)]
-pub struct TCBRotKeys(NiAnimationKeys<8, 4>);
+#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiLinPosKey {
+    time: f32,
+    value: Vec3,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiBezPosKey {
+    time: f32,
+    value: Vec3,
+    in_tan: Vec3,
+    out_an: Vec3,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
+#[repr(C)]
+pub struct NiTCBPosKey {
+    time: f32,
+    value: Vec3,
+    t: f32,
+    c: f32,
+    b: f32,
+}
+
+#[derive(LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
+pub struct NiLinColKey {
+    time: f32,
+    value: ColorA,
+}
+
+#[derive(LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+pub struct NiLinRotKey {
+    time: f32,
+    #[default(QUAT_IDENTITY)]
+    value: Quat,
+}
+
+#[derive(LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+pub struct NiBezRotKey {
+    time: f32,
+    #[default(QUAT_IDENTITY)]
+    value: Quat,
+}
+
+#[derive(LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
+pub struct NiTCBRotKey {
+    time: f32,
+    #[default(QUAT_IDENTITY)]
+    value: Quat,
+    t: f32,
+    c: f32,
+    b: f32,
+}

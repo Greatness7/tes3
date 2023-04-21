@@ -7,7 +7,7 @@ use crate::prelude::*;
 #[derive(Clone, Debug, From, PartialEq, SmartDefault)]
 pub enum NiColorKey {
     #[default]
-    LinKey(LinColKeys),
+    LinKey(Vec<NiLinColKey>),
 }
 
 impl Load for NiColorKey {
@@ -15,7 +15,7 @@ impl Load for NiColorKey {
         let num_keys = stream.load_as::<u32, _>()?;
         let key_type = if num_keys == 0 { KeyType::LinKey } else { stream.load()? };
         Ok(match key_type {
-            KeyType::LinKey => LinColKeys::load(stream, num_keys)?.into(),
+            KeyType::LinKey => NiColorKey::LinKey(stream.load_seq(num_keys)?),
             _ => Reader::error(format!("NiColorKey does not support {key_type:?}"))?,
         })
     }
@@ -24,7 +24,14 @@ impl Load for NiColorKey {
 impl Save for NiColorKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         match self {
-            NiColorKey::LinKey(keys) => keys.save(stream),
-        }
+            NiColorKey::LinKey(keys) => {
+                stream.save_as::<_, u32>(keys.len())?;
+                if !keys.is_empty() {
+                    stream.save(&KeyType::LinKey)?;
+                    stream.save_seq(keys)?;
+                }
+            }
+        };
+        Ok(())
     }
 }

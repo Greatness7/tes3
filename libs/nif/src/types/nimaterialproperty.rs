@@ -1,16 +1,13 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiMaterialProperty {
     pub base: NiProperty,
-    pub ambient_color: Vector3<f32>,
-    pub diffuse_color: Vector3<f32>,
-    pub specular_color: Vector3<f32>,
-    pub emissive_color: Vector3<f32>,
+    pub ambient_color: Vec3,
+    pub diffuse_color: Vec3,
+    pub specular_color: Vec3,
+    pub emissive_color: Vec3,
     pub shine: f32,
     pub alpha: f32,
 }

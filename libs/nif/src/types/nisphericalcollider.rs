@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,7 +5,7 @@ use crate::prelude::*;
 pub struct NiSphericalCollider {
     pub base: NiParticleCollider,
     pub radius: f32,
-    pub position: Vector3<f32>,
+    pub position: Vec3,
 }
 
 impl Load for NiSphericalCollider {

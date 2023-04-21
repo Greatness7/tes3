@@ -7,10 +7,10 @@ use crate::prelude::*;
 #[derive(Clone, Debug, From, PartialEq, SmartDefault)]
 pub enum NiRotKey {
     #[default]
-    LinKey(LinRotKeys),
-    BezKey(BezRotKeys),
-    TCBKey(TCBRotKeys),
-    EulerKey(EulerRotKeys),
+    LinKey(Vec<NiLinRotKey>),
+    BezKey(Vec<NiBezRotKey>),
+    TCBKey(Vec<NiTCBRotKey>),
+    EulerKey(EulerRotKey),
 }
 
 impl Load for NiRotKey {
@@ -18,10 +18,10 @@ impl Load for NiRotKey {
         let num_keys = stream.load_as::<u32, _>()?;
         let key_type = if num_keys == 0 { KeyType::LinKey } else { stream.load()? };
         Ok(match key_type {
-            KeyType::LinKey => LinRotKeys::load_q(stream, num_keys)?.into(),
-            KeyType::BezKey => BezRotKeys::load_q(stream, num_keys)?.into(),
-            KeyType::TCBKey => TCBRotKeys::load_q(stream, num_keys)?.into(),
-            KeyType::EulerKey => EulerRotKeys::load(stream)?.into(),
+            KeyType::LinKey => NiRotKey::LinKey(stream.load_seq(num_keys)?),
+            KeyType::BezKey => NiRotKey::BezKey(stream.load_seq(num_keys)?),
+            KeyType::TCBKey => NiRotKey::TCBKey(stream.load_seq(num_keys)?),
+            KeyType::EulerKey => NiRotKey::EulerKey(stream.load()?),
             _ => Reader::error(format!("NiRotKey does not support {key_type:?}"))?,
         })
     }
@@ -30,59 +30,68 @@ impl Load for NiRotKey {
 impl Save for NiRotKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         match self {
-            NiRotKey::LinKey(keys) => keys.save_q(stream)?,
-            NiRotKey::BezKey(keys) => keys.save_q(stream)?,
-            NiRotKey::TCBKey(keys) => keys.save_q(stream)?,
-            NiRotKey::EulerKey(keys) => keys.save(stream)?,
-        }
+            NiRotKey::LinKey(keys) => {
+                stream.save_as::<_, u32>(keys.len())?;
+                if !keys.is_empty() {
+                    stream.save(&KeyType::LinKey)?;
+                    stream.save_seq(keys)?;
+                }
+            }
+            NiRotKey::BezKey(keys) => {
+                stream.save_as::<_, u32>(keys.len())?;
+                if !keys.is_empty() {
+                    stream.save(&KeyType::BezKey)?;
+                    stream.save_seq(keys)?;
+                }
+            }
+            NiRotKey::TCBKey(keys) => {
+                stream.save_as::<_, u32>(keys.len())?;
+                if !keys.is_empty() {
+                    stream.save(&KeyType::TCBKey)?;
+                    stream.save_seq(keys)?;
+                }
+            }
+            NiRotKey::EulerKey(keys) => {
+                let is_empty = keys.is_empty();
+                stream.save_as::<_, u32>(!is_empty)?;
+                if !is_empty {
+                    stream.save(&KeyType::EulerKey)?;
+                    stream.save(keys)?;
+                }
+            }
+        };
         Ok(())
     }
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct EulerRotKeys {
-    pub euler_axis_order: AxisOrder,
-    pub euler_data: [NiFloatData; 3],
+pub struct EulerRotKey {
+    pub axis_order: AxisOrder,
+    pub axes: [NiFloatData; 3],
 }
 
-impl EulerRotKeys {
-    fn has_keys(&self) -> bool {
-        for data in &self.euler_data {
-            if !match &data.keys {
-                NiFloatKey::LinKey(keys) => keys.is_empty(),
-                NiFloatKey::BezKey(keys) => keys.is_empty(),
-                NiFloatKey::TCBKey(keys) => keys.is_empty(),
-            } {
-                return true;
-            }
-        }
-        false
-    }
-}
-
-impl Load for EulerRotKeys {
-    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let euler_axis_order = stream.load()?;
-        let euler_data = [stream.load()?, stream.load()?, stream.load()?];
-        Ok(Self {
-            euler_axis_order,
-            euler_data,
+impl EulerRotKey {
+    pub fn is_empty(&self) -> bool {
+        self.axes.iter().all(|axis| match &axis.keys {
+            NiFloatKey::LinKey(keys) => keys.is_empty(),
+            NiFloatKey::BezKey(keys) => keys.is_empty(),
+            NiFloatKey::TCBKey(keys) => keys.is_empty(),
         })
     }
 }
 
-impl Save for EulerRotKeys {
+impl Load for EulerRotKey {
+    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+        let axis_order = stream.load()?;
+        let axes = [stream.load()?, stream.load()?, stream.load()?];
+        Ok(Self { axis_order, axes })
+    }
+}
+
+impl Save for EulerRotKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        if self.has_keys() {
-            stream.save(&1u32)?;
-            stream.save(&KeyType::EulerKey)?;
-            stream.save(&self.euler_axis_order)?;
-            stream.save(&self.euler_data[0])?;
-            stream.save(&self.euler_data[1])?;
-            stream.save(&self.euler_data[2])?;
-        } else {
-            stream.save(&0u32)?;
-        }
+        stream.save(&self.axis_order)?;
+        stream.save_seq(&self.axes)?;
         Ok(())
     }
 }

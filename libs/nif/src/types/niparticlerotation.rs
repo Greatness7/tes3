@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,7 +5,7 @@ use crate::prelude::*;
 pub struct NiParticleRotation {
     pub base: NiParticleModifier,
     pub random_initial_axis: bool,
-    pub initial_axis: Vector3<f32>,
+    pub initial_axis: Vec3,
     pub rotation_speed: f32,
 }
 

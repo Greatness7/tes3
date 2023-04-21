@@ -1,14 +1,11 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiPerParticleData {
     pub base: NiObject,
-    pub velocity: Vector3<f32>,
-    pub rotation_axis: Vector3<f32>,
+    pub velocity: Vec3,
+    pub rotation_axis: Vec3,
     pub age: f32,
     pub lifespan: f32,
     pub last_update: f32,

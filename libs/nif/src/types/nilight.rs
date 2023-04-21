@@ -1,6 +1,3 @@
-// external imports
-use nalgebra::Vector3;
-
 // internal imports
 use crate::prelude::*;
 
@@ -8,9 +5,9 @@ use crate::prelude::*;
 pub struct NiLight {
     pub base: NiDynamicEffect,
     pub dimmer: f32,
-    pub ambient_color: Vector3<f32>,
-    pub diffuse_color: Vector3<f32>,
-    pub specular_color: Vector3<f32>,
+    pub ambient_color: Vec3,
+    pub diffuse_color: Vec3,
+    pub specular_color: Vec3,
 }
 
 impl Load for NiLight {

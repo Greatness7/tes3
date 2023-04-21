@@ -1,15 +1,11 @@
-// external imports
-use nalgebra::{Dyn, OMatrix, Vector3, U2};
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiLODNode {
     pub base: NiSwitchNode,
-    pub lod_center: Vector3<f32>,
-    #[default(Empty::empty())]
-    pub lod_levels: OMatrix<f32, U2, Dyn>,
+    pub lod_center: Vec3,
+    pub lod_levels: Vec<[f32; 2]>, // [Near, Far]
 }
 
 impl Load for NiLODNode {
@@ -17,7 +13,7 @@ impl Load for NiLODNode {
         let base = stream.load()?;
         let lod_center = stream.load()?;
         let num_lod_levels = stream.load_as::<u32, _>()?;
-        let lod_levels = stream.load_matrix(2, num_lod_levels)?;
+        let lod_levels = stream.load_vec(num_lod_levels)?;
         Ok(Self {
             base,
             lod_center,
@@ -30,8 +26,8 @@ impl Save for NiLODNode {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         stream.save(&self.base)?;
         stream.save(&self.lod_center)?;
-        stream.save_as::<_, u32>(self.lod_levels.ncols())?;
-        stream.save_matrix(&self.lod_levels)?;
+        stream.save_as::<_, u32>(self.lod_levels.len())?;
+        stream.save_vec(&self.lod_levels)?;
         Ok(())
     }
 }

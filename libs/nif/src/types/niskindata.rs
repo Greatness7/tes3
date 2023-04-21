@@ -1,15 +1,12 @@
-// external imports
-use nalgebra::{Matrix3, Vector3};
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiSkinData {
     pub base: NiObject,
-    #[default(Matrix3::identity())]
-    pub rotation: Matrix3<f32>,
-    pub translation: Vector3<f32>,
+    #[default(MAT3_IDENTITY)]
+    pub rotation: Mat3,
+    pub translation: Vec3,
     #[default(1.0)]
     pub scale: f32,
     pub skin_partition: NiLink<NiSkinPartition>,
@@ -22,9 +19,9 @@ impl Load for NiSkinData {
         let rotation = stream.load()?;
         let translation = stream.load()?;
         let scale = stream.load()?;
-        let num_bone_data: u32 = stream.load()?;
+        let num_bone_data = stream.load_as::<u32, _>()?;
         let skin_partition = stream.load()?;
-        let bone_data = (0..num_bone_data).load(|_| stream.load())?;
+        let bone_data = stream.load_seq(num_bone_data)?;
         Ok(Self {
             base,
             rotation,
@@ -44,9 +41,7 @@ impl Save for NiSkinData {
         stream.save(&self.scale)?;
         stream.save_as::<_, u32>(self.bone_data.len())?;
         stream.save(&self.skin_partition)?;
-        for bone_data in &self.bone_data {
-            stream.save(bone_data)?;
-        }
+        stream.save_seq(&self.bone_data)?;
         Ok(())
     }
 }
@@ -54,9 +49,9 @@ impl Save for NiSkinData {
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct BoneData {
     pub base: NiObject,
-    #[default(Matrix3::identity())]
-    pub rotation: Matrix3<f32>,
-    pub translation: Vector3<f32>,
+    #[default(MAT3_IDENTITY)]
+    pub rotation: Mat3,
+    pub translation: Vec3,
     #[default(1.0)]
     pub scale: f32,
     pub bound: NiBound,
@@ -70,8 +65,8 @@ impl Load for BoneData {
         let translation = stream.load()?;
         let scale = stream.load()?;
         let bound = stream.load()?;
-        let num_vertex_weights: u16 = stream.load()?;
-        let vertex_weights = (0..num_vertex_weights).load(|_| Ok((stream.load()?, stream.load()?)))?;
+        let num_vertex_weights = stream.load_as::<u16, _>()?;
+        let vertex_weights = stream.load_seq(num_vertex_weights)?;
         Ok(Self {
             base,
             rotation,
@@ -91,10 +86,7 @@ impl Save for BoneData {
         stream.save(&self.scale)?;
         stream.save(&self.bound)?;
         stream.save_as::<_, u16>(self.vertex_weights.len())?;
-        for (index, weight) in &self.vertex_weights {
-            stream.save(index)?;
-            stream.save(weight)?;
-        }
+        stream.save_seq(&self.vertex_weights)?;
         Ok(())
     }
 }

@@ -1,13 +1,10 @@
-// external imports
-use nalgebra::Vector4;
-
 // internal imports
 use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiBSPNode {
     pub base: NiNode,
-    pub plane: Vector4<f32>, // NiPlane
+    pub plane: [f32; 4], // NiPlane
 }
 
 impl Load for NiBSPNode {

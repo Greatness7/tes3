@@ -25,7 +25,6 @@ impl Save for NiSkinPartition {
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct Partition {
-    pub base: NiObject,
     pub num_bones_per_vertex: usize,
     pub bones: Vec<u16>,
     pub vertex_indices: Vec<u16>,
@@ -38,7 +37,6 @@ pub struct Partition {
 
 impl Load for Partition {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let base = stream.load()?;
         let num_vertices = stream.load_as::<u16, _>()?;
         let num_triangles = stream.load_as::<u16, _>()?;
         let num_bones = stream.load_as::<u16, _>()?;
@@ -58,7 +56,6 @@ impl Load for Partition {
             _ => Some(stream.load_vec(num_weights)?),
         };
         Ok(Self {
-            base,
             num_bones_per_vertex,
             bones,
             vertex_indices,
@@ -73,7 +70,6 @@ impl Load for Partition {
 
 impl Save for Partition {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.base)?;
         stream.save_as::<_, u16>(self.vertex_indices.len())?;
         stream.save_as::<_, u16>(self.triangles.len())?;
         stream.save_as::<_, u16>(self.bones.len())?;

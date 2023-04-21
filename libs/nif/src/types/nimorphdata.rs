@@ -40,7 +40,6 @@ impl Save for NiMorphData {
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct MorphTarget {
-    pub base: NiObject,
     pub keys: NiFloatKey,
     pub vertices: Vec<Vec3>,
 }
@@ -48,7 +47,6 @@ pub struct MorphTarget {
 impl MorphTarget {
     #[allow(clippy::match_same_arms)]
     pub(crate) fn load(stream: &mut Reader<'_>, num_vertices: usize) -> io::Result<Self> {
-        let base = stream.load()?;
         let num_keys = stream.load_as::<u32, _>()?;
         let key_type = stream.load()?;
         let keys = match key_type {
@@ -60,7 +58,7 @@ impl MorphTarget {
             _ => Reader::error(format!("NiMorphData does not support {key_type:?}"))?,
         };
         let vertices = stream.load_vec(num_vertices)?;
-        Ok(Self { base, keys, vertices })
+        Ok(Self { keys, vertices })
     }
 }
 
@@ -71,7 +69,6 @@ impl Save for MorphTarget {
             NiFloatKey::BezKey(keys) => (keys.len(), KeyType::BezKey, cast_slice(keys)),
             NiFloatKey::TCBKey(keys) => (keys.len(), KeyType::TCBKey, cast_slice(keys)),
         };
-        stream.save(&self.base)?;
         stream.save_as::<_, u32>(len)?;
         stream.save(&key_type)?;
         stream.save_bytes(bytes)?;

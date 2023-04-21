@@ -3,7 +3,6 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct NiPerParticleData {
-    pub base: NiObject,
     pub velocity: Vec3,
     pub rotation_axis: Vec3,
     pub age: f32,
@@ -15,7 +14,6 @@ pub struct NiPerParticleData {
 
 impl Load for NiPerParticleData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let base = stream.load()?;
         let velocity = stream.load()?;
         let rotation_axis = stream.load()?;
         let age = stream.load()?;
@@ -24,7 +22,6 @@ impl Load for NiPerParticleData {
         let generation = stream.load()?;
         let index = stream.load()?;
         Ok(Self {
-            base,
             velocity,
             rotation_axis,
             age,
@@ -38,7 +35,6 @@ impl Load for NiPerParticleData {
 
 impl Save for NiPerParticleData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.base)?;
         stream.save(&self.velocity)?;
         stream.save(&self.rotation_axis)?;
         stream.save(&self.age)?;

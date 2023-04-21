@@ -48,7 +48,6 @@ impl Save for NiSkinData {
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct BoneData {
-    pub base: NiObject,
     #[default(MAT3_IDENTITY)]
     pub rotation: Mat3,
     pub translation: Vec3,
@@ -60,7 +59,6 @@ pub struct BoneData {
 
 impl Load for BoneData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let base = stream.load()?;
         let rotation = stream.load()?;
         let translation = stream.load()?;
         let scale = stream.load()?;
@@ -68,7 +66,6 @@ impl Load for BoneData {
         let num_vertex_weights = stream.load_as::<u16, _>()?;
         let vertex_weights = stream.load_seq(num_vertex_weights)?;
         Ok(Self {
-            base,
             rotation,
             translation,
             scale,
@@ -80,7 +77,6 @@ impl Load for BoneData {
 
 impl Save for BoneData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.base)?;
         stream.save(&self.rotation)?;
         stream.save(&self.translation)?;
         stream.save(&self.scale)?;

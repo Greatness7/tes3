@@ -3,7 +3,6 @@ use crate::prelude::*;
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiBoundingVolume {
-    pub base: NiObject,
     pub bound_data: BoundData,
 }
 
@@ -27,7 +26,6 @@ impl BoundData {
 
 impl Load for NiBoundingVolume {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let base = stream.load()?;
         let bound_type = stream.load()?;
         let bound_data = match bound_type {
             BoundType::Box => BoundData::NiBoxBV(stream.load()?),
@@ -35,13 +33,12 @@ impl Load for NiBoundingVolume {
             BoundType::Union => BoundData::NiUnionBV(stream.load()?),
             _ => Reader::error(format!("Invalid BoundType: {bound_type:?}"))?,
         };
-        Ok(Self { base, bound_data })
+        Ok(Self { bound_data })
     }
 }
 
 impl Save for NiBoundingVolume {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.base)?;
         stream.save(&self.bound_data.bound_type())?;
         match &self.bound_data {
             BoundData::NiBoxBV(data) => stream.save(data)?,

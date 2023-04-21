@@ -22,7 +22,7 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
     let self_id = &input.ident;
 
     // the ident of the base field struct
-    let base_id = get_base_ident(&input.data).clone();
+    let base_id = get_base_ident(&input.data);
 
     // the struct ident as a byte literal
     let self_id_bytes = get_literal_byte_str(self_id);
@@ -30,22 +30,14 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
     // iter over the structs named fields
     let fields = get_struct_fields_rev(&input.data);
 
+    // trait impls for inheritence system
+    let inheritence_impls = impl_inheritence(self_id, base_id);
+
     let output = quote! {
         impl #self_id {
             #[doc(hidden)]
             pub const fn type_name(&self) -> &'static [u8] {
                 #self_id_bytes
-            }
-        }
-        impl ::std::ops::Deref for #self_id {
-            type Target = #base_id;
-            fn deref(&self) -> &Self::Target {
-                &self.base
-            }
-        }
-        impl ::std::ops::DerefMut for #self_id {
-            fn deref_mut(&mut self) -> &mut Self::Target {
-                &mut self.base
             }
         }
         impl Visitor for #self_id {
@@ -59,10 +51,12 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
                 )*
             }
         }
+        #inheritence_impls
     };
 
-    // ...
-    RELATIONS.insert(self_id.to_string(), base_id.to_string());
+    if let Some(ident) = base_id {
+        RELATIONS.insert(self_id.to_string(), ident.to_string());
+    }
 
     output.into()
 }
@@ -151,9 +145,9 @@ pub fn derive_nitype(input: TokenStream) -> TokenStream {
 }
 
 fn impl_try_from_nitype(idents: &[&Ident]) -> impl ToTokens {
-    // idents is an array of all the structs tagged with NiMeta
+    // idents is an array of all the structs tagged with "Meta"
     // we need them in string form as well, so create a mapping
-    let strings_to_idents: HashMap<String, &Ident> = idents.iter().map(|ident| (ident.to_string(), *ident)).collect();
+    let strings_to_idents: HashMap<String, &Ident> = idents.iter().map(|&ident| (ident.to_string(), ident)).collect();
 
     // build a map that pairs structs with their "base" structs
     let mut structs_to_bases = HashMap::<&Ident, Vec<&Ident>>::with_capacity(idents.len());
@@ -235,23 +229,42 @@ fn impl_try_from_nitype(idents: &[&Ident]) -> impl ToTokens {
     output
 }
 
+fn impl_inheritence(self_id: &Ident, base_id: Option<&Ident>) -> impl ToTokens {
+    let Some(base_id) = base_id else {
+        return quote!();
+    };
+    quote! {
+        impl ::std::ops::Deref for #self_id {
+            type Target = #base_id;
+            fn deref(&self) -> &Self::Target {
+                &self.base
+            }
+        }
+        impl ::std::ops::DerefMut for #self_id {
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.base
+            }
+        }
+    }
+}
+
 /// Convert an Ident into a `LitByteStr`.
 fn get_literal_byte_str(id: &Ident) -> LitByteStr {
     LitByteStr::new(id.to_string().as_bytes(), id.span())
 }
 
 /// Return the type ident of the first struct field if it is named "base".
-fn get_base_ident(data: &Data) -> &Ident {
+fn get_base_ident(data: &Data) -> Option<&Ident> {
     if let Data::Struct(s) = data {
         if let Fields::Named(f) = &s.fields {
-            if let Some(first) = f.named.first() {
-                if first.ident.as_ref().unwrap() == "base" {
-                    if let Type::Path(ty) = &first.ty {
-                        return ty.path.get_ident().unwrap();
-                    }
+            let field = f.named.first()?;
+            let ident = field.ident.as_ref()?;
+            if let Type::Path(ty) = &field.ty {
+                if ident == "base" {
+                    return ty.path.get_ident();
                 }
             }
         }
     }
-    panic!("Could not find `base` field.")
+    None
 }

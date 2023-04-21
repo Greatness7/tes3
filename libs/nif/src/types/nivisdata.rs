@@ -16,7 +16,7 @@ pub struct NiVisKey {
 impl Load for NiVisData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let num_keys = stream.load_as::<u32, _>()?;
+        let num_keys: u32 = stream.load()?;
         let keys = stream.load_seq(num_keys)?;
         Ok(Self { base, keys })
     }

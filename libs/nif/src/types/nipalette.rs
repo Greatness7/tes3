@@ -12,7 +12,7 @@ impl Load for NiPalette {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
         let has_alpha = stream.load::<u8>()? != 0;
-        let num_palettes = stream.load_as::<u32, _>()?;
+        let num_palettes: u32 = stream.load()?;
         let palettes = stream.load_vec(num_palettes)?;
         Ok(Self {
             base,

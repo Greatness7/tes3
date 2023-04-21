@@ -19,7 +19,7 @@ impl Load for NiSkinData {
         let rotation = stream.load()?;
         let translation = stream.load()?;
         let scale = stream.load()?;
-        let num_bone_data = stream.load_as::<u32, _>()?;
+        let num_bone_data: u32 = stream.load()?;
         let skin_partition = stream.load()?;
         let bone_data = stream.load_seq(num_bone_data)?;
         Ok(Self {
@@ -63,7 +63,7 @@ impl Load for BoneData {
         let translation = stream.load()?;
         let scale = stream.load()?;
         let bound = stream.load()?;
-        let num_vertex_weights = stream.load_as::<u16, _>()?;
+        let num_vertex_weights: u16 = stream.load()?;
         let vertex_weights = stream.load_seq(num_vertex_weights)?;
         Ok(Self {
             rotation,

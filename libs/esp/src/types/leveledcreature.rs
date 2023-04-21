@@ -32,7 +32,7 @@ impl Load for LeveledCreature {
                 }
                 b"INDX" => {
                     stream.expect(4u32)?;
-                    this.creatures.reserve(stream.load_as::<u32, _>()?);
+                    this.creatures.reserve(stream.load_as::<u32, usize>()?);
                 }
                 b"CNAM" => {
                     this.creatures.push(default());

@@ -13,9 +13,9 @@ impl Load for NiTriStripsData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
         let num_triangles = stream.load()?;
-        let num_strip_lengths = stream.load_as::<u16, _>()?;
+        let num_strip_lengths: u16 = stream.load()?;
         let strip_lengths: Vec<u16> = stream.load_vec(num_strip_lengths)?;
-        let strip_lengths_sum = strip_lengths.iter().map(|n| *n as usize).sum();
+        let strip_lengths_sum: usize = strip_lengths.iter().map(|n| *n as usize).sum();
         let strips = stream.load_vec(strip_lengths_sum)?;
         Ok(Self {
             base,

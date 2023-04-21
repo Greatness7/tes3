@@ -16,10 +16,10 @@ impl Load for NiPixelData {
         let base = stream.load()?;
         let pixel_format = stream.load()?;
         let palette = stream.load()?;
-        let num_mipmap_levels = stream.load_as::<u32, _>()?;
+        let num_mipmap_levels: u32 = stream.load()?;
         let pixel_stride = stream.load()?;
         let mipmaps = stream.load_vec(num_mipmap_levels)?;
-        let num_pixel_data = stream.load_as::<u32, _>()?;
+        let num_pixel_data: u32 = stream.load()?;
         let pixel_data = stream.load_vec(num_pixel_data)?;
         Ok(Self {
             base,

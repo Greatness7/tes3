@@ -46,7 +46,7 @@ impl<'a> Reader<'a> {
     {
         L::load(self)?
             .try_into()
-            .map_err(|_| io::Error::new(io::ErrorKind::InvalidData, "Invalid Load Conversion"))
+            .map_or_else(|_| Self::error("Invalid 'Load As' Conversion"), |value| Ok(value))
     }
 
     pub fn load_bytes(&mut self, len: usize) -> io::Result<Vec<u8>> {
@@ -55,21 +55,29 @@ impl<'a> Reader<'a> {
         Ok(bytes)
     }
 
-    pub fn load_vec<P>(&mut self, len: usize) -> io::Result<Vec<P>>
-    where
-        P: Pod,
-    {
-        let mut this = zeroed_vec(len);
-        self.read_exact(cast_slice_mut(&mut this))?;
-        Ok(this)
-    }
-
-    pub fn load_seq<T, L>(&mut self, len: usize) -> io::Result<T>
+    pub fn load_seq<T, L>(&mut self, len: impl TryInto<usize>) -> io::Result<T>
     where
         T: FromIterator<L>,
         L: Load,
     {
-        (0..len).map(|_| self.load()).collect()
+        len.try_into().map_or_else(
+            |_| Self::error("Invalid integer length"),
+            |i| (0..i).map(|_| self.load()).collect(),
+        )
+    }
+
+    pub fn load_vec<P>(&mut self, len: impl TryInto<usize>) -> io::Result<Vec<P>>
+    where
+        P: Pod,
+    {
+        len.try_into().map_or_else(
+            |_| Self::error("Invalid integer length"),
+            |i| {
+                let mut this = zeroed_vec(i);
+                self.read_exact(cast_slice_mut(&mut this))?;
+                Ok(this)
+            },
+        )
     }
 
     pub fn load_string<T>(&mut self, len: usize) -> io::Result<T>

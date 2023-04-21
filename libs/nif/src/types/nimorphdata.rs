@@ -16,7 +16,7 @@ impl Load for NiMorphData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
         let num_targets: u32 = stream.load()?;
-        let num_vertices = stream.load_as::<u32, _>()?;
+        let num_vertices: u32 = stream.load()?;
         let relative_targets = stream.load::<u8>()? != 0;
         let targets = (0..num_targets).load(|_| MorphTarget::load(stream, num_vertices))?;
         Ok(Self {
@@ -45,16 +45,14 @@ pub struct MorphTarget {
 }
 
 impl MorphTarget {
-    #[allow(clippy::match_same_arms)]
-    pub(crate) fn load(stream: &mut Reader<'_>, num_vertices: usize) -> io::Result<Self> {
-        let num_keys = stream.load_as::<u32, _>()?;
+    pub(crate) fn load(stream: &mut Reader<'_>, num_vertices: u32) -> io::Result<Self> {
+        let num_keys: u32 = stream.load()?;
         let key_type = stream.load()?;
         let keys = match key_type {
-            // `NoInterp` still uses linear key sizes (see: base_anim_female.1st.nif)
-            KeyType::NoInterp => NiFloatKey::LinKey(stream.load_vec(num_keys)?),
             KeyType::LinKey => NiFloatKey::LinKey(stream.load_vec(num_keys)?),
             KeyType::BezKey => NiFloatKey::BezKey(stream.load_vec(num_keys)?),
             KeyType::TCBKey => NiFloatKey::TCBKey(stream.load_vec(num_keys)?),
+            _ if (num_keys == 0) => default(), // Allowed only when there are no keys.
             _ => Reader::error(format!("NiMorphData does not support {key_type:?}"))?,
         };
         let vertices = stream.load_vec(num_vertices)?;

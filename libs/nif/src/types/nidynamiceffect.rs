@@ -10,7 +10,7 @@ pub struct NiDynamicEffect {
 impl Load for NiDynamicEffect {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let num_affected_nodes = stream.load_as::<u32, _>()?;
+        let num_affected_nodes: u32 = stream.load()?;
         let affected_nodes = stream.load_vec(num_affected_nodes)?;
         Ok(Self { base, affected_nodes })
     }

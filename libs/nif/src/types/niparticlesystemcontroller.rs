@@ -68,7 +68,7 @@ impl Load for NiParticleSystemController {
         let spawn_multiplier = stream.load()?;
         let spawned_speed_chaos = stream.load()?;
         let spawned_direction_chaos = stream.load()?;
-        let num_particles = stream.load_as::<u16, _>()?;
+        let num_particles: u16 = stream.load()?;
         let particles = stream.load_seq(num_particles)?;
         let num_active_particles = stream.load()?;
         let emitter_modifier = stream.load()?;

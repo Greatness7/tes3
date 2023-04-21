@@ -32,7 +32,7 @@ impl Load for LeveledItem {
                 }
                 b"INDX" => {
                     stream.expect(4u32)?;
-                    this.items.reserve(stream.load_as::<u32, _>()?);
+                    this.items.reserve(stream.load_as::<u32, usize>()?);
                 }
                 b"INAM" => {
                     this.items.push(default());

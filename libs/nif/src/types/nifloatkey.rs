@@ -15,27 +15,27 @@ pub enum NiFloatKey {
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiLinFloatKey {
-    time: f32,
-    value: f32,
+    pub time: f32,
+    pub value: f32,
 }
 
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiBezFloatKey {
-    time: f32,
-    value: f32,
-    in_tan: f32,
-    out_an: f32,
+    pub time: f32,
+    pub value: f32,
+    pub in_tan: f32,
+    pub out_an: f32,
 }
 
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiTCBFloatKey {
-    time: f32,
-    value: f32,
-    t: f32,
-    c: f32,
-    b: f32,
+    pub time: f32,
+    pub value: f32,
+    pub t: f32,
+    pub c: f32,
+    pub b: f32,
 }
 
 impl Load for NiFloatKey {

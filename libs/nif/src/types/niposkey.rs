@@ -15,27 +15,27 @@ pub enum NiPosKey {
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiLinPosKey {
-    time: f32,
-    value: Vec3,
+    pub time: f32,
+    pub value: Vec3,
 }
 
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiBezPosKey {
-    time: f32,
-    value: Vec3,
-    in_tan: Vec3,
-    out_an: Vec3,
+    pub time: f32,
+    pub value: Vec3,
+    pub in_tan: Vec3,
+    pub out_an: Vec3,
 }
 
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]
 #[repr(C)]
 pub struct NiTCBPosKey {
-    time: f32,
-    value: Vec3,
-    t: f32,
-    c: f32,
-    b: f32,
+    pub time: f32,
+    pub value: Vec3,
+    pub t: f32,
+    pub c: f32,
+    pub b: f32,
 }
 
 impl Load for NiPosKey {

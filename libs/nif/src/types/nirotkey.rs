@@ -55,7 +55,7 @@ impl Load for NiRotKey {
             KeyType::BezKey => NiRotKey::BezKey(stream.load_seq(num_keys)?),
             KeyType::TCBKey => NiRotKey::TCBKey(stream.load_seq(num_keys)?),
             KeyType::EulerKey => NiRotKey::EulerKey(stream.load()?),
-            _ => Reader::error(format!("NiRotKey does not support {key_type:?}"))?,
+            _ => Reader::error(format!("Invalid KeyType: {key_type:?}"))?,
         })
     }
 }

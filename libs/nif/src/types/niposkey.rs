@@ -1,6 +1,5 @@
 // external imports
 use bytemuck::cast_slice;
-use derive_more::From;
 
 // internal imports
 use crate::prelude::*;

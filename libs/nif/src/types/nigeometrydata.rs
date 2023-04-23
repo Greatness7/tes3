@@ -8,15 +8,15 @@ pub struct NiGeometryData {
     pub normals: Vec<Vec3>,
     pub bound: NiBound,
     pub vertex_colors: Vec<ColorA>,
-    pub uv_sets: Vec<Vec<Vec2>>, // TODO: flatten
+    pub uv_sets: Vec<Vec2>,
 }
 
 impl Load for NiGeometryData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;
-        let num_vertices: u16 = stream.load()?;
+        let num_vertices = stream.load_as::<u16, usize>()?;
         let has_vertices = stream.load::<u32>()? != 0;
-        let num_vertices = if has_vertices { num_vertices as usize } else { 0 };
+        let num_vertices = if has_vertices { num_vertices } else { 0 };
         let vertices = stream.load_vec(num_vertices)?;
         let has_normals = stream.load::<u32>()? != 0;
         let num_normals = if has_normals { num_vertices } else { 0 };
@@ -25,10 +25,10 @@ impl Load for NiGeometryData {
         let has_vertex_colors = stream.load::<u32>()? != 0;
         let num_vertex_colors = if has_vertex_colors { num_vertices } else { 0 };
         let vertex_colors = stream.load_vec(num_vertex_colors)?;
-        let num_uv_sets: u16 = stream.load()?;
+        let num_uv_sets = stream.load_as::<u16, usize>()?;
         let has_uv_sets = stream.load::<u32>()? != 0;
         let num_uv_sets = if has_uv_sets { num_uv_sets } else { 0 };
-        let uv_sets = (0..num_uv_sets).load(|_| stream.load_vec(num_vertices))?;
+        let uv_sets = stream.load_vec(num_vertices * num_uv_sets)?;
         Ok(Self {
             base,
             vertices,
@@ -51,11 +51,31 @@ impl Save for NiGeometryData {
         stream.save(&self.bound)?;
         stream.save_as::<u32>(!self.vertex_colors.is_empty())?;
         stream.save_vec(&self.vertex_colors)?;
-        stream.save_as::<u16>(self.uv_sets.len())?;
+        stream.save_as::<u16>(self.num_uv_sets())?;
         stream.save_as::<u32>(!self.uv_sets.is_empty())?;
-        for uv_set in &self.uv_sets {
-            stream.save_vec(uv_set)?;
-        }
+        stream.save_vec(&self.uv_sets)?;
         Ok(())
+    }
+}
+
+impl NiGeometryData {
+    pub fn num_uv_sets(&self) -> usize {
+        if self.vertices.is_empty() {
+            0
+        } else {
+            self.uv_sets.len() / self.vertices.len()
+        }
+    }
+
+    pub fn uv_set(&self, index: usize) -> Option<&[Vec2]> {
+        let start = index * self.vertices.len();
+        let end = start + self.vertices.len();
+        self.uv_sets.get(start..end)
+    }
+
+    pub fn uv_set_mut(&mut self, index: usize) -> Option<&mut [Vec2]> {
+        let start = index * self.vertices.len();
+        let end = start + self.vertices.len();
+        self.uv_sets.get_mut(start..end)
     }
 }

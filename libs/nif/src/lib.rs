@@ -3,22 +3,22 @@ pub use types::*;
 
 #[allow(unused_imports)]
 pub(crate) mod prelude {
-    pub(crate) use super::*;
+    pub use super::*;
 
     // internal imports
-    pub(crate) use bytes_io::*;
-    pub(crate) use nif_macros::*;
+    pub use bytes_io::*;
+    pub use nif_macros::*;
 
     // external imports
-    pub(crate) use bstr::{BString, ByteSlice, ByteVec};
-    pub(crate) use bytemuck::{Pod, Zeroable};
-    pub(crate) use derive_more::{Deref, DerefMut, From, Into};
-    pub(crate) use hashbrown::{HashMap, HashSet};
-    pub(crate) use smart_default::SmartDefault;
-    pub(crate) use std::io;
+    pub use bstr::{BString, ByteSlice, ByteVec};
+    pub use bytemuck::{Pod, Zeroable};
+    pub use derive_more::{Deref, DerefMut, From, Into};
+    pub use hashbrown::{HashMap, HashSet};
+    pub use smart_default::SmartDefault;
+    pub use std::io;
 
     // use [`std::default::default`] when stable
-    pub(crate) fn default<T: Default>() -> T {
+    pub fn default<T: Default>() -> T {
         Default::default()
     }
 
@@ -28,5 +28,5 @@ pub(crate) mod prelude {
         // a temporary alias until we pick a color library
         pub type ColorA = Vec4;
     }
-    pub(crate) use math::*;
+    pub use math::*;
 }

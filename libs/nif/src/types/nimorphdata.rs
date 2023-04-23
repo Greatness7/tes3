@@ -45,7 +45,7 @@ pub struct MorphTarget {
 }
 
 impl MorphTarget {
-    pub(crate) fn load(stream: &mut Reader<'_>, num_vertices: u32) -> io::Result<Self> {
+    fn load(stream: &mut Reader<'_>, num_vertices: u32) -> io::Result<Self> {
         let num_keys: u32 = stream.load()?;
         let key_type = stream.load()?;
         let keys = match key_type {

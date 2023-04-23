@@ -4,7 +4,7 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiBoxBV {
     pub center: Vec3,
-    #[default(MAT3_IDENTITY)]
+    #[default(Mat3::IDENTITY)]
     pub axis: Mat3,
     pub extents: Vec3,
 }

@@ -6,7 +6,7 @@ pub struct NiAVObject {
     pub base: NiObjectNET,
     pub flags: u16,
     pub translation: Vec3,
-    #[default(MAT3_IDENTITY)]
+    #[default(Mat3::IDENTITY)]
     pub rotation: Mat3,
     #[default(1.0)]
     pub scale: f32,

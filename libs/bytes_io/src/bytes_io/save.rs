@@ -125,3 +125,21 @@ macro_rules! impl_save {
     }
 }
 impl_save! { i8 u8 i16 u16 f32 i32 u32 f64 i64 u64 }
+
+#[cfg(feature = "glam")]
+const _: () = {
+    use glam::{Mat2, Mat3, Mat4, Quat, Vec2, Vec3, Vec4};
+
+    macro_rules! impl_save {
+        ($($T:ty)*) => {
+            $(
+                impl Save for $T {
+                    fn save(&self, stream: &mut Writer) -> io::Result<()> {
+                        stream.write_all(bytes_of(self))
+                    }
+                }
+            )*
+        };
+    }
+    impl_save! { Vec2 Vec3 Vec4 Quat Mat2 Mat3 Mat4 }
+};

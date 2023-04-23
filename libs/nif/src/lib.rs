@@ -21,4 +21,12 @@ pub(crate) mod prelude {
     pub(crate) fn default<T: Default>() -> T {
         Default::default()
     }
+
+    // basic math types
+    mod math {
+        pub use glam::{Mat2, Mat3, Quat, Vec2, Vec3, Vec4};
+        // a temporary alias until we pick a color library
+        pub type ColorA = Vec4;
+    }
+    pub(crate) use math::*;
 }

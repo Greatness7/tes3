@@ -7,6 +7,12 @@ pub enum NiColorKey {
     LinKey(Vec<NiLinColKey>),
 }
 
+#[derive(Meta, LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
+pub struct NiLinColKey {
+    pub time: f32,
+    pub value: ColorA,
+}
+
 impl Load for NiColorKey {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let num_keys: u32 = stream.load()?;

@@ -10,34 +10,28 @@ pub enum NiRotKey {
     EulerKey(NiEulerRotKeys),
 }
 
-#[derive(Meta, LoadSave, Clone, Copy, Debug, Default, PartialEq, Zeroable)]
-pub struct NiLinColKey {
-    time: f32,
-    value: ColorA,
-}
-
 #[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiLinRotKey {
-    time: f32,
+    pub time: f32,
     #[default(Quat::IDENTITY)]
-    value: Quat,
+    pub value: Quat,
 }
 
 #[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiBezRotKey {
-    time: f32,
+    pub time: f32,
     #[default(Quat::IDENTITY)]
-    value: Quat,
+    pub value: Quat,
 }
 
 #[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiTCBRotKey {
-    time: f32,
+    pub time: f32,
     #[default(Quat::IDENTITY)]
-    value: Quat,
-    t: f32,
-    c: f32,
-    b: f32,
+    pub value: Quat,
+    pub t: f32,
+    pub c: f32,
+    pub b: f32,
 }
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]

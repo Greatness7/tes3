@@ -19,21 +19,21 @@ pub struct NiLinColKey {
 #[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiLinRotKey {
     time: f32,
-    #[default(QUAT_IDENTITY)]
+    #[default(Quat::IDENTITY)]
     value: Quat,
 }
 
 #[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiBezRotKey {
     time: f32,
-    #[default(QUAT_IDENTITY)]
+    #[default(Quat::IDENTITY)]
     value: Quat,
 }
 
 #[derive(Meta, LoadSave, Clone, Copy, Debug, PartialEq, SmartDefault, Zeroable)]
 pub struct NiTCBRotKey {
     time: f32,
-    #[default(QUAT_IDENTITY)]
+    #[default(Quat::IDENTITY)]
     value: Quat,
     t: f32,
     c: f32,

@@ -4,7 +4,7 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiSkinData {
     pub base: NiObject,
-    #[default(MAT3_IDENTITY)]
+    #[default(Mat3::IDENTITY)]
     pub rotation: Mat3,
     pub translation: Vec3,
     #[default(1.0)]
@@ -48,7 +48,7 @@ impl Save for NiSkinData {
 
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct BoneData {
-    #[default(MAT3_IDENTITY)]
+    #[default(Mat3::IDENTITY)]
     pub rotation: Mat3,
     pub translation: Vec3,
     #[default(1.0)]

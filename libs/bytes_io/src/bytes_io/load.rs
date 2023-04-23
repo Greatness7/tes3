@@ -138,3 +138,23 @@ pub trait LoadFn: Iterator {
 
 impl LoadFn for std::ops::Range<u16> {}
 impl LoadFn for std::ops::Range<u32> {}
+
+#[cfg(feature = "glam")]
+const _: () = {
+    use glam::{Mat2, Mat3, Mat4, Quat, Vec2, Vec3, Vec4};
+
+    macro_rules! impl_load {
+        ($($T:ty)*) => {
+            $(
+                impl Load for $T {
+                    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+                        let mut this = Self::zeroed();
+                        stream.read_exact(bytes_of_mut(&mut this))?;
+                        Ok(this)
+                    }
+                }
+            )*
+        };
+    }
+    impl_load! { Vec2 Vec3 Vec4 Quat Mat2 Mat3 Mat4 }
+};

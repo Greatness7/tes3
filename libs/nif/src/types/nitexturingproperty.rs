@@ -118,7 +118,7 @@ pub struct BumpMap {
     pub base: Map,
     pub luma_scale: f32,
     pub luma_offset: f32,
-    #[default(MAT2_IDENTITY)]
+    #[default(Mat2::IDENTITY)]
     pub displacement: Mat2,
 }
 

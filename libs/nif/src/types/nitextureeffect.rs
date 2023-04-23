@@ -4,7 +4,7 @@ use crate::prelude::*;
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct NiTextureEffect {
     pub base: NiDynamicEffect,
-    #[default(MAT3_IDENTITY)]
+    #[default(Mat3::IDENTITY)]
     pub projection_matrix: Mat3,
     pub projection_translation: Vec3,
     pub texture_filter: FilterMode,

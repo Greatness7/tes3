@@ -46,7 +46,7 @@ impl Load for NiPosKey {
             KeyType::LinKey => NiPosKey::LinKey(stream.load_vec(num_keys)?),
             KeyType::BezKey => NiPosKey::BezKey(stream.load_vec(num_keys)?),
             KeyType::TCBKey => NiPosKey::TCBKey(stream.load_vec(num_keys)?),
-            _ => Reader::error(format!("NiPosKey does not support {key_type:?}"))?,
+            _ => Reader::error(format!("Invalid KeyType: {key_type:?}"))?,
         })
     }
 }

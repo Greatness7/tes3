@@ -53,7 +53,7 @@ impl MorphTarget {
             KeyType::BezKey => NiFloatKey::BezKey(stream.load_vec(num_keys)?),
             KeyType::TCBKey => NiFloatKey::TCBKey(stream.load_vec(num_keys)?),
             _ if (num_keys == 0) => default(), // Allowed only when there are no keys.
-            _ => Reader::error(format!("NiMorphData does not support {key_type:?}"))?,
+            _ => Reader::error(format!("Invalid KeyType: {key_type:?}"))?,
         };
         let vertices = stream.load_vec(num_vertices)?;
         Ok(Self { keys, vertices })

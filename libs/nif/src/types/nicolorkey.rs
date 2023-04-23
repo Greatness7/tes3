@@ -13,7 +13,7 @@ impl Load for NiColorKey {
         let key_type = if num_keys == 0 { KeyType::LinKey } else { stream.load()? };
         Ok(match key_type {
             KeyType::LinKey => NiColorKey::LinKey(stream.load_seq(num_keys)?),
-            _ => Reader::error(format!("NiColorKey does not support {key_type:?}"))?,
+            _ => Reader::error(format!("Invalid KeyType: {key_type:?}"))?,
         })
     }
 }

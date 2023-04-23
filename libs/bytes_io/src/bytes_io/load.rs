@@ -141,7 +141,7 @@ impl LoadFn for std::ops::Range<u32> {}
 
 #[cfg(feature = "glam")]
 const _: () = {
-    use glam::{Mat2, Mat3, Mat4, Quat, Vec2, Vec3, Vec4};
+    use glam::{Mat2, Mat3, Mat4, Quat, Vec2, Vec3, Vec4, Vec4Swizzles};
 
     macro_rules! impl_load {
         ($($T:ty)*) => {
@@ -156,5 +156,11 @@ const _: () = {
             )*
         };
     }
-    impl_load! { Vec2 Vec3 Vec4 Quat Mat2 Mat3 Mat4 }
+    impl_load! { Vec2 Vec3 Vec4 Mat2 Mat3 Mat4 }
+
+    impl Load for Quat {
+        fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+            stream.load().map(Vec4::xyzw).map(Quat::from_vec4)
+        }
+    }
 };

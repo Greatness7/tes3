@@ -12,7 +12,7 @@ impl Load for NiRotatingParticlesData {
         let base: NiParticlesData = stream.load()?;
         let has_rotations = stream.load::<u32>()? != 0;
         let num_rotations = if has_rotations { base.vertices.len() } else { 0 };
-        let rotations = stream.load_vec(num_rotations)?;
+        let rotations = stream.load_seq(num_rotations)?;
         Ok(Self { base, rotations })
     }
 }

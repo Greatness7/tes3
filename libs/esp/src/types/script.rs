@@ -9,7 +9,7 @@ pub struct Script {
     pub header: ScriptHeader,
     pub variables: Vec<u8>,
     pub bytecode: Vec<u8>,
-    pub script_text: String,
+    pub text: String,
 }
 
 #[esp_meta]
@@ -42,7 +42,7 @@ impl Load for Script {
                     this.bytecode = stream.load()?;
                 }
                 b"SCTX" => {
-                    this.script_text = stream.load()?;
+                    this.text = stream.load()?;
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -78,9 +78,9 @@ impl Save for Script {
             stream.save(&self.bytecode)?;
         }
         // SCTX
-        if !self.script_text.is_empty() {
+        if !self.text.is_empty() {
             stream.save(b"SCTX")?;
-            stream.save(&self.script_text)?;
+            stream.save(&self.text)?;
         }
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {

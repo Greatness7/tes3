@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct Bodypart {
     pub flags: ObjectFlags,
     pub id: String,
-    pub name: String,
+    pub race: String,
     pub mesh: String,
     pub data: BodypartData,
 }
@@ -35,7 +35,7 @@ impl Load for Bodypart {
                     this.mesh = stream.load()?;
                 }
                 b"FNAM" => {
-                    this.name = stream.load()?;
+                    this.race = stream.load()?;
                 }
                 b"BYDT" => {
                     stream.expect(4u32)?;
@@ -68,9 +68,9 @@ impl Save for Bodypart {
             stream.save(&self.mesh)?;
         }
         // FNAM
-        if !self.name.is_empty() {
+        if !self.race.is_empty() {
             stream.save(b"FNAM")?;
-            stream.save(&self.name)?;
+            stream.save(&self.race)?;
         }
         // BYDT
         stream.save(b"BYDT")?;

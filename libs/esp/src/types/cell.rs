@@ -1,5 +1,6 @@
 // internal imports
 use crate::prelude::*;
+use std::cmp::Reverse;
 
 #[esp_meta]
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -235,12 +236,14 @@ impl Cell {
         let mut references: Vec<_> = self.references.values().collect();
 
         // sort references such that:
-        // 1. persistent references come before temporary references
-        // 2. master-defined references come before plugin-defined references
-        // 3. references from the same source file are sorted by object index
+        // 1. moved references come first, otherwise reference processing in both engines breaks
+        // 2. persistent references come before temporary references
+        // 3. master-defined references come before plugin-defined references
+        // 4. references from the same source file are sorted by object index
 
         references.sort_by_key(|r| {
             (
+                Reverse(r.moved_cell),
                 r.temporary,
                 match r.mast_index {
                     0 => u32::MAX,

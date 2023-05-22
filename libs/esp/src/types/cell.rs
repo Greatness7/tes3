@@ -236,7 +236,8 @@ impl Cell {
         let mut references: Vec<_> = self.references.values().collect();
 
         // sort references such that:
-        // 1. moved references come first, otherwise reference processing in both engines breaks
+        // 1. moved references come first, otherwise reference processing in OpenMW 0.47
+        //    breaks(fixed in 0.48)
         // 2. persistent references come before temporary references
         // 3. master-defined references come before plugin-defined references
         // 4. references from the same source file are sorted by object index

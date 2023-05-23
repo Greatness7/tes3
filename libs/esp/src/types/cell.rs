@@ -1,3 +1,6 @@
+// rust std imports
+use std::cmp::Reverse;
+
 // internal imports
 use crate::prelude::*;
 
@@ -229,12 +232,14 @@ impl Cell {
         let mut references: Vec<_> = self.references.iter().collect();
 
         // sort references such that:
-        // 1. persistent references come before temporary references
-        // 2. master-defined references come before plugin-defined references
-        // 3. references from the same source file are sorted by object index
+        // 1. moved references come first, otherwise reference processing in OpenMW 0.47 breaks. (fixed in 0.48)
+        // 2. persistent references come before temporary references
+        // 3. master-defined references come before plugin-defined references
+        // 4. references from the same source file are sorted by object index
 
         references.sort_by_key(|((mast_index, refr_index), reference)| {
             (
+                Reverse(reference.moved_cell),
                 reference.temporary,
                 match *mast_index {
                     0 => u32::MAX,

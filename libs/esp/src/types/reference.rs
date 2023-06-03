@@ -214,3 +214,24 @@ impl Save for Reference {
         Ok(())
     }
 }
+
+impl Reference {
+    pub fn persistent(&self) -> bool {
+        // Moved references are always persistent.
+        if self.moved_cell.is_some() {
+            return true;
+        }
+
+        // Doors with destinations are always persistent.
+        if self.destination.is_some() {
+            return true;
+        }
+
+        // Note:
+        //  NPCs and creatures should also always be persistent.
+        //  We do not have the information to enforce that here.
+
+        // For everything else trust the flag.
+        return !self.temporary;
+    }
+}

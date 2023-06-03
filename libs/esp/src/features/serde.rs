@@ -68,7 +68,7 @@ pub mod cell_references {
 
         references.sort_by_key(|reference| {
             (
-                reference.temporary,
+                !reference.persistent(),
                 match reference.mast_index {
                     0 => u32::MAX,
                     i => i,

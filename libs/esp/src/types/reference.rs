@@ -20,8 +20,7 @@ pub struct Reference {
     pub charge_left: Option<u32>,
     pub health_left: Option<i32>,
     pub object_count: Option<u32>,
-    pub door_destination_coords: Option<[f32; 6]>,
-    pub door_destination_cell: Option<String>,
+    pub destination: Option<TravelDestination>,
     pub lock_level: Option<u32>,
     pub key: Option<String>,
     pub trap: Option<String>,
@@ -76,10 +75,7 @@ impl Load for Reference {
                 }
                 b"DODT" => {
                     stream.expect(24u32)?;
-                    this.door_destination_coords = Some(stream.load()?);
-                }
-                b"DNAM" => {
-                    this.door_destination_cell = Some(stream.load()?);
+                    this.destination = Some(stream.load()?);
                 }
                 b"FLTV" => {
                     stream.expect(4u32)?;
@@ -182,14 +178,9 @@ impl Save for Reference {
             }
         }
         // DODT
-        if let Some(value) = &self.door_destination_coords {
+        if let Some(value) = &self.destination {
             stream.save(b"DODT")?;
             stream.save(&24u32)?;
-            stream.save(value)?;
-        }
-        // DNAM
-        if let Some(value) = &self.door_destination_cell {
-            stream.save(b"DNAM")?;
             stream.save(value)?;
         }
         // FLTV

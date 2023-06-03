@@ -7,7 +7,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-bstr = { version = "^1.4", default-features = false, features = ["std"] }
+bstr = { version = "^1.5", default-features = false, features = ["std"] }
 bytemuck = { version = "^1.13", features = ["derive"] }
 bytes_io = { path = "../bytes_io", features = ["glam"] }
 derive_more = "^0.99"
@@ -15,7 +15,7 @@ glam = "^0.23"
 hashbrown = { version = ">=0.12, <1.0" }
 nif_macros = { path = "../nif_macros" }
 slotmap = "^1.0"
-smart-default = "^0.6"
+smart-default = "^0.7"
 
 [dev-dependencies]
 tempfile = "^3.5"

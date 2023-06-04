@@ -223,40 +223,12 @@ impl NiStream {
         self.get_all_as(links)
     }
 
-    /// Retrieve multiple objects from the stream.
-    pub fn get_all_mut<'a, T>(&'a mut self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a mut T>
-    where
-        &'a mut T: TryFrom<&'a mut NiType>,
-    {
-        self.get_all_as_mut(links)
-    }
-
     /// Retrieve multiple objects of the specified type from the stream.
     pub fn get_all_as<'a, T, U>(&'a self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a U>
     where
         &'a U: 'a + TryFrom<&'a NiType>,
     {
         links.iter().filter_map(move |link| self.get_as(*link))
-    }
-
-    /// Retrieve multiple objects of the specified type from the stream.
-    pub fn get_all_as_mut<'a, T, U>(&'a mut self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a mut U>
-    where
-        &'a mut U: 'a + TryFrom<&'a mut NiType>,
-    {
-        // Prevent two mutable references to same object.
-        let mut seen = HashSet::with_capacity(links.len());
-        links.iter().filter_map(move |link| {
-            if seen.insert(link.key) {
-                #[allow(trivial_casts)]
-                if let Some(value) = self.objects.get_mut(link.key) {
-                    let ptr = value as *mut NiType;
-                    let obj = unsafe { &mut *ptr };
-                    return obj.try_into().ok();
-                }
-            }
-            None
-        })
     }
 
     /// Create an iterator over objects of the specified type.

@@ -25,7 +25,7 @@ pub struct NiBezFloatKey {
     pub time: f32,
     pub value: f32,
     pub in_tan: f32,
-    pub out_an: f32,
+    pub out_tan: f32,
 }
 
 #[derive(Meta, Clone, Copy, Debug, Default, PartialEq, Pod, Zeroable)]

@@ -29,9 +29,9 @@ pub struct NiTCBRotKey {
     pub time: f32,
     #[default(Quat::IDENTITY)]
     pub value: Quat,
-    pub t: f32,
-    pub c: f32,
-    pub b: f32,
+    pub tension: f32,
+    pub continuity: f32,
+    pub bias: f32,
 }
 
 #[derive(Meta, Clone, Debug, Default, PartialEq)]

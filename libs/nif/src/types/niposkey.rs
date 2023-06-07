@@ -33,9 +33,9 @@ pub struct NiBezPosKey {
 pub struct NiTCBPosKey {
     pub time: f32,
     pub value: Vec3,
-    pub t: f32,
-    pub c: f32,
-    pub b: f32,
+    pub tension: f32,
+    pub continuity: f32,
+    pub bias: f32,
 }
 
 impl Load for NiPosKey {

@@ -160,7 +160,7 @@ const _: () = {
 
     impl Load for Quat {
         fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-            stream.load().map(Vec4::xyzw).map(Quat::from_vec4)
+            stream.load().map(Vec4::yzwx).map(Quat::from_vec4)
         }
     }
 };

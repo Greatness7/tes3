@@ -145,7 +145,7 @@ const _: () = {
 
     impl Save for Quat {
         fn save(&self, stream: &mut Writer) -> io::Result<()> {
-            stream.save(&Vec4::from(*self).xyzw())
+            stream.save(&Vec4::from(*self).wxyz())
         }
     }
 };

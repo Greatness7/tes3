@@ -136,13 +136,13 @@ impl Plugin {
     }
 
     #[cfg(feature = "nightly")]
-    pub fn drain_objects_of_type<T>(&mut self) -> impl Iterator<Item = T> + '_
+    pub fn extract_objects_of_type<T>(&mut self) -> impl Iterator<Item = T> + '_
     where
         TES3Object: TryInto<T>,
         for<'a> &'a mut TES3Object: TryInto<&'a mut T>,
     {
         self.objects
-            .drain_filter(|obj| obj.try_into().is_ok())
+            .extract_if(|obj| obj.try_into().is_ok())
             .filter_map(|obj| obj.try_into().ok())
     }
 }

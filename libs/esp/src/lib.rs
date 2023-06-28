@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "nightly", feature(drain_filter))]
+#![cfg_attr(feature = "nightly", feature(extract_if))]
 
 pub mod types;
 pub use types::*;

@@ -27,7 +27,11 @@ fn insert_struct_attrs(attrs: &mut Vec<syn::Attribute>, data: &mut syn::DataStru
 /// <https://serde.rs/enum-representations.html>
 ///
 fn insert_enum_attrs(attrs: &mut Vec<syn::Attribute>, data: &mut syn::DataEnum) {
-    // Use the "adjacently tagged" representation for enums with numeric primitive variants.
+    // Use default representation for "C-like" enums.
+    if data.variants.iter().all(|variant| variant.discriminant.is_some()) {
+        return;
+    }
+    // Use "adjacently tagged" representation for enums with numeric primitive variants.
     for variant in &data.variants {
         if let syn::Fields::Unnamed(fields) = &variant.fields {
             for field in &fields.unnamed {

@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct LeveledItem {
     pub flags: ObjectFlags,
     pub id: String,
-    pub list_flags: u32,
+    pub leveled_item_flags: LeveledItemFlags,
     pub chance_none: u8,
     pub items: Vec<(String, u16)>,
 }
@@ -24,7 +24,7 @@ impl Load for LeveledItem {
                 }
                 b"DATA" => {
                     stream.expect(4u32)?;
-                    this.list_flags = stream.load()?;
+                    this.leveled_item_flags = stream.load()?;
                 }
                 b"NNAM" => {
                     stream.expect(1u32)?;
@@ -66,7 +66,7 @@ impl Save for LeveledItem {
         // DATA
         stream.save(b"DATA")?;
         stream.save(&4u32)?;
-        stream.save(&self.list_flags)?;
+        stream.save(&self.leveled_item_flags)?;
         // NNAM
         stream.save(b"NNAM")?;
         stream.save(&1u32)?;

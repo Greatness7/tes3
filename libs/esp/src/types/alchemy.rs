@@ -19,7 +19,7 @@ pub struct Alchemy {
 pub struct AlchemyData {
     pub weight: f32,
     pub value: u32,
-    pub flags: u32,
+    pub flags: AlchemyFlags,
 }
 
 impl Load for Alchemy {

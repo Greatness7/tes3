@@ -26,7 +26,7 @@ pub struct RaceData {
     pub luck: [i32; 2],
     pub height: [f32; 2],
     pub weight: [f32; 2],
-    pub flags: u32,
+    pub flags: RaceFlags,
 }
 
 #[esp_meta]

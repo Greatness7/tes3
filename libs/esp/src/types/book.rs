@@ -20,7 +20,7 @@ pub struct Book {
 pub struct BookData {
     pub weight: f32,
     pub value: u32,
-    pub flags: u32,
+    pub kind: BookType,
     pub skill: SkillId,
     pub enchantment: u32,
 }

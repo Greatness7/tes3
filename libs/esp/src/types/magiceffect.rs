@@ -25,7 +25,7 @@ pub struct MagicEffect {
 pub struct MagicEffectData {
     pub school: EffectSchool,
     pub base_cost: f32,
-    pub flags: u32,
+    pub flags: MagicEffectFlags,
     pub color: (i32, i32, i32),
     pub speed: f32,
     pub size: f32,

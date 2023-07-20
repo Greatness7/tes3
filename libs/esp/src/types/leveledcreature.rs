@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct LeveledCreature {
     pub flags: ObjectFlags,
     pub id: String,
-    pub list_flags: u32,
+    pub leveled_creature_flags: LeveledCreatureFlags,
     pub chance_none: u8,
     pub creatures: Vec<(String, u16)>,
 }
@@ -24,7 +24,7 @@ impl Load for LeveledCreature {
                 }
                 b"DATA" => {
                     stream.expect(4u32)?;
-                    this.list_flags = stream.load()?;
+                    this.leveled_creature_flags = stream.load()?;
                 }
                 b"NNAM" => {
                     stream.expect(1u32)?;
@@ -66,7 +66,7 @@ impl Save for LeveledCreature {
         // DATA
         stream.save(b"DATA")?;
         stream.save(&4u32)?;
-        stream.save(&self.list_flags)?;
+        stream.save(&self.leveled_creature_flags)?;
         // NNAM
         stream.save(b"NNAM")?;
         stream.save(&1u32)?;

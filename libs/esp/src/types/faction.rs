@@ -18,7 +18,7 @@ pub struct FactionData {
     pub favored_attributes: [AttributeId; 2],
     pub requirements: [FactionRequirement; 10],
     pub favored_skills: [SkillId; 7],
-    pub flags: u32,
+    pub flags: FactionFlags,
 }
 
 #[esp_meta]

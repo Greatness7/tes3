@@ -16,7 +16,7 @@ pub struct EnchantingData {
     pub kind: EnchantType,
     pub cost: u32,
     pub max_charge: u32,
-    pub flags: u32,
+    pub flags: EnchantingFlags,
 }
 
 impl Load for Enchanting {

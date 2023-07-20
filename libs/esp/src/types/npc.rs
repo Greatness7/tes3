@@ -19,7 +19,8 @@ pub struct Npc {
     pub faction: String,
     pub head: String,
     pub hair: String,
-    pub npc_flags: u32,
+    pub npc_flags: NpcFlags,
+    pub blood_type: u8,
     pub data: NpcData,
 }
 
@@ -84,7 +85,8 @@ impl Load for Npc {
                 }
                 b"FLAG" => {
                     stream.expect(4u32)?;
-                    this.npc_flags = stream.load()?;
+                    let flags = stream.load()?;
+                    (this.npc_flags, this.blood_type) = unpack_flags(flags);
                 }
                 b"NPCO" => {
                     stream.expect(36u32)?;
@@ -188,7 +190,7 @@ impl Save for Npc {
         // FLAG
         stream.save(b"FLAG")?;
         stream.save(&4u32)?;
-        stream.save(&self.npc_flags)?;
+        stream.save(&pack_flags(self.npc_flags, self.blood_type))?;
         // NPCO
         for value in &self.inventory {
             stream.save(b"NPCO")?;
@@ -339,4 +341,20 @@ impl Save for NpcStats {
         stream.save(&self.fatigue)?;
         Ok(())
     }
+}
+
+#[allow(clippy::cast_possible_truncation)]
+const fn unpack_flags(flags: u32) -> (NpcFlags, u8) {
+    // Note: drops unknown flags, may be `.ess` incompatible.
+    let npc_flags = NpcFlags::from_bits_truncate(flags as u8);
+    // Blood types start at the 10th bit and are 3 bits long.
+    let blood_type = ((flags >> 10) & 0b111) as u8;
+    (npc_flags, blood_type)
+}
+
+#[allow(clippy::cast_lossless)]
+const fn pack_flags(npc_flags: NpcFlags, blood_type: u8) -> u32 {
+    let flags = npc_flags.bits() as u32;
+    let blood_type = blood_type as u32;
+    flags | (blood_type & 0b111 << 10)
 }

@@ -10,7 +10,7 @@ pub struct Container {
     pub script: String,
     pub mesh: String,
     pub encumbrance: f32,
-    pub container_flags: u32,
+    pub container_flags: ContainerFlags,
     pub inventory: Vec<(i32, FixedString<32>)>,
 }
 

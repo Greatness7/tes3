@@ -16,14 +16,15 @@ pub struct Creature {
     pub travel_destinations: Vec<TravelDestination>,
     pub sound: String,
     pub scale: Option<f32>,
-    pub creature_flags: u32,
+    pub creature_flags: CreatureFlags,
+    pub blood_type: u8,
     pub data: CreatureData,
 }
 
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CreatureData {
-    pub kind: u32,
+    pub kind: CreatureType,
     pub level: u32,
     pub strength: u32,
     pub intelligence: u32,
@@ -75,7 +76,8 @@ impl Load for Creature {
                 }
                 b"FLAG" => {
                     stream.expect(4u32)?;
-                    this.creature_flags = stream.load()?;
+                    let flags = stream.load()?;
+                    (this.creature_flags, this.blood_type) = unpack_flags(flags);
                 }
                 b"XSCL" => {
                     stream.expect(4u32)?;
@@ -164,7 +166,7 @@ impl Save for Creature {
         // FLAG
         stream.save(b"FLAG")?;
         stream.save(&4u32)?;
-        stream.save(&self.creature_flags)?;
+        stream.save(&pack_flags(self.creature_flags, self.blood_type))?;
         // XSCL
         if let Some(value) = &self.scale {
             let scale = value.clamp(0.5, 2.0);
@@ -240,4 +242,20 @@ impl Save for Creature {
         }
         Ok(())
     }
+}
+
+#[allow(clippy::cast_possible_truncation)]
+const fn unpack_flags(flags: u32) -> (CreatureFlags, u8) {
+    // Note: drops unknown flags, may be `.ess` incompatible.
+    let creature_flags = CreatureFlags::from_bits_truncate(flags as u8);
+    // Blood types start at the 10th bit and are 3 bits long.
+    let blood_type = ((flags >> 10) & 0b111) as u8;
+    (creature_flags, blood_type)
+}
+
+#[allow(clippy::cast_lossless)]
+const fn pack_flags(npc_flags: CreatureFlags, blood_type: u8) -> u32 {
+    let flags = npc_flags.bits() as u32;
+    let blood_type = blood_type as u32;
+    flags | (blood_type & 0b111 << 10)
 }

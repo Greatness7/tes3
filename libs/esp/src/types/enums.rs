@@ -491,6 +491,15 @@ pub enum ArmorType {
 #[esp_meta]
 #[repr(u32)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum BookType {
+    #[default]
+    Book = 0,
+    Scroll = 1,
+}
+
+#[esp_meta]
+#[repr(u32)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 pub enum ClothingType {
     #[default]
     Pants = 0,
@@ -503,6 +512,17 @@ pub enum ClothingType {
     Skirt = 7,
     Ring = 8,
     Amulet = 9,
+}
+
+#[esp_meta]
+#[repr(u32)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum CreatureType {
+    #[default]
+    Normal = 0,
+    Daedra = 1,
+    Undead = 2,
+    Humanoid = 3,
 }
 
 #[esp_meta]

@@ -18,7 +18,7 @@ pub struct MiscItem {
 pub struct MiscItemData {
     pub weight: f32,
     pub value: u32,
-    pub flags: u32,
+    pub flags: MiscItemFlags,
 }
 
 impl Load for MiscItem {

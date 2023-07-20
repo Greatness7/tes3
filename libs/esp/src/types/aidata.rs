@@ -8,7 +8,7 @@ pub struct AiData {
     pub fight: i8,
     pub flee: i8,
     pub alarm: i8,
-    pub services: u32,
+    pub services: ServiceFlags,
 }
 
 impl Load for AiData {

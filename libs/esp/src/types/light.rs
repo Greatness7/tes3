@@ -22,7 +22,7 @@ pub struct LightData {
     pub time: i32,
     pub radius: u32,
     pub color: [u8; 4],
-    pub flags: u32,
+    pub flags: LightFlags,
 }
 
 impl Load for Light {

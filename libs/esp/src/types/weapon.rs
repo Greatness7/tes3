@@ -30,7 +30,7 @@ pub struct WeaponData {
     pub slash_max: u8,
     pub thrust_min: u8,
     pub thrust_max: u8,
-    pub flags: u32,
+    pub flags: WeaponFlags,
 }
 
 impl Load for Weapon {

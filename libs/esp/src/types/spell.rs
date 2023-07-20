@@ -16,7 +16,7 @@ pub struct Spell {
 pub struct SpellData {
     pub kind: SpellType,
     pub cost: u32,
-    pub flags: u32,
+    pub flags: SpellFlags,
 }
 
 impl Load for Spell {

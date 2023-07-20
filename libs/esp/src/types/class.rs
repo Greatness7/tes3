@@ -27,8 +27,8 @@ pub struct ClassData {
     pub major4: SkillId,
     pub minor5: SkillId,
     pub major5: SkillId,
-    pub flags: u32,
-    pub auto_calc_flags: u32,
+    pub flags: ClassFlags,
+    pub services: ServiceFlags,
 }
 
 impl Load for Class {

@@ -793,7 +793,7 @@ pub enum FilterFunction {
     NotRace = 22610,               // b"RX",
     NotIdType = 22616,             // b"XX",
     Global = 22630,                // b"fX",
-    Pcgold = 22636,                // b"lX",
+    PcGold = 22636,                // b"lX",
     CompareGlobal = 22578,         // b"2X",
     CompareLocal = 22579,          // b"3X",
     VariableCompare = 22643,       // b"sX",

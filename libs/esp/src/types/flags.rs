@@ -213,7 +213,7 @@ bitflags! {
         const BARTERS_PROBES = 0x40;
         const BARTERS_LIGHTS = 0x80;
         const BARTERS_APPARATUS = 0x100;
-        const BARTERS_REPAIR_TOOLS = 0x200;
+        const BARTERS_REPAIR_ITEMS = 0x200;
         const BARTERS_MISC_ITEMS = 0x400;
         const OFFERS_SPELLS = 0x800;
         const BARTERS_ENCHANTED_ITEMS = 0x1000;

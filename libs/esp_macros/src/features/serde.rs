@@ -7,7 +7,7 @@ pub fn impl_serialize_deserialize(input: &mut syn::DeriveInput) {
     match &mut input.data {
         syn::Data::Struct(data_struct) => insert_struct_attrs(&mut input.attrs, data_struct),
         syn::Data::Enum(data_enum) => insert_enum_attrs(&mut input.attrs, data_enum),
-        syn::Data::Union(_) => {}
+        syn::Data::Union(_) => unimplemented!(),
     }
 }
 

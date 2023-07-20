@@ -216,7 +216,7 @@ impl Save for Reference {
 }
 
 impl Reference {
-    pub fn persistent(&self) -> bool {
+    pub const fn persistent(&self) -> bool {
         // Moved references are always persistent.
         if self.moved_cell.is_some() {
             return true;
@@ -232,6 +232,6 @@ impl Reference {
         //  We do not have the information to enforce that here.
 
         // For everything else trust the flag.
-        return !self.temporary;
+        !self.temporary
     }
 }

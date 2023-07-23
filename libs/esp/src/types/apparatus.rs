@@ -16,7 +16,7 @@ pub struct Apparatus {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ApparatusData {
-    pub kind: ApparatusType,
+    pub apparatus_type: ApparatusType,
     pub quality: f32,
     pub weight: f32,
     pub value: u32,

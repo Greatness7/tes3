@@ -13,7 +13,7 @@ pub struct Enchanting {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct EnchantingData {
-    pub kind: EnchantType,
+    pub enchant_type: EnchantType,
     pub cost: u32,
     pub max_charge: u32,
     pub flags: EnchantingFlags,

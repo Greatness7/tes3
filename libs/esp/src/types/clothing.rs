@@ -18,7 +18,7 @@ pub struct Clothing {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ClothingData {
-    pub kind: ClothingType,
+    pub clothing_type: ClothingType,
     pub weight: f32,
     pub value: u16,
     pub enchantment: u16,

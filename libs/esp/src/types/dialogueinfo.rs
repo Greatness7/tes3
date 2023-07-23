@@ -25,7 +25,7 @@ pub struct DialogueInfo {
 #[esp_meta]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct DialogueData {
-    pub kind: DialogueType,
+    pub dialogue_type: DialogueType,
     pub disposition: i32,
     pub speaker_rank: i8,
     pub speaker_sex: Sex,
@@ -36,7 +36,7 @@ pub struct DialogueData {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Filter {
     pub slot: FilterSlot,
-    pub kind: FilterType,
+    pub filter_type: FilterType,
     pub function: FilterFunction,
     pub comparison: FilterComparison,
     pub id: String,
@@ -274,7 +274,7 @@ impl Load for DialogueData {
         let player_rank = stream.load()?;
         stream.skip(1)?; // padding
         Ok(Self {
-            kind,
+            dialogue_type: kind,
             disposition,
             speaker_rank,
             speaker_sex,
@@ -285,7 +285,7 @@ impl Load for DialogueData {
 
 impl Save for DialogueData {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(&self.kind)?;
+        stream.save(&self.dialogue_type)?;
         stream.save(&self.disposition)?;
         stream.save(&self.speaker_rank)?;
         stream.save(&self.speaker_sex)?;
@@ -299,14 +299,14 @@ impl Load for Filter {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let len = stream.load_as::<u32, usize>()?;
         let slot = stream.load()?;
-        let kind = stream.load()?;
+        let filter_type = stream.load()?;
         let function = stream.load()?;
         let comparison = stream.load()?;
         let id = stream.load_string(len - 5)?;
         let value = default();
         Ok(Self {
             slot,
-            kind,
+            filter_type,
             function,
             comparison,
             id,
@@ -320,7 +320,7 @@ impl Save for Filter {
         let id = stream.encode(&self.id)?;
         stream.save_as::<u32>(id.len() + 5)?;
         stream.save(&self.slot)?;
-        stream.save(&self.kind)?;
+        stream.save(&self.filter_type)?;
         stream.save(&self.function)?;
         stream.save(&self.comparison)?;
         stream.save_bytes(&id)?;

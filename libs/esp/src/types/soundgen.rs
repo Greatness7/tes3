@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct SoundGen {
     pub flags: ObjectFlags,
     pub id: String,
-    pub kind: SoundGenType,
+    pub sound_gen_type: SoundGenType,
     pub creature: String,
     pub sound: String,
 }
@@ -24,7 +24,7 @@ impl Load for SoundGen {
                 }
                 b"DATA" => {
                     stream.expect(4u32)?;
-                    this.kind = stream.load()?;
+                    this.sound_gen_type = stream.load()?;
                 }
                 b"CNAM" => {
                     this.creature = stream.load()?;
@@ -56,7 +56,7 @@ impl Save for SoundGen {
         // DATA
         stream.save(b"DATA")?;
         stream.save(&4u32)?;
-        stream.save(&self.kind)?;
+        stream.save(&self.sound_gen_type)?;
         // CNAM
         if !self.creature.is_empty() {
             stream.save(b"CNAM")?;

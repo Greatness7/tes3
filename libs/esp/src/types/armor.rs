@@ -18,7 +18,7 @@ pub struct Armor {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ArmorData {
-    pub kind: ArmorType,
+    pub armor_type: ArmorType,
     pub weight: f32,
     pub value: u32,
     pub health: u32,

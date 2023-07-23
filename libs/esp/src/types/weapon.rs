@@ -19,7 +19,7 @@ pub struct Weapon {
 pub struct WeaponData {
     pub weight: f32,
     pub value: u32,
-    pub kind: WeaponType,
+    pub weapon_type: WeaponType,
     pub health: u16,
     pub speed: f32,
     pub reach: f32,

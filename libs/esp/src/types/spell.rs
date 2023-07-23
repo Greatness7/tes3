@@ -14,7 +14,7 @@ pub struct Spell {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct SpellData {
-    pub kind: SpellType,
+    pub spell_type: SpellType,
     pub cost: u32,
     pub flags: SpellFlags,
 }

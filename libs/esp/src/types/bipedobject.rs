@@ -4,7 +4,7 @@ use crate::prelude::*;
 #[esp_meta]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct BipedObject {
-    pub kind: BipedObjectType,
+    pub biped_object_type: BipedObjectType,
     pub male_bodypart: String,
     pub female_bodypart: String,
 }
@@ -14,7 +14,7 @@ impl Load for BipedObject {
         let mut this: Self = default();
         // INDX
         stream.expect(1u32)?;
-        this.kind = stream.load()?;
+        this.biped_object_type = stream.load()?;
         //
         for _ in 0..2 {
             // BNAM
@@ -37,7 +37,7 @@ impl Save for BipedObject {
         // INDX
         stream.save(b"INDX")?;
         stream.save(&1u32)?;
-        stream.save(&self.kind)?;
+        stream.save(&self.biped_object_type)?;
         // BNAM
         if !self.male_bodypart.is_empty() {
             stream.save(b"BNAM")?;

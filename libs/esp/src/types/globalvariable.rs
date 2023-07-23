@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct GlobalVariable {
     pub flags: ObjectFlags,
     pub id: String,
-    pub kind: GlobalType,
+    pub global_type: GlobalType,
     pub value: f32,
 }
 
@@ -23,7 +23,7 @@ impl Load for GlobalVariable {
                 }
                 b"FNAM" => {
                     stream.expect(1u32)?;
-                    this.kind = stream.load()?;
+                    this.global_type = stream.load()?;
                 }
                 b"FLTV" => {
                     stream.expect(4u32)?;
@@ -55,7 +55,7 @@ impl Save for GlobalVariable {
         // FNAM
         stream.save(b"FNAM")?;
         stream.save(&1u32)?;
-        stream.save(&self.kind)?;
+        stream.save(&self.global_type)?;
         // FLTV
         stream.save(b"FLTV")?;
         stream.save(&4u32)?;

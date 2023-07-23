@@ -17,7 +17,7 @@ pub struct BodypartData {
     pub part: BodypartId,
     pub vampire: u8,
     pub female: u8,
-    pub kind: BodypartType,
+    pub bodypart_type: BodypartType,
 }
 
 impl Load for Bodypart {

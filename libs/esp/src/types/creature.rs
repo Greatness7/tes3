@@ -24,7 +24,7 @@ pub struct Creature {
 #[esp_meta]
 #[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CreatureData {
-    pub kind: CreatureType,
+    pub creature_type: CreatureType,
     pub level: u32,
     pub strength: u32,
     pub intelligence: u32,

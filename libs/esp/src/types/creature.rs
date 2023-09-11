@@ -257,5 +257,5 @@ const fn unpack_flags(flags: u32) -> (CreatureFlags, u8) {
 const fn pack_flags(npc_flags: CreatureFlags, blood_type: u8) -> u32 {
     let flags = npc_flags.bits() as u32;
     let blood_type = blood_type as u32;
-    flags | (blood_type & 0b111 << 10)
+    flags | ((blood_type & 0b111) << 10)
 }

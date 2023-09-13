@@ -37,7 +37,7 @@ pub struct CreatureData {
     pub health: u32,
     pub magicka: u32,
     pub fatigue: u32,
-    pub soul_points: u32,
+    pub soul: u32,
     pub combat: u32,
     pub magic: u32,
     pub steath: u32,

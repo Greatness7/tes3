@@ -57,6 +57,7 @@ warn = [
 allow = [
     "clippy::cargo_common_metadata", # TODO
     "clippy::field_reassign_with_default",
+    "clippy::ignored_unit_patterns",
     "clippy::inline_always",
     "clippy::match_wildcard_for_single_variants",
     "clippy::missing_errors_doc", # TODO

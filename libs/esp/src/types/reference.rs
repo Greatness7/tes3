@@ -12,7 +12,6 @@ pub struct Reference {
     pub rotation: [f32; 3],
     pub scale: Option<f32>,
     pub moved_cell: Option<(i32, i32)>,
-    pub blocked: Option<u8>,
     pub owner: Option<String>,
     pub owner_global: Option<String>,
     pub owner_faction: Option<String>,
@@ -25,6 +24,7 @@ pub struct Reference {
     pub key: Option<String>,
     pub trap: Option<String>,
     pub soul: Option<String>,
+    pub blocked: Option<u8>,
     pub deleted: Option<bool>,
 }
 

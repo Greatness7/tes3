@@ -52,8 +52,9 @@ pub enum FilterValue {
 }
 
 #[esp_meta]
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub enum QuestState {
+    #[default]
     Name,
     Finished,
     Restart,
@@ -267,14 +268,14 @@ impl Save for DialogueInfo {
 
 impl Load for DialogueData {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let kind = stream.load()?;
+        let dialogue_type = stream.load()?;
         let disposition = stream.load()?;
         let speaker_rank = stream.load()?;
         let speaker_sex = stream.load()?;
         let player_rank = stream.load()?;
         stream.skip(1)?; // padding
         Ok(Self {
-            dialogue_type: kind,
+            dialogue_type,
             disposition,
             speaker_rank,
             speaker_sex,

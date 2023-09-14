@@ -704,10 +704,10 @@ pub enum FilterType {
     NotLocal = b'C',
 }
 
+#[rustfmt::skip]
 #[esp_meta]
 #[repr(u16)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
-#[rustfmt::skip]
 pub enum FilterFunction {
     #[default]
     ReactionLow = 12336,           // b"00",

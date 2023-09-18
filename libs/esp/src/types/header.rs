@@ -1,3 +1,7 @@
+// rust std imports
+use std::io::Read;
+use std::path::Path;
+
 // internal imports
 use crate::prelude::*;
 
@@ -71,5 +75,30 @@ impl Save for Header {
             stream.save(master_size)?;
         }
         Ok(())
+    }
+}
+
+impl Header {
+    pub fn from_path(path: impl AsRef<Path>) -> io::Result<Self> {
+        let mut file = std::fs::File::open(path)?;
+        let mut buffer = [0; 4];
+
+        // tag
+        file.read_exact(&mut buffer)?;
+        if buffer != *Header::TAG {
+            Reader::error("invalid header tag")?;
+        }
+
+        // size
+        file.read_exact(&mut buffer)?;
+        let size = u32::from_le_bytes(buffer) as usize;
+
+        // padding
+        file.read_exact(&mut buffer)?;
+
+        // content
+        let mut buffer = vec![0; size + 4];
+        file.read_exact(&mut buffer)?;
+        Reader::new(&buffer).load()
     }
 }

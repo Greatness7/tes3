@@ -18,8 +18,8 @@ pub struct Lockpick {
 pub struct LockpickData {
     pub weight: f32,
     pub value: u32,
-    pub uses: u32,
     pub quality: f32,
+    pub uses: u32,
 }
 
 impl Load for Lockpick {

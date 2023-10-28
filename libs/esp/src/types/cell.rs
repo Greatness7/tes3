@@ -183,7 +183,7 @@ impl Save for Cell {
         for (i, (key, reference)) in self.references_sorted().into_iter().enumerate() {
             let packed_indices = pack(*key);
             // NAM0
-            if (num_temp_refs == 0) && reference.temporary {
+            if (num_temp_refs == 0) && !reference.persistent() {
                 num_temp_refs = self.references.len() - i;
                 stream.save(b"NAM0")?;
                 stream.save(&4u32)?;

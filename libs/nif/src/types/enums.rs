@@ -118,6 +118,7 @@ pub enum SortingMode {
     Inherit = 0,
     Off = 1,
     Subsort = 2,
+    Grouped = 64,
 }
 
 #[repr(i32)]

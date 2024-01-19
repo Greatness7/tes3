@@ -40,7 +40,7 @@ pub struct CreatureData {
     pub soul: u32,
     pub combat: u32,
     pub magic: u32,
-    pub steath: u32,
+    pub stealth: u32,
     pub attack1: (u32, u32),
     pub attack2: (u32, u32),
     pub attack3: (u32, u32),

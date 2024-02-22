@@ -1,5 +1,5 @@
 // rust std imports
-use std::io::{self, Write};
+use std::io::Write;
 use std::path::Path;
 
 // internal imports

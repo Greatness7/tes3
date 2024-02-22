@@ -16,3 +16,6 @@ syn = { version = "^2.0", features = [ "visit" ] }
 [features]
 default = []
 serde = []
+
+[lints]
+workspace = true

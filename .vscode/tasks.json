@@ -28,7 +28,7 @@
         {
             "label": "cargo clippy",
             "type": "shell",
-            "command": "cargo cranky --workspace --no-deps --all-features --all-targets",
+            "command": "cargo clippy --workspace --no-deps --all-features --all-targets",
             "presentation": {
                 "clear": true
             }

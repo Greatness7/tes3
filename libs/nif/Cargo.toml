@@ -11,7 +11,7 @@ bstr = { version = "^1.6", default-features = false, features = ["std"] }
 bytemuck = { version = "^1.14", features = ["derive"] }
 bytes_io = { path = "../bytes_io", features = ["glam"] }
 derive_more = "^0.99"
-glam = "^0.24"
+glam = "^0.25"
 hashbrown = "^0.14"
 nif_macros = { path = "../nif_macros" }
 slotmap = "^1.0"
@@ -24,3 +24,6 @@ tempfile = "^3.8"
 default = []
 nightly = ["bytes_io/nightly", "hashbrown/nightly"]
 simd = ["bytes_io/simd", "glam/core-simd"]
+
+[lints]
+workspace = true

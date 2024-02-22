@@ -1,9 +1,8 @@
 // rust std imports
-use std::io::{self, Read, Seek, Write};
+use std::io::{Read, Seek, Write};
 use std::path::Path;
 
 // external imports
-use hashbrown::HashSet;
 use slotmap::{new_key_type, DenseSlotMap, Key};
 
 // internal imports

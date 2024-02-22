@@ -21,7 +21,7 @@ smart-default = "^0.7"
 # serde-related features
 base64-simd = { version = "^0.8", optional = true }
 serde = { version = "^1.0", features = ["derive"], optional = true }
-zstd = { version = "^0.12", optional = true }
+zstd = { version = "^0.13", optional = true }
 
 [dev-dependencies]
 tempfile = "^3.8"
@@ -39,3 +39,6 @@ serde = [
     "esp_macros/serde",
     "hashbrown/serde",
 ]
+
+[lints]
+workspace = true

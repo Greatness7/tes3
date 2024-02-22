@@ -62,11 +62,11 @@ impl Save for SequenceTarget {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         match self {
             SequenceTarget::External(file_name) => {
-                stream.save(&1_u8)?; // has_external
+                stream.save(&1u8)?; // has_external
                 stream.save_string_without_null_terminator(file_name)?;
             }
             SequenceTarget::Internal(unknown1, unknown2) => {
-                stream.save(&0_u8)?; // has_external
+                stream.save(&0u8)?; // has_external
                 stream.save(unknown1)?;
                 stream.save(unknown2)?;
             }

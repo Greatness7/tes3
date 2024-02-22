@@ -26,3 +26,76 @@ nightly = ["esp?/nightly", "nif?/nightly"]
 serde = ["esp?/serde"]
 serde-zstd = ["esp?/zstd"]
 simd = ["esp?/simd", "nif?/simd"]
+
+# rust lints
+# https://doc.rust-lang.org/rustc/lints/groups.html
+# https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html
+[workspace.lints.rust]
+future_incompatible = "warn"
+let_underscore = "warn"
+nonstandard_style = "warn"
+rust_2018_compatibility = "warn"
+rust_2018_idioms = "warn"
+rust_2021_compatibility = "warn"
+unused = "warn"
+absolute_paths_not_starting_with_crate = "warn"
+elided_lifetimes_in_paths = "warn"
+explicit_outlives_requirements = "warn"
+ffi_unwind_calls = "warn"
+keyword_idents = "warn"
+let_underscore_drop = "warn"
+macro_use_extern_crate = "warn"
+meta_variable_misuse = "warn"
+missing_abi = "warn"
+missing_debug_implementations = "warn"
+# missing_docs = "warn"
+non_ascii_idents = "warn"
+rust_2021_incompatible_closure_captures = "warn"
+rust_2021_incompatible_or_patterns = "warn"
+rust_2021_prefixes_incompatible_syntax = "warn"
+rust_2021_prelude_collisions = "warn"
+single_use_lifetimes = "warn"
+trivial_casts = "warn"
+trivial_numeric_casts = "warn"
+unit_bindings = "warn"
+# unreachable_pub = "warn"
+# unsafe_code = "warn"
+# unsafe_op_in_unsafe_fn = "warn"
+# unstable_features = "warn"
+# unused_crate_dependencies = "warn"
+unused_extern_crates = "warn"
+unused_import_braces = "warn"
+unused_lifetimes = "warn"
+unused_macro_rules = "warn"
+unused_qualifications = "warn"
+# unused_results = "warn"
+dead_code = "warn"
+variant_size_differences = "warn"
+
+# clippy lints
+# https://github.com/rust-lang/rust-clippy
+[workspace.lints.clippy]
+# group: cargo
+cargo = { level = "warn", priority = -1 }
+cargo_common_metadata = "allow"
+# group: pedantic
+pedantic = { level = "warn", priority = -1 }
+inline_always = "allow"
+unreadable_literal = "allow"
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+must_use_candidate = "allow"
+ignored_unit_patterns = "allow"
+match_wildcard_for_single_variants = "allow"
+unsafe_derive_deserialize = "allow"
+multiple_crate_versions = "allow"
+# group: nursery
+nursery = { level = "warn", priority = -1 }
+use_self = "allow"
+# group: restriction
+# restriction = { level = "warn", priority = -1 }
+separated_literal_suffix = "warn"
+# panic = "warn"
+# expect_used = "warn"
+# unwrap_used = "warn"
+# as_conversions = "warn"

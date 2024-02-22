@@ -27,17 +27,24 @@ serde = ["esp?/serde"]
 serde-zstd = ["esp?/zstd"]
 simd = ["esp?/simd", "nif?/simd"]
 
-# rust lints
-# https://doc.rust-lang.org/rustc/lints/groups.html
-# https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html
+# Lint Configuration
+
 [workspace.lints.rust]
-future_incompatible = "warn"
-let_underscore = "warn"
-nonstandard_style = "warn"
-rust_2018_compatibility = "warn"
-rust_2018_idioms = "warn"
-rust_2021_compatibility = "warn"
-unused = "warn"
+#
+# Lint Groups
+# https://doc.rust-lang.org/rustc/lints/groups.html
+#
+future_incompatible = { level = "warn", priority = -1 }
+let_underscore = { level = "warn", priority = -1 }
+nonstandard_style = { level = "warn", priority = -1 }
+rust_2018_compatibility = { level = "warn", priority = -1 }
+rust_2018_idioms = { level = "warn", priority = -1 }
+rust_2021_compatibility = { level = "warn", priority = -1 }
+unused = { level = "warn", priority = -1 }
+#
+# Allowed-by-default Lints
+# https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html
+#
 absolute_paths_not_starting_with_crate = "warn"
 elided_lifetimes_in_paths = "warn"
 explicit_outlives_requirements = "warn"
@@ -72,13 +79,17 @@ unused_qualifications = "warn"
 dead_code = "warn"
 variant_size_differences = "warn"
 
-# clippy lints
-# https://github.com/rust-lang/rust-clippy
 [workspace.lints.clippy]
-# group: cargo
+#
+# Clippy Group: Cargo
+# https://rust-lang.github.io/rust-clippy/master/index.html#?groups=cargo
+#
 cargo = { level = "warn", priority = -1 }
 cargo_common_metadata = "allow"
-# group: pedantic
+#
+# Clippy Group: Pedantic
+# https://rust-lang.github.io/rust-clippy/master/index.html#?groups=pedantic
+#
 pedantic = { level = "warn", priority = -1 }
 inline_always = "allow"
 unreadable_literal = "allow"
@@ -89,10 +100,16 @@ ignored_unit_patterns = "allow"
 match_wildcard_for_single_variants = "allow"
 unsafe_derive_deserialize = "allow"
 multiple_crate_versions = "allow"
-# group: nursery
+#
+# Clippy Group: Nursery
+# https://rust-lang.github.io/rust-clippy/master/index.html#?groups=nursery
+#
 nursery = { level = "warn", priority = -1 }
 use_self = "allow"
-# group: restriction
+#
+# # Clippy Group: Restriction
+# https://rust-lang.github.io/rust-clippy/master/index.html#?groups=restriction
+#
 # restriction = { level = "warn", priority = -1 }
 separated_literal_suffix = "warn"
 # panic = "warn"

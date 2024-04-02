@@ -20,7 +20,7 @@ pub struct Reference {
     pub health_left: Option<i32>,
     pub object_count: Option<u32>,
     pub destination: Option<TravelDestination>,
-    pub lock_level: Option<u32>,
+    pub lock_level: Option<i32>,
     pub key: Option<String>,
     pub trap: Option<String>,
     pub soul: Option<String>,

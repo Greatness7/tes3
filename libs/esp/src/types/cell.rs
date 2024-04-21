@@ -228,7 +228,7 @@ impl Cell {
     }
 
     pub fn get_region(&self) -> &str {
-        self.region.as_deref().unwrap_or("{ Exterior }")
+        self.region.as_deref().unwrap_or("Wilderness")
     }
 
     fn references_sorted(&self) -> Vec<(&(u32, u32), &Reference)> {

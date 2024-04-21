@@ -58,14 +58,14 @@ impl EditorId for Cell {
 
 impl EditorId for Landscape {
     fn editor_id(&self) -> Cow<'_, str> {
-        with_grid("(Exterior)", self.grid).into()
+        with_grid(Self::TAG_STR, self.grid).into()
     }
 }
 
 impl EditorId for PathGrid {
     fn editor_id(&self) -> Cow<'_, str> {
         let grid = self.data.grid;
-        let name = if self.cell.is_empty() { "(Exterior)" } else { &self.cell };
+        let name = if self.cell.is_empty() { "Wilderness" } else { &self.cell };
         with_grid(name, grid).into()
     }
 }

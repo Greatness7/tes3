@@ -36,7 +36,7 @@ pub struct VertexHeights {
 #[derive(LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct WorldMapData {
     #[default(zeroed_box())]
-    pub data: Box<[[u8; 9]; 9]>,
+    pub data: Box<[[i8; 9]; 9]>,
 }
 
 #[esp_meta]

@@ -7,7 +7,11 @@ use derive_more::{Deref, DerefMut, From, Into};
 
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(TransparentWrapper)]
 #[derive(Deref, DerefMut, From, Into)]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]

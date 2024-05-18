@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum FileType {
@@ -10,6 +14,7 @@ pub enum FileType {
     Ess = 32,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum GlobalType {
@@ -19,6 +24,7 @@ pub enum GlobalType {
     Float = b'f',
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i32)]
 pub enum AttributeId {
@@ -34,6 +40,7 @@ pub enum AttributeId {
     Luck = 7,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i8)]
 pub enum AttributeId2 {
@@ -49,6 +56,7 @@ pub enum AttributeId2 {
     Luck = 7,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i32)]
 pub enum Specialization {
@@ -59,6 +67,7 @@ pub enum Specialization {
     Stealth = 2,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i32)]
 pub enum SkillId {
@@ -93,6 +102,7 @@ pub enum SkillId {
     HandToHand = 26,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i8)]
 pub enum SkillId2 {
@@ -127,6 +137,7 @@ pub enum SkillId2 {
     HandToHand = 26,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i32)]
 pub enum EffectId {
@@ -277,6 +288,7 @@ pub enum EffectId {
     Summon05 = 142,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i16)]
 pub enum EffectId2 {
@@ -427,6 +439,7 @@ pub enum EffectId2 {
     Summon05 = 142,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum EffectRange {
@@ -436,6 +449,7 @@ pub enum EffectRange {
     OnTarget = 2,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum EffectSchool {
@@ -448,6 +462,7 @@ pub enum EffectSchool {
     Restoration = 5,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum ApparatusType {
@@ -458,6 +473,7 @@ pub enum ApparatusType {
     Retort = 3,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum ArmorType {
@@ -475,6 +491,7 @@ pub enum ArmorType {
     RightBracer = 10,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum ClothingType {
@@ -491,6 +508,7 @@ pub enum ClothingType {
     Amulet = 9,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u16)]
 pub enum WeaponType {
@@ -511,6 +529,7 @@ pub enum WeaponType {
     Bolt = 13,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum SpellType {
@@ -523,6 +542,7 @@ pub enum SpellType {
     Power = 5,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum EnchantType {
@@ -533,6 +553,7 @@ pub enum EnchantType {
     ConstantEffect = 3,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum BodypartId {
@@ -554,6 +575,7 @@ pub enum BodypartId {
     Tail = 14,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum BodypartType {
@@ -563,6 +585,7 @@ pub enum BodypartType {
     Armor = 2,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum BipedObjectType {
@@ -596,6 +619,7 @@ pub enum BipedObjectType {
     Tail = 26,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(i8)]
 pub enum Sex {
@@ -605,6 +629,7 @@ pub enum Sex {
     Female = 1,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum DialogueType {
@@ -616,6 +641,7 @@ pub enum DialogueType {
     Journal = 4,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum DialogueType2 {
@@ -627,6 +653,7 @@ pub enum DialogueType2 {
     Journal = 4,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum FilterSlot {
@@ -640,6 +667,7 @@ pub enum FilterSlot {
     Slot6 = b'6',
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum FilterType {
@@ -659,6 +687,7 @@ pub enum FilterType {
     NotLocal = b'C',
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u16)]
 #[rustfmt::skip]
@@ -753,6 +782,7 @@ pub enum FilterFunction {
     VariableCompare = 22643,       // b"sX",
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u8)]
 pub enum FilterComparison {
@@ -765,6 +795,7 @@ pub enum FilterComparison {
     LessEqual = b'5',
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, PartialEq, Default)]
 #[repr(u32)]
 pub enum SoundGenType {

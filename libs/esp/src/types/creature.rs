@@ -1,6 +1,7 @@
 // internal imports
 use crate::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Creature {
     pub flags: ObjectFlags,
@@ -19,6 +20,7 @@ pub struct Creature {
     pub travel_destinations: Option<Vec<TravelDestination>>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CreatureData {
     pub kind: u32,

@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Info {
     pub flags: ObjectFlags,
@@ -23,6 +27,7 @@ pub struct Info {
     pub script_text: Option<String>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct InfoData {
     pub kind: DialogueType,
@@ -32,6 +37,7 @@ pub struct InfoData {
     pub player_rank: i8,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Filter {
     pub slot: FilterSlot,
@@ -42,6 +48,7 @@ pub struct Filter {
     pub value: Option<FilterValue>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Clone, Debug, PartialEq, SmartDefault)]
 pub enum FilterValue {
     #[default]

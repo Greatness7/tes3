@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGrid {
     pub flags: ObjectFlags,
@@ -10,6 +14,7 @@ pub struct PathGrid {
     pub connections: Option<Vec<u32>>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGridData {
     pub grid: (i32, i32),
@@ -17,6 +22,7 @@ pub struct PathGridData {
     pub point_count: u16,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct PathGridPoint {
     pub location: [i32; 3],

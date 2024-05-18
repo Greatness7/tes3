@@ -105,7 +105,11 @@ pub use startscript::*;
 pub use static_::*;
 pub use string::*;
 pub use weapon::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[rustfmt::skip]
 #[derive(TES3Object, Clone, Debug, PartialEq)]
 pub enum TES3Object {

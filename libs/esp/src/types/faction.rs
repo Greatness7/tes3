@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Faction {
     pub flags: ObjectFlags,
@@ -11,6 +15,7 @@ pub struct Faction {
     pub reactions: Option<Vec<FactionReaction>>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct FactionData {
     pub favored_attributes: [AttributeId; 2],
@@ -19,6 +24,7 @@ pub struct FactionData {
     pub flags: u32,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct FactionRequirement {
     pub attributes: [i32; 2],
@@ -27,6 +33,7 @@ pub struct FactionRequirement {
     pub reputation: i32,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct FactionReaction {
     pub faction: String,

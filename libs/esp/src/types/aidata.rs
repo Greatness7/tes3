@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct AiData {
     pub hello: i16,

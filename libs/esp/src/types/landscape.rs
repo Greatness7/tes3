@@ -3,7 +3,11 @@ use bytemuck::zeroed_box;
 
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Landscape {
     pub flags: ObjectFlags,
@@ -16,12 +20,14 @@ pub struct Landscape {
     pub texture_indices: Option<TextureIndices>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct VertexNormals {
     #[default(zeroed_box())]
     pub data: Box<[[[i8; 3]; 65]; 65]>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct VertexHeights {
     pub offset: f32,
@@ -29,18 +35,21 @@ pub struct VertexHeights {
     pub data: Box<[[i8; 65]; 65]>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct WorldMapData {
     #[default(zeroed_box())]
     pub data: Box<[[u8; 9]; 9]>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct VertexColors {
     #[default(zeroed_box())]
     pub data: Box<[[[u8; 3]; 65]; 65]>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Eq, PartialEq, SmartDefault)]
 pub struct TextureIndices {
     #[default(zeroed_box())]

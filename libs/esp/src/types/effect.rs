@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Effect {
     pub magic_effect: EffectId2,

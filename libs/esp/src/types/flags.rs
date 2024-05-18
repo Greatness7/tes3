@@ -3,8 +3,12 @@ use crate::prelude::*;
 
 // external imports
 use bitflags::bitflags;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
 bitflags! {
+    #[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[derive(LoadSave, Default)]
     #[repr(transparent)]
     pub struct ObjectFlags: u32 {
@@ -16,6 +20,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[derive(LoadSave, Default)]
     #[repr(transparent)]
     pub struct LandscapeFlags: u32 {

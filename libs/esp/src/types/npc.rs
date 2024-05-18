@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Npc {
     pub flags: ObjectFlags,
@@ -22,6 +26,7 @@ pub struct Npc {
     pub travel_destinations: Option<Vec<TravelDestination>>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct NpcData {
     pub level: i16,
@@ -32,6 +37,7 @@ pub struct NpcData {
     pub gold: u32,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct NpcStats {
     pub attributes: [u8; 8],

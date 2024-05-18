@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct MagicEffect {
     pub flags: ObjectFlags,
@@ -19,6 +23,7 @@ pub struct MagicEffect {
     pub description: Option<String>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct MagicEffectData {
     pub school: EffectSchool,

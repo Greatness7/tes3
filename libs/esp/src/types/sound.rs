@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Sound {
     pub flags: ObjectFlags,
@@ -9,6 +13,7 @@ pub struct Sound {
     pub data: Option<SoundData>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct SoundData {
     pub volume: u8,

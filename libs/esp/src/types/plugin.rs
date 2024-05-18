@@ -8,6 +8,11 @@ use rayon::prelude::*;
 // internal imports
 use crate::prelude::*;
 
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Clone, Debug, Default)]
 pub struct Plugin {
     pub objects: Vec<TES3Object>,

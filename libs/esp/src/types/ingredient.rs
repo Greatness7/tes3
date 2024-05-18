@@ -1,6 +1,7 @@
 // internal imports
 use crate::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Ingredient {
     pub flags: ObjectFlags,
@@ -12,6 +13,7 @@ pub struct Ingredient {
     pub script: Option<String>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct IngredientData {
     pub weight: f32,

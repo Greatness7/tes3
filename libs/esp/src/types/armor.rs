@@ -1,6 +1,10 @@
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Armor {
     pub flags: ObjectFlags,
@@ -14,6 +18,7 @@ pub struct Armor {
     pub biped_objects: Option<Vec<BipedObject>>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct ArmorData {
     pub kind: ArmorType,

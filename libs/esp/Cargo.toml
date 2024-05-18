@@ -13,7 +13,9 @@ esp_macros = { path = "../esp_macros" }
 hashbrown = { version = "^0.12", features = ["rayon"] }
 rayon = "^1.5"
 smart-default = "^0.6"
+wasm-bindgen = { version = "0.2", optional = true }
 
 [features]
-default = []
+default = ["wasm"]
 nightly = ["bytes_io/nightly", "hashbrown/nightly"]
+wasm = ["wasm-bindgen"]

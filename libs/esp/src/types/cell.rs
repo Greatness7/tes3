@@ -3,7 +3,11 @@ use std::cmp::Reverse;
 
 // internal imports
 use crate::prelude::*;
+// wasm
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, Clone, Debug, Default, PartialEq)]
 pub struct Cell {
     pub flags: ObjectFlags,
@@ -16,12 +20,14 @@ pub struct Cell {
     pub references: HashMap<(u32, u32), Reference>, // no option, to prevent auto merge
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, Eq, PartialEq)]
 pub struct CellData {
     pub flags: u32,
     pub grid: (i32, i32),
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Meta, LoadSave, Clone, Debug, Default, PartialEq)]
 pub struct AtmosphereData {
     pub ambient_color: [u8; 4],

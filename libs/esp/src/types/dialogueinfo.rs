@@ -44,7 +44,7 @@ pub struct Filter {
 }
 
 #[esp_meta]
-#[derive(Clone, Debug, PartialEq, SmartDefault)]
+#[derive(Clone, Copy, Debug, PartialEq, SmartDefault)]
 pub enum FilterValue {
     #[default]
     Float(f32),
@@ -52,7 +52,7 @@ pub enum FilterValue {
 }
 
 #[esp_meta]
-#[derive(Clone, Debug, Eq, PartialEq, SmartDefault)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, SmartDefault)]
 pub enum QuestState {
     #[default]
     Name,

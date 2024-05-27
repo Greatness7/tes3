@@ -19,8 +19,7 @@ smart-default = "^0.7"
 [features]
 default = []
 nightly = ["hashbrown/nightly"]
-# simd = ["encoding_rs/simd-accel"]
-simd = []
+simd = ["encoding_rs/simd-accel"]
 
 [lints]
 workspace = true

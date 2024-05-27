@@ -12,11 +12,11 @@ pub struct Bodypart {
 }
 
 #[esp_meta]
-#[derive(LoadSave, Clone, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct BodypartData {
     pub part: BodypartId,
-    pub vampire: u8,
-    pub female: u8,
+    pub vampire: bool,
+    pub female: bool,
     pub bodypart_type: BodypartType,
 }
 
@@ -82,6 +82,31 @@ impl Save for Bodypart {
             stream.save(&4u32)?;
             stream.save(&0u32)?;
         }
+        Ok(())
+    }
+}
+
+impl Load for BodypartData {
+    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+        let part = stream.load()?;
+        let vampire = stream.load::<u8>()? != 0;
+        let female = stream.load::<u8>()? != 0;
+        let bodypart_type = stream.load()?;
+        Ok(Self {
+            part,
+            vampire,
+            female,
+            bodypart_type,
+        })
+    }
+}
+
+impl Save for BodypartData {
+    fn save(&self, stream: &mut Writer) -> io::Result<()> {
+        stream.save(&self.part)?;
+        stream.save_as::<u8>(self.vampire)?;
+        stream.save_as::<u8>(self.female)?;
+        stream.save(&self.bodypart_type)?;
         Ok(())
     }
 }

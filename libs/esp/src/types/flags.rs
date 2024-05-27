@@ -243,3 +243,13 @@ bitflags! {
         const CALCULATE_FROM_ALL_LEVELS = 0x1;
     }
 }
+
+bitflags! {
+    #[esp_meta]
+    #[repr(transparent)]
+    #[derive(LoadSave, Clone, Copy, Debug, Default, Eq, PartialEq)]
+    pub struct BodypartFlags: u8 {
+        const FEMALE = 0x1;
+        const NOT_PLAYABLE = 0x2;
+    }
+}

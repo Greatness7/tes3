@@ -1,14 +1,15 @@
-use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 
-use once_cell::sync::Lazy;
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{Data, DataStruct, DeriveInput, Fields, Ident, LitByteStr, Type};
 
-type LazyMap<K, V> = Lazy<Mutex<HashMap<K, V>>>;
+mod util;
+use util::*;
 
-static RELATIONS: LazyMap<String, String> = Lazy::new(Default::default);
+type LazyMap<K, V> = LazyLock<Mutex<HashMap<K, V>>>;
+
+static RELATIONS: LazyMap<String, String> = LazyMap::new(Default::default);
 
 /// Internal derive macro for use with `NiObject` structs in `nif.rs`.
 #[doc(hidden)]
@@ -148,7 +149,7 @@ fn impl_try_from_nitype(idents: &[&Ident]) -> impl ToTokens {
     let strings_to_idents: HashMap<String, &Ident> = idents.iter().map(|&ident| (ident.to_string(), ident)).collect();
 
     // build a map that pairs structs with their "base" structs
-    let mut structs_to_bases = HashMap::<&Ident, Vec<&Ident>>::with_capacity(idents.len());
+    let mut structs_to_bases = HashMap::<&Ident, Vec<&Ident>>::default();
 
     for (mut ident_string, ident) in &strings_to_idents {
         // we include the struct itself in its own bases vector

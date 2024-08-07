@@ -108,7 +108,7 @@ multiple_crate_versions = "allow"
 nursery = { level = "warn", priority = -1 }
 use_self = "allow"
 #
-# # Clippy Group: Restriction
+# Clippy Group: Restriction
 # https://rust-lang.github.io/rust-clippy/master/index.html#?groups=restriction
 #
 # restriction = { level = "warn", priority = -1 }

@@ -25,8 +25,7 @@ features = ["esp"]  # add "nif" only if you need it
 use tes3::esp::{Plugin, Npc};
 
 fn main() -> std::io::Result<()> {
-    let mut plugin = Plugin::new();
-    plugin.load_path("Path/To/Morrowind.esm")?;
+    let plugin = Plugin::from_path("./Morrowind.esm")?;
 
     for object in plugin.objects_of_type::<Npc>() {
         if object.id == "fargoth" {
@@ -36,5 +35,4 @@ fn main() -> std::io::Result<()> {
 
     Ok(())
 }
-
 ```

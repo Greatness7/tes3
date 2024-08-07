@@ -46,6 +46,12 @@ impl NiStream {
         self.load_bytes(&std::fs::read(path)?)
     }
 
+    pub fn from_bytes(bytes: &[u8]) -> io::Result<Self> {
+        let mut stream = Self::new();
+        stream.load_bytes(bytes)?;
+        Ok(stream)
+    }
+
     pub fn load_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
         let mut stream = Reader::new(bytes);
 

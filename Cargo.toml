@@ -101,6 +101,7 @@ ignored_unit_patterns = "allow"
 match_wildcard_for_single_variants = "allow"
 unsafe_derive_deserialize = "allow"
 multiple_crate_versions = "allow"
+wildcard_imports = "allow"
 #
 # Clippy Group: Nursery
 # https://rust-lang.github.io/rust-clippy/master/index.html#?groups=nursery

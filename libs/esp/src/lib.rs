@@ -7,6 +7,7 @@ pub mod traits;
 pub use traits::*;
 
 pub(crate) mod features;
+pub(crate) mod macros;
 
 #[allow(unused_imports)]
 pub(crate) mod prelude {

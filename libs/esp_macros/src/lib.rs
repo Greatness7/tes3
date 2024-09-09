@@ -36,13 +36,11 @@ pub fn derive_tes3object(input: TokenStream) -> TokenStream {
 
     let impl_variants = tes3object_variant_impls(&idents, &tags);
     let impl_object = tes3object_inherent_impls(&idents);
-    let impl_macros = tes3object_macros(&idents);
 
     let output = quote! {
         const _: () = {
             #impl_variants
             #impl_object
-            #impl_macros
         };
     };
 
@@ -144,28 +142,6 @@ fn tes3object_inherent_impls(idents: &[syn::Ident]) -> impl ToTokens {
 
                 Ok(())
             }
-        }
-    }
-}
-
-fn tes3object_macros(idents: &[syn::Ident]) -> impl ToTokens {
-    quote! {
-        #[macro_export]
-        macro_rules! delegate {
-            (impl $name:path { $($body:item)* }) => {
-                #(
-                    impl $name for #idents {
-                        $($body)*
-                    }
-                )*
-            };
-            (match $object:ident { $name:ident => $body:expr $(,)? }) => {
-                match $object {
-                    #(
-                        TES3Object::#idents($name) => $body,
-                    )*
-                }
-            };
         }
     }
 }

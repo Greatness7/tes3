@@ -35,7 +35,7 @@ pub struct DialogueData {
 #[esp_meta]
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Filter {
-    pub slot: FilterSlot,
+    pub index: u8,
     pub filter_type: FilterType,
     pub function: FilterFunction,
     pub comparison: FilterComparison,
@@ -299,14 +299,18 @@ impl Save for DialogueData {
 impl Load for Filter {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let len = stream.load_as::<u32, usize>()?;
-        let slot = stream.load()?;
+        let index = stream.load::<u8>()?;
         let filter_type = stream.load()?;
         let function = stream.load()?;
         let comparison = stream.load()?;
         let id = stream.load_string(len - 5)?;
         let value = default();
+        // Convert the index from a char to a number for convenience.
+        let Some(index) = index.checked_sub(b'0') else {
+            return Reader::error("DialogueInfo: Invalid filter index");
+        };
         Ok(Self {
-            slot,
+            index,
             filter_type,
             function,
             comparison,
@@ -318,9 +322,13 @@ impl Load for Filter {
 
 impl Save for Filter {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
+        // Convert the index back to a char as required by the format.
+        let Some(index) = self.index.checked_add(b'0') else {
+            return Writer::error("DialogueInfo: Invalid filter index");
+        };
         let id = stream.encode(&self.id)?;
         stream.save_as::<u32>(id.len() + 5)?;
-        stream.save(&self.slot)?;
+        stream.save(&index)?;
         stream.save(&self.filter_type)?;
         stream.save(&self.function)?;
         stream.save(&self.comparison)?;

@@ -673,20 +673,6 @@ pub enum DialogueType2 {
 #[esp_meta]
 #[repr(u8)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
-pub enum FilterSlot {
-    #[default]
-    Slot0 = b'0',
-    Slot1 = b'1',
-    Slot2 = b'2',
-    Slot3 = b'3',
-    Slot4 = b'4',
-    Slot5 = b'5',
-    Slot6 = b'6',
-}
-
-#[esp_meta]
-#[repr(u8)]
-#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 pub enum FilterType {
     #[default]
     None = b'0',

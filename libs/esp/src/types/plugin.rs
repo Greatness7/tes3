@@ -142,7 +142,7 @@ impl Plugin {
         for<'a> &'a mut TES3Object: TryInto<&'a mut T>,
     {
         self.objects
-            .extract_if(|obj| obj.try_into().is_ok())
+            .extract_if(.., |obj| obj.try_into().is_ok())
             .filter_map(|obj| obj.try_into().ok())
     }
 }

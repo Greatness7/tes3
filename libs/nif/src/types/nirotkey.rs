@@ -58,7 +58,7 @@ impl Save for NiRotKey {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         /// Helper function to reduce code duplication in the match statement below.
         #[inline]
-        fn _save<'a, I, S>(stream: &mut Writer, len: usize, key_type: KeyType, keys: I) -> io::Result<()>
+        fn save<'a, I, S>(stream: &mut Writer, len: usize, key_type: KeyType, keys: I) -> io::Result<()>
         where
             I: IntoIterator<Item = &'a S>,
             S: Save + 'a,
@@ -71,10 +71,10 @@ impl Save for NiRotKey {
             Ok(())
         }
         match self {
-            NiRotKey::LinKey(keys) => _save(stream, keys.len(), KeyType::LinKey, keys),
-            NiRotKey::BezKey(keys) => _save(stream, keys.len(), KeyType::BezKey, keys),
-            NiRotKey::TCBKey(keys) => _save(stream, keys.len(), KeyType::TCBKey, keys),
-            NiRotKey::EulerKey(keys) => _save(stream, keys.len(), KeyType::EulerKey, [keys]),
+            NiRotKey::LinKey(keys) => save(stream, keys.len(), KeyType::LinKey, keys),
+            NiRotKey::BezKey(keys) => save(stream, keys.len(), KeyType::BezKey, keys),
+            NiRotKey::TCBKey(keys) => save(stream, keys.len(), KeyType::TCBKey, keys),
+            NiRotKey::EulerKey(keys) => save(stream, keys.len(), KeyType::EulerKey, [keys]),
         }
     }
 }

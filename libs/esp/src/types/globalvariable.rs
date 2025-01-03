@@ -25,9 +25,8 @@ impl Load for GlobalVariable {
 
         this.flags = stream.load()?;
 
-        //  MW is very lenient with subrecord orderm, so it might be a case where you load the value before loadign the type
-        let mut temp_val = 0.0;
-        let mut global_type = GlobalType::Short;
+        // this is guranteed to be loaded before FLTV according to Null
+        let mut global_type = None;
 
         while let Ok(tag) = stream.load() {
             match &tag {
@@ -36,13 +35,18 @@ impl Load for GlobalVariable {
                 }
                 b"FNAM" => {
                     stream.expect(1u32)?;
-                    global_type = stream.load()?;
+                    global_type = Some(stream.load()?);
                 }
                 b"FLTV" => {
                     stream.expect(4u32)?;
-                    temp_val = stream.load::<f32>()?;
+                    let mut val = stream.load::<f32>()?;
                     // Ignore NaNs, see "ratskilled" in "Morrowind.esm".
-                    temp_val = if temp_val.is_nan() { 0.0 } else { temp_val };
+                    val = if val.is_nan() { 0.0 } else { val };
+                    match global_type.expect("Incorrect FNAM order") {
+                        GlobalType::Short => this.value = GlobalValue::Short(val as i16),
+                        GlobalType::Long => this.value = GlobalValue::Long(val as i32),
+                        GlobalType::Float => this.value = GlobalValue::Float(val),
+                    }
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -53,13 +57,6 @@ impl Load for GlobalVariable {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
                 }
             }
-        }
-
-        // now save the temp value
-        match global_type {
-            GlobalType::Short => this.value = GlobalValue::Short(temp_val as i16),
-            GlobalType::Long => this.value = GlobalValue::Long(temp_val as i32),
-            GlobalType::Float => this.value = GlobalValue::Float(temp_val),
         }
 
         Ok(this)

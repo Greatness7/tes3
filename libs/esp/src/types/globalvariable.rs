@@ -72,6 +72,10 @@ impl Save for GlobalVariable {
             stream.save(&4u32)?;
             stream.save(&0u32)?;
         }
+        // Disallow values with known precision errors.
+        if self.value.has_precision_error() {
+            Reader::error(format!("GlobalVariable precision error: {}", self.id))?;
+        }
         Ok(())
     }
 }
@@ -104,5 +108,25 @@ impl GlobalValue {
             GlobalValue::Long(_) => GlobalType::Long,
             GlobalValue::Short(_) => GlobalType::Short,
         }
+    }
+
+    #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
+    pub const fn has_precision_error(self) -> bool {
+        match self {
+            GlobalValue::Float(_) => false,
+            GlobalValue::Long(v) => (v as f32 as i32) != v,
+            GlobalValue::Short(v) => (v as f32 as i16) != v,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_precision_error() {
+        let value = GlobalValue::Long(16777217);
+        assert!(value.has_precision_error());
     }
 }

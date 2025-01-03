@@ -16,9 +16,9 @@ pub enum FileType {
 #[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 pub enum GlobalType {
     #[default]
-    Short = b's',
-    Long = b'l',
     Float = b'f',
+    Long = b'l',
+    Short = b's',
 }
 
 #[esp_meta]

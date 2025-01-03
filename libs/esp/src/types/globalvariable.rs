@@ -6,17 +6,16 @@ use crate::prelude::*;
 pub struct GlobalVariable {
     pub flags: ObjectFlags,
     pub id: String,
-    //pub global_type: GlobalType,
     pub value: GlobalValue,
 }
 
 #[esp_meta]
-#[derive(Clone, Debug, PartialEq, SmartDefault)]
+#[derive(Clone, Copy, Debug, PartialEq, SmartDefault)]
 pub enum GlobalValue {
     #[default]
     Float(f32),
-    Short(i16),
     Long(i32),
+    Short(i16),
 }
 
 impl Load for GlobalVariable {
@@ -25,9 +24,6 @@ impl Load for GlobalVariable {
 
         this.flags = stream.load()?;
 
-        // this is guranteed to be loaded before FLTV according to Null
-        let mut global_type = None;
-
         while let Ok(tag) = stream.load() {
             match &tag {
                 b"NAME" => {
@@ -35,18 +31,11 @@ impl Load for GlobalVariable {
                 }
                 b"FNAM" => {
                     stream.expect(1u32)?;
-                    global_type = Some(stream.load()?);
-                }
-                b"FLTV" => {
+                    let global_type = stream.load()?;
+                    stream.expect(*b"FLTV")?;
                     stream.expect(4u32)?;
-                    let mut val = stream.load::<f32>()?;
-                    // Ignore NaNs, see "ratskilled" in "Morrowind.esm".
-                    val = if val.is_nan() { 0.0 } else { val };
-                    match global_type.expect("Incorrect FNAM order") {
-                        GlobalType::Short => this.value = GlobalValue::Short(val as i16),
-                        GlobalType::Long => this.value = GlobalValue::Long(val as i32),
-                        GlobalType::Float => this.value = GlobalValue::Float(val),
-                    }
+                    let global_value = stream.load()?;
+                    this.value = GlobalValue::from_f32(global_type, global_value);
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -72,22 +61,11 @@ impl Save for GlobalVariable {
         // FNAM
         stream.save(b"FNAM")?;
         stream.save(&1u32)?;
-        let global_type = match self.value {
-            GlobalValue::Float(_) => GlobalType::Float,
-            GlobalValue::Short(_) => GlobalType::Short,
-            GlobalValue::Long(_) => GlobalType::Long,
-        };
-        stream.save(&global_type)?;
+        stream.save(&self.value.global_type())?;
         // FLTV
         stream.save(b"FLTV")?;
         stream.save(&4u32)?;
-        // save as f32
-        let value = match self.value {
-            GlobalValue::Float(value) => value,
-            GlobalValue::Short(value) => value as f32,
-            GlobalValue::Long(value) => value as f32,
-        };
-        stream.save(&value)?;
+        stream.save(&self.value.to_f32())?;
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;
@@ -95,5 +73,36 @@ impl Save for GlobalVariable {
             stream.save(&0u32)?;
         }
         Ok(())
+    }
+}
+
+impl GlobalValue {
+    #[allow(clippy::cast_possible_truncation)]
+    pub const fn from_f32(t: GlobalType, v: f32) -> Self {
+        // NaNs are converted to zero by the engine.
+        // Example: "ratskilled" in "Morrowind.esm".
+        let v = if v.is_nan() { 0.0 } else { v };
+        match t {
+            GlobalType::Float => GlobalValue::Float(v),
+            GlobalType::Long => GlobalValue::Long(v as i32),
+            GlobalType::Short => GlobalValue::Short(v as i16),
+        }
+    }
+
+    #[allow(clippy::cast_precision_loss)]
+    pub const fn to_f32(self) -> f32 {
+        match self {
+            GlobalValue::Float(v) => v,
+            GlobalValue::Long(v) => v as f32,
+            GlobalValue::Short(v) => v as f32,
+        }
+    }
+
+    pub const fn global_type(self) -> GlobalType {
+        match self {
+            GlobalValue::Float(_) => GlobalType::Float,
+            GlobalValue::Long(_) => GlobalType::Long,
+            GlobalValue::Short(_) => GlobalType::Short,
+        }
     }
 }

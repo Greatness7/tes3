@@ -6,8 +6,17 @@ use crate::prelude::*;
 pub struct GlobalVariable {
     pub flags: ObjectFlags,
     pub id: String,
-    pub global_type: GlobalType,
-    pub value: f32,
+    //pub global_type: GlobalType,
+    pub value: GlobalValue,
+}
+
+#[esp_meta]
+#[derive(Clone, Debug, PartialEq, SmartDefault)]
+pub enum GlobalValue {
+    #[default]
+    Float(f32),
+    Short(i16),
+    Long(i32),
 }
 
 impl Load for GlobalVariable {
@@ -16,6 +25,9 @@ impl Load for GlobalVariable {
 
         this.flags = stream.load()?;
 
+        // this is guranteed to be loaded before FLTV according to Null
+        let mut global_type = None;
+
         while let Ok(tag) = stream.load() {
             match &tag {
                 b"NAME" => {
@@ -23,13 +35,18 @@ impl Load for GlobalVariable {
                 }
                 b"FNAM" => {
                     stream.expect(1u32)?;
-                    this.global_type = stream.load()?;
+                    global_type = Some(stream.load()?);
                 }
                 b"FLTV" => {
                     stream.expect(4u32)?;
-                    let value: f32 = stream.load()?;
+                    let mut val = stream.load::<f32>()?;
                     // Ignore NaNs, see "ratskilled" in "Morrowind.esm".
-                    this.value = if value.is_nan() { 0.0 } else { value };
+                    val = if val.is_nan() { 0.0 } else { val };
+                    match global_type.expect("Incorrect FNAM order") {
+                        GlobalType::Short => this.value = GlobalValue::Short(val as i16),
+                        GlobalType::Long => this.value = GlobalValue::Long(val as i32),
+                        GlobalType::Float => this.value = GlobalValue::Float(val),
+                    }
                 }
                 b"DELE" => {
                     let size: u32 = stream.load()?;
@@ -55,11 +72,22 @@ impl Save for GlobalVariable {
         // FNAM
         stream.save(b"FNAM")?;
         stream.save(&1u32)?;
-        stream.save(&self.global_type)?;
+        let global_type = match self.value {
+            GlobalValue::Float(_) => GlobalType::Float,
+            GlobalValue::Short(_) => GlobalType::Short,
+            GlobalValue::Long(_) => GlobalType::Long,
+        };
+        stream.save(&global_type)?;
         // FLTV
         stream.save(b"FLTV")?;
         stream.save(&4u32)?;
-        stream.save(&self.value)?;
+        // save as f32
+        let value = match self.value {
+            GlobalValue::Float(value) => value,
+            GlobalValue::Short(value) => value as f32,
+            GlobalValue::Long(value) => value as f32,
+        };
+        stream.save(&value)?;
         // DELE
         if self.flags.contains(ObjectFlags::DELETED) {
             stream.save(b"DELE")?;

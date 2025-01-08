@@ -74,6 +74,7 @@ impl Load for Cell {
                 b"MVRF" => {
                     stream.expect(4u32)?;
                     let packed_indices = stream.load()?;
+                    let indices = unpack(packed_indices);
                     // "MVRF" is always followed by "CNDT"
                     stream.expect(*b"CNDT")?;
                     stream.expect(8u32)?;
@@ -81,7 +82,7 @@ impl Load for Cell {
                     // MVRF/CNDT are independent of other subrecords
                     // the moved reference may not have been loaded yet at this point
                     // so postpone assignments until we know all references are loaded
-                    moved_refs.push((packed_indices, moved_cell));
+                    moved_refs.push((indices, moved_cell));
                 }
                 b"FRMR" => {
                     stream.expect(4u32)?;
@@ -96,6 +97,12 @@ impl Load for Cell {
                     num_temp_refs -= 1;
                     // insert the ref
                     this.references.insert(indices, reference);
+                    // override MVRF indices when master index was 0
+                    if let Some(moved_ref) = moved_refs.last_mut() {
+                        if let ((0, _), _) = moved_ref {
+                            moved_ref.0 = indices;
+                        }
+                    }
                 }
                 b"INTV" => {
                     stream.expect(4u32)?;
@@ -118,8 +125,7 @@ impl Load for Cell {
         }
 
         // assign moved cells
-        for (packed_indices, moved_cell) in moved_refs {
-            let indices = unpack(packed_indices);
+        for (indices, moved_cell) in moved_refs {
             if let Some(reference) = this.references.get_mut(&indices) {
                 reference.moved_cell = Some(moved_cell);
             } else {

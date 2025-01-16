@@ -22,6 +22,10 @@ smart-default = "^0.7"
 base64-simd = { version = "^0.8", optional = true }
 serde = { version = "^1.0", features = ["derive"], optional = true }
 zstd = { version = "^0.13", optional = true }
+mlua = { version = "^0.10", optional = true, features = ["luajit", "module"] }
+yoke = { version = "^0.7", optional = true }
+tynm = { version = "^0.1", optional = true }
+indexmap = "^2.7"
 
 [dev-dependencies]
 tempfile = "^3.8"
@@ -38,6 +42,12 @@ serde = [
     "bstr/serde",
     "esp_macros/serde",
     "hashbrown/serde",
+]
+lua = [
+    "dep:mlua",
+    "dep:yoke",
+    "dep:tynm",
+    "esp_macros/lua",
 ]
 
 [lints]

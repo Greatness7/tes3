@@ -14,6 +14,13 @@ pub fn esp_meta(_args: TokenStream, input: TokenStream) -> TokenStream {
         features::serde::impl_serialize_deserialize(&mut input);
     }
 
+    #[cfg(feature = "lua")]
+    {
+        input.attrs.push(syn::parse_quote! {
+            #[derive(IntoFromLua)]
+        });
+    }
+
     let output = quote! {
         #input
     };
@@ -158,4 +165,26 @@ where
     I: IntoIterator<Item = &'a syn::Variant>,
 {
     variants.into_iter().map(|v| v.ident.clone()).collect()
+}
+
+// ---------------------------------------------------------------------------
+
+#[cfg(feature = "lua")]
+#[proc_macro_derive(IntoFromLua)]
+pub fn derive_lua_bindings(input: TokenStream) -> TokenStream {
+    let input = syn::parse_macro_input!(input as syn::DeriveInput);
+    let ident = &input.ident;
+
+    // Allow manual implementations for types with generics.
+    if !input.generics.params.is_empty() {
+        return TokenStream::new();
+    }
+
+    use features::lua::*;
+
+    match &input.data {
+        syn::Data::Struct(data) => struct_impl(ident, data),
+        syn::Data::Enum(data) => enum_impl(ident, data),
+        syn::Data::Union(_) => unimplemented!(),
+    }
 }

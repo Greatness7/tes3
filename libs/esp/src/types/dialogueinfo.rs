@@ -55,9 +55,9 @@ pub enum FilterValue {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, SmartDefault)]
 pub enum QuestState {
     #[default]
-    Name,
-    Finished,
-    Restart,
+    Name = 0,
+    Finished = 1,
+    Restart = 2,
 }
 
 impl Load for DialogueInfo {

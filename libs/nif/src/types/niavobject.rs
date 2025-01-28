@@ -15,6 +15,15 @@ pub struct NiAVObject {
     pub bounding_volume: Option<NiBoundingVolume>,
 }
 
+impl NiAVObject {
+    pub fn transform(&self) -> Affine3A {
+        Affine3A {
+            matrix3: (self.rotation * self.scale).transpose().into(),
+            translation: self.translation.into(),
+        }
+    }
+}
+
 impl Load for NiAVObject {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let base = stream.load()?;

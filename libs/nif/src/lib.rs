@@ -24,7 +24,7 @@ pub(crate) mod prelude {
 
     // basic math types
     mod math {
-        pub use glam::{Mat2, Mat3, Quat, Vec2, Vec3, Vec4};
+        pub use glam::{Affine3A, Mat2, Mat3, Quat, Vec2, Vec3, Vec4};
         // a temporary alias until we pick a color library
         pub type ColorA = Vec4;
     }

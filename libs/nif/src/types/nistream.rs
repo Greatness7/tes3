@@ -314,4 +314,50 @@ impl NiStream {
         self.objects_of_type_mut::<T>()
             .filter(move |object| object.as_ref().name.eq_ignore_ascii_case(name))
     }
+
+    /// Axis-aligned bounding box encompassing all objects in the stream.
+    ///
+    pub fn bounding_box(&self) -> Option<(Vec3, Vec3)> {
+        let root = self.roots.first()?;
+
+        let mut min = Vec3::splat(f32::INFINITY);
+        let mut max = Vec3::splat(f32::NEG_INFINITY);
+
+        // note: intentionally ignores the root transform
+        let mut stack = vec![(root.key, Affine3A::IDENTITY)];
+
+        while let Some((key, transform)) = stack.pop() {
+            let Some(object) = self.objects.get(key) else {
+                continue;
+            };
+
+            if <&NiCollisionSwitch>::try_from(object).is_ok() {
+                continue;
+            }
+
+            if let Ok(node) = <&NiNode>::try_from(object) {
+                let transform = transform * node.transform();
+                for child in &node.children {
+                    stack.push((child.key, transform));
+                }
+                continue;
+            }
+
+            let Ok(shape) = <&NiTriShape>::try_from(object) else {
+                continue;
+            };
+
+            if let Some(data) = self.get(shape.geometry_data) {
+                let transform = transform * shape.transform();
+                for vertex in &data.vertices {
+                    let v = transform.transform_point3(*vertex);
+                    min = min.min(v);
+                    max = max.max(v);
+                }
+            };
+        }
+
+        let is_finite = min.is_finite() && max.is_finite();
+        is_finite.then_some((min, max))
+    }
 }

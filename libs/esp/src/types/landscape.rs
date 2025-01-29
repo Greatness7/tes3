@@ -1,5 +1,6 @@
 // external imports
 use bytemuck::zeroed_box;
+use glam::{Vec3, Vec4};
 
 // internal imports
 use crate::prelude::*;
@@ -178,5 +179,110 @@ impl Save for VertexHeights {
 impl LandscapeFlags {
     pub fn uses_world_map_data(&self) -> bool {
         self.intersects(Self::USES_VERTEX_HEIGHTS_AND_NORMALS | Self::USES_VERTEX_COLORS | Self::USES_TEXTURES)
+    }
+}
+
+impl Landscape {
+    pub fn decode_vertex_normals(&self) -> Vec<Vec3> {
+        let data = self.vertex_normals.data.as_flattened();
+
+        let mut normals = vec![Vec3::ZERO; 65 * 65];
+
+        for (normal, [x, y, z]) in normals.iter_mut().zip(data) {
+            normal.x = *x as f32;
+            normal.y = *y as f32;
+            normal.z = *z as f32;
+            *normal = normal.normalize();
+        }
+
+        normals
+    }
+
+    pub fn decode_vertex_colors(&self) -> Vec<Vec4> {
+        let data = self.vertex_colors.data.as_flattened();
+
+        let mut colors = vec![Vec4::ZERO; 65 * 65];
+
+        for (color, [r, g, b]) in colors.iter_mut().zip(data) {
+            color.x = *r as f32;
+            color.y = *g as f32;
+            color.z = *b as f32;
+            *color /= 255.0;
+        }
+
+        colors
+    }
+
+    pub fn decode_vertex_heights(&self) -> [[f32; 65]; 65] {
+        let mut offset = self.vertex_heights.offset;
+        let mut heights = [[0.0; 65]; 65];
+
+        for y in 0..65 {
+            for x in 0..65 {
+                let height = self.vertex_heights.data[y][x];
+                offset += height as f32;
+                heights[y][x] = offset;
+            }
+            offset = heights[y][0];
+        }
+
+        heights.iter_mut().flatten().for_each(|z| *z *= 8.0);
+        heights
+    }
+
+    pub fn calculate_vertices(&self) -> Vec<Vec3> {
+        let mut vertices = vec![Vec3::ZERO; 65 * 65];
+
+        let heights = self.decode_vertex_heights();
+
+        const CELL_SIZE: f32 = 8192.0;
+        let u = self.grid.0 as f32 * CELL_SIZE;
+        let v = self.grid.1 as f32 * CELL_SIZE;
+
+        for y in 0..65 {
+            for x in 0..65 {
+                let vertex = &mut vertices[y * 65 + x];
+                vertex.x = u + x as f32 * 128.0;
+                vertex.y = v + y as f32 * 128.0;
+                vertex.z = heights[y][x];
+            }
+        }
+
+        vertices
+    }
+
+    pub fn calcuate_triangles(&self) -> Vec<[u16; 3]> {
+        let mut triangles = vec![[0; 3]; 8192];
+
+        let v = 65u16;
+        let t = v - 1;
+
+        for y in 0..t {
+            for x in 0..t {
+                let a = v * y + x;
+                let b = a + v + 1;
+                let c = a + v;
+                let d = a + 1;
+
+                let i = 2 * (y * t + x) as usize;
+                let j = i + 1;
+
+                // if (x + y) % 2 == 0 {
+                //     triangles[i] = [b, c, a];
+                //     triangles[j] = [d, b, a];
+                // } else {
+                //     triangles[i] = [a, d, c];
+                //     triangles[j] = [c, d, b];
+                // }
+
+                // branchless
+                let m = ((x + y) % 2 == 0) as u16;
+                let n = 1 - m;
+                triangles[i] = [b * n + a * m, c * n + d * m, a * n + c * m];
+                triangles[j] = [d * n + c * m, b * n + d * m, a * n + b * m];
+            }
+        }
+
+        triangles
     }
 }

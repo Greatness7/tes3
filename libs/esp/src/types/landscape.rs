@@ -230,20 +230,31 @@ impl Landscape {
         heights
     }
 
+    pub fn calculate_world_vertices(&self) -> Vec<Vec3> {
+        let mut vertices = self.calculate_vertices();
+
+        const CELL_SIZE: f32 = 8192.0;
+        let x = self.grid.0 as f32 * CELL_SIZE;
+        let y = self.grid.1 as f32 * CELL_SIZE;
+
+        for vertex in &mut vertices {
+            vertex.x += x;
+            vertex.y += y;
+        }
+
+        vertices
+    }
+
     pub fn calculate_vertices(&self) -> Vec<Vec3> {
         let mut vertices = vec![Vec3::ZERO; 65 * 65];
 
         let heights = self.decode_vertex_heights();
 
-        const CELL_SIZE: f32 = 8192.0;
-        let u = self.grid.0 as f32 * CELL_SIZE;
-        let v = self.grid.1 as f32 * CELL_SIZE;
-
         for y in 0..65 {
             for x in 0..65 {
                 let vertex = &mut vertices[y * 65 + x];
-                vertex.x = u + x as f32 * 128.0;
-                vertex.y = v + y as f32 * 128.0;
+                vertex.x = x as f32 * 128.0;
+                vertex.y = y as f32 * 128.0;
                 vertex.z = heights[y][x];
             }
         }

@@ -22,6 +22,12 @@ impl Plugin {
         Ok(plugin)
     }
 
+    pub fn from_path_filtered(path: impl AsRef<Path>, filter: impl Fn([u8; 4]) -> bool) -> io::Result<Self> {
+        let mut plugin = Self::new();
+        plugin.load_path_filtered(path, filter)?;
+        Ok(plugin)
+    }
+
     pub fn load_path(&mut self, path: impl AsRef<Path>) -> io::Result<()> {
         self.load_bytes(&std::fs::read(path)?)
     }

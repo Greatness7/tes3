@@ -78,4 +78,30 @@ impl NiGeometryData {
         let end = start + self.vertices.len();
         self.uv_sets.get_mut(start..end)
     }
+
+    pub fn update_center_radius(&mut self) {
+        if self.vertices.is_empty() {
+            self.bound.center = Vec3::ZERO;
+            self.bound.radius = 0.0;
+            return;
+        }
+
+        let mut min = Vec3::splat(f32::INFINITY);
+        let mut max = Vec3::splat(f32::NEG_INFINITY);
+        for v in &self.vertices {
+            min = min.min(*v);
+            max = max.max(*v);
+        }
+
+        let center = 0.5 * (min + max);
+        let mut radius = 0.0;
+
+        for v in &self.vertices {
+            let d = *v - center;
+            radius = d.dot(d).max(radius);
+        }
+
+        self.bound.center = center;
+        self.bound.radius = radius.sqrt();
+    }
 }

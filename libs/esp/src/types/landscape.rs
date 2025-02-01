@@ -268,30 +268,20 @@ impl Landscape {
         let v = 65u16;
         let t = v - 1;
 
-        for y in 0..t {
-            for x in 0..t {
-                let a = v * y + x;
-                let b = a + v + 1;
-                let c = a + v;
-                let d = a + 1;
+        for (pair, i) in triangles.chunks_exact_mut(2).zip(0..) {
+            let y = i / t;
+            let x = i % t;
 
-                let i = 2 * (y * t + x) as usize;
-                let j = i + 1;
+            let a = v * y + x;
+            let b = a + v;
+            let c = a + 1;
+            let d = b + 1;
 
-                // if (x + y) % 2 == 0 {
-                //     triangles[i] = [b, c, a];
-                //     triangles[j] = [d, b, a];
-                // } else {
-                //     triangles[i] = [a, d, c];
-                //     triangles[j] = [c, d, b];
-                // }
+            let m = (x ^ y) & 1;
+            let n = 1 - m;
 
-                // branchless
-                let m = ((x + y) % 2 == 0) as u16;
-                let n = 1 - m;
-                triangles[i] = [b * n + a * m, c * n + d * m, a * n + c * m];
-                triangles[j] = [d * n + c * m, b * n + d * m, a * n + b * m];
-            }
+            pair[0] = [d * n + a * m, b * n + c * m, a * n + b * m];
+            pair[1] = [c * n + b * m, d * n + c * m, a * n + d * m];
         }
 
         triangles

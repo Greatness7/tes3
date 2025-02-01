@@ -213,9 +213,9 @@ impl Landscape {
         colors
     }
 
-    pub fn decode_vertex_heights(&self) -> [[f32; 65]; 65] {
+    pub fn decode_vertex_heights(&self) -> Box<[[f32; 65]; 65]> {
         let mut offset = self.vertex_heights.offset;
-        let mut heights = [[0.0; 65]; 65];
+        let mut heights: Box<[[f32; 65]; 65]> = zeroed_box();
 
         for y in 0..65 {
             for x in 0..65 {
@@ -230,10 +230,12 @@ impl Landscape {
         heights
     }
 
+    #[allow(clippy::cast_precision_loss)]
     pub fn calculate_world_vertices(&self) -> Vec<Vec3> {
+        const CELL_SIZE: f32 = 8192.0;
+
         let mut vertices = self.calculate_vertices();
 
-        const CELL_SIZE: f32 = 8192.0;
         let x = self.grid.0 as f32 * CELL_SIZE;
         let y = self.grid.1 as f32 * CELL_SIZE;
 
@@ -245,6 +247,7 @@ impl Landscape {
         vertices
     }
 
+    #[allow(clippy::cast_precision_loss)]
     pub fn calculate_vertices(&self) -> Vec<Vec3> {
         let mut vertices = vec![Vec3::ZERO; 65 * 65];
 
@@ -262,6 +265,7 @@ impl Landscape {
         vertices
     }
 
+    #[allow(clippy::many_single_char_names)]
     pub fn calcuate_triangles(&self) -> Vec<[u16; 3]> {
         let mut triangles = vec![[0; 3]; 8192];
 

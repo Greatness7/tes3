@@ -87,21 +87,21 @@ const _: () = {
     impl SortHint for Cell {
         fn sort_hint(&self) -> i64 {
             let (x, y) = self.exterior_coords().unwrap_or_default();
-            (x as i64) << 32 | (y as i64)
+            ((x as i64) << 32) | (y as i64)
         }
     }
 
     impl SortHint for PathGrid {
         fn sort_hint(&self) -> i64 {
             let (x, y) = self.data.grid;
-            (x as i64) << 32 | (y as i64)
+            ((x as i64) << 32) | (y as i64)
         }
     }
 
     impl SortHint for Landscape {
         fn sort_hint(&self) -> i64 {
             let (x, y) = self.grid;
-            (x as i64) << 32 | (y as i64)
+            ((x as i64) << 32) | (y as i64)
         }
     }
 

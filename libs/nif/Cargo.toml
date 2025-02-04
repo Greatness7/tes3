@@ -12,7 +12,7 @@ bytemuck = { version = "^1.14", features = ["derive"] }
 bytes_io = { path = "../bytes_io", features = ["glam"] }
 derive_more = { version = "^1.0", features = ["deref", "deref_mut", "from", "into" ] }
 glam = "^0.29"
-hashbrown = "^0.14"
+hashbrown = "^0.15"
 nif_macros = { path = "../nif_macros" }
 slotmap = "^1.0"
 smart-default = "^0.7"
@@ -22,7 +22,7 @@ tempfile = "^3.8"
 
 [features]
 default = []
-nightly = ["bytes_io/nightly", "hashbrown/nightly"]
+nightly = ["bytes_io/nightly"]
 simd = ["bytes_io/simd", "glam/core-simd"]
 
 [lints]

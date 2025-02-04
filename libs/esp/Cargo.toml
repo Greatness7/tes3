@@ -15,7 +15,7 @@ cow-utils = "^0.1"
 derive_more = { version = "^1.0", features = ["deref", "deref_mut", "from", "into" ] }
 esp_macros = { path = "../esp_macros" }
 glam = "^0.29"
-hashbrown = { version = "^0.14", features = ["rayon"] }
+hashbrown = { version = "^0.15", features = ["rayon"] }
 itoa = "^1.0"
 rayon = "^1.7"
 smart-default = "^0.7"
@@ -30,7 +30,7 @@ serde_json = "^1.0"
 
 [features]
 default = []
-nightly = ["bytes_io/nightly", "hashbrown/nightly"]
+nightly = ["bytes_io/nightly"]
 simd = ["bytes_io/simd"]
 serde = [
     "dep:serde",

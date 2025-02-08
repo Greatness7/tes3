@@ -44,7 +44,7 @@ impl Save for NiBoundingVolume {
             BoundData::NiBoxBV(data) => stream.save(data)?,
             BoundData::NiSphereBV(data) => stream.save(data)?,
             BoundData::NiUnionBV(data) => stream.save(data)?,
-        };
+        }
         Ok(())
     }
 }

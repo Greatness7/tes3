@@ -34,7 +34,7 @@ impl Save for NiColorKey {
                     stream.save_seq(keys)?;
                 }
             }
-        };
+        }
         Ok(())
     }
 }

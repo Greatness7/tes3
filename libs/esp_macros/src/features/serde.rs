@@ -90,7 +90,7 @@ fn is_repr_transparent(attributes: &[syn::Attribute]) -> bool {
                 if outer_ident == "repr" && inner_ident == "transparent" {
                     return true;
                 }
-            };
+            }
         }
     }
     false

@@ -22,3 +22,12 @@ impl Save for NiStringExtraData {
         Ok(())
     }
 }
+
+impl NiStringExtraData {
+    pub fn starts_with_ignore_ascii_case(&self, prefix: &str) -> bool {
+        self.value
+            .bytes()
+            .zip(prefix.bytes())
+            .all(|(a, b)| a.eq_ignore_ascii_case(&b))
+    }
+}

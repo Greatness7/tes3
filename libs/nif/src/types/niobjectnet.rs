@@ -33,3 +33,22 @@ impl Save for NiObjectNET {
         Ok(())
     }
 }
+
+impl NiObjectNET {
+    pub fn extra_datas<'a>(&'a self, stream: &'a NiStream) -> impl Iterator<Item = &'a NiType> {
+        let mut next = self.extra_data;
+        std::iter::from_fn(move || {
+            let object = stream.objects.get(next.key)?;
+            let extra_data: &NiExtraData = object.try_into().ok()?;
+            next = extra_data.next;
+            Some(object)
+        })
+    }
+
+    pub fn extra_datas_of_type<'a, T>(&'a self, stream: &'a NiStream) -> impl Iterator<Item = &'a T>
+    where
+        &'a T: 'a + TryFrom<&'a NiType>,
+    {
+        self.extra_datas(stream).filter_map(|object| object.try_into().ok())
+    }
+}

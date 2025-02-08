@@ -46,4 +46,19 @@ impl NiNode {
             None
         })
     }
+
+    pub fn children_of_type<'a, T>(&'a self, stream: &'a NiStream) -> impl 'a + Iterator<Item = &'a T>
+    where
+        &'a T: 'a + TryFrom<&'a NiType>,
+    {
+        self.children.iter().filter_map(move |child| stream.get_as::<_, T>(*child))
+    }
+
+    pub fn children_of_type_recursive<'a, T>(&'a self, stream: &'a NiStream) -> impl 'a + Iterator<Item = &'a T>
+    where
+        &'a T: 'a + TryFrom<&'a NiType>,
+    {
+        self.children_recursive(stream)
+            .filter_map(move |child| stream.get_as::<_, T>(child))
+    }
 }

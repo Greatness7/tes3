@@ -1,4 +1,5 @@
 // rust std imports
+use std::collections::VecDeque;
 use std::io::{Read, Seek, Write};
 use std::path::Path;
 
@@ -315,49 +316,86 @@ impl NiStream {
             .filter(move |object| object.as_ref().name.eq_ignore_ascii_case(name))
     }
 
+    /// Yields all geometries and their world transforms.
+    ///
+    pub fn geometries<'a, T>(&'a self) -> impl Iterator<Item = (&'a T, Affine3A)>
+    where
+        &'a T: 'a + TryFrom<&'a NiType> + AsRef<NiGeometry>,
+    {
+        let mut queue = VecDeque::new();
+
+        for root in &self.roots {
+            queue.push_back((root.key, Affine3A::IDENTITY));
+        }
+
+        std::iter::from_fn(move || {
+            while let Some((key, transform)) = queue.pop_front() {
+                let Some(object) = self.objects.get(key) else {
+                    continue;
+                };
+
+                if let Ok(node) = <&NiNode>::try_from(object) {
+                    if !node.children.is_empty() {
+                        let transform = transform * node.transform();
+                        queue.reserve(node.children.len());
+                        for child in &node.children {
+                            queue.push_back((child.key, transform));
+                        }
+                    }
+                    continue;
+                }
+
+                if let Ok(geometry) = <&T>::try_from(object) {
+                    let transform = transform * geometry.as_ref().transform();
+                    return Some((geometry, transform));
+                };
+            }
+            None
+        })
+    }
+
     /// Axis-aligned bounding box encompassing all objects in the stream.
     ///
     pub fn bounding_box(&self) -> Option<(Vec3, Vec3)> {
-        let root = self.roots.first()?;
-
         let mut min = Vec3::splat(f32::INFINITY);
         let mut max = Vec3::splat(f32::NEG_INFINITY);
 
-        // note: intentionally ignores the root transform
-        let mut stack = vec![(root.key, Affine3A::IDENTITY)];
-
-        while let Some((key, transform)) = stack.pop() {
-            let Some(object) = self.objects.get(key) else {
-                continue;
-            };
-
-            if <&NiCollisionSwitch>::try_from(object).is_ok() {
-                continue;
-            }
-
-            if let Ok(node) = <&NiNode>::try_from(object) {
-                let transform = transform * node.transform();
-                for child in &node.children {
-                    stack.push((child.key, transform));
-                }
-                continue;
-            }
-
-            let Ok(shape) = <&NiTriShape>::try_from(object) else {
-                continue;
-            };
-
-            if let Some(data) = self.get(shape.geometry_data) {
-                let transform = transform * shape.transform();
-                for vertex in &data.vertices {
-                    let v = transform.transform_point3(*vertex);
+        for (geom, transform) in self.geometries::<NiTriBasedGeom>() {
+            if let Some(data) = self.get(geom.geometry_data) {
+                for v in &data.vertices {
+                    let v = transform.transform_point3(*v);
                     min = min.min(v);
                     max = max.max(v);
                 }
-            };
+            }
         }
 
-        let is_finite = min.is_finite() && max.is_finite();
-        is_finite.then_some((min, max))
+        if min.is_finite() && max.is_finite() {
+            Some((min, max))
+        } else {
+            None
+        }
+    }
+
+    /// Convenience function for case-insensitive prefix searches.
+    ///
+    pub fn root_has_string_data_starting_with(&self, prefix: &str) -> bool {
+        for root in self.roots_of_type::<NiObjectNET>() {
+            for data in root.extra_datas_of_type::<NiStringExtraData>(self) {
+                if data.starts_with_ignore_ascii_case(prefix) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    /// Get a link to the given object, or null if it is not in this stream.
+    ///
+    pub fn get_link(&self, object: impl AsRef<NiObject>) -> NiLink<NiObject> {
+        let object = object.as_ref();
+        self.objects_of_type_with_link::<NiObject>()
+            .find_map(|(link, other)| std::ptr::eq(object, other).then_some(link))
+            .unwrap_or_default()
     }
 }

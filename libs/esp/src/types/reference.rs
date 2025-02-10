@@ -216,6 +216,10 @@ impl Save for Reference {
 }
 
 impl Reference {
+    pub const fn deleted(&self) -> bool {
+        matches!(self.deleted, Some(true))
+    }
+
     pub const fn persistent(&self) -> bool {
         // Moved references are always persistent.
         if self.moved_cell.is_some() {

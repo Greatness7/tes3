@@ -10,7 +10,7 @@ use crate::prelude::*;
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct NiLink<T> {
     pub key: NiKey,
-    phantom: PhantomData<*const T>,
+    phantom: PhantomData<fn() -> T>,
 }
 
 impl<T> NiLink<T> {

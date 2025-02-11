@@ -398,4 +398,14 @@ impl NiStream {
             .find_map(|(link, other)| std::ptr::eq(object, other).then_some(link))
             .unwrap_or_default()
     }
+
+    pub fn clear_root_transforms(&mut self) {
+        for root in &self.roots {
+            let _ = self
+                .objects
+                .get_mut(root.key)
+                .and_then(|object| object.try_into().ok())
+                .map(NiAVObject::clear_transform);
+        }
+    }
 }

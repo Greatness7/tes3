@@ -22,6 +22,12 @@ impl NiAVObject {
             translation: self.translation.into(),
         }
     }
+
+    pub const fn clear_transform(&mut self) {
+        self.translation = Vec3::ZERO;
+        self.rotation = Mat3::IDENTITY;
+        self.scale = 1.0;
+    }
 }
 
 impl Load for NiAVObject {

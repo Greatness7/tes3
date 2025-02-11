@@ -354,27 +354,22 @@ impl NiStream {
         })
     }
 
-    /// Axis-aligned bounding box encompassing all objects in the stream.
+    /// Bounding sphere encompassing all geometries in the stream.
+    ///
+    pub fn bounding_sphere(&self) -> Option<NiBound> {
+        NiBound::from_geometries(
+            self.geometries::<NiGeometry>()
+                .filter_map(|(geom, transform)| Some((self.get(geom.geometry_data)?, transform))),
+        )
+    }
+
+    /// Axis-aligned bounding box encompassing all geometries in the stream.
     ///
     pub fn bounding_box(&self) -> Option<(Vec3, Vec3)> {
-        let mut min = Vec3::splat(f32::INFINITY);
-        let mut max = Vec3::splat(f32::NEG_INFINITY);
-
-        for (geom, transform) in self.geometries::<NiTriBasedGeom>() {
-            if let Some(data) = self.get(geom.geometry_data) {
-                for v in &data.vertices {
-                    let v = transform.transform_point3(*v);
-                    min = min.min(v);
-                    max = max.max(v);
-                }
-            }
-        }
-
-        if min.is_finite() && max.is_finite() {
-            Some((min, max))
-        } else {
-            None
-        }
+        NiBound::aabb_from_geometries(
+            self.geometries::<NiGeometry>()
+                .filter_map(|(geom, transform)| Some((self.get(geom.geometry_data)?, transform))),
+        )
     }
 
     /// Convenience function for case-insensitive prefix searches.
@@ -407,5 +402,56 @@ impl NiStream {
                 .and_then(|object| object.try_into().ok())
                 .map(NiAVObject::clear_transform);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use glam::vec3;
+
+    #[ignore]
+    #[test]
+    fn test_bounding_sphere() {
+        let src_path = "tests/assets/random_objects.nif";
+        let dst_path = "tests/assets/random_objects~1.nif";
+
+        let mut stream = NiStream::from_path(src_path).unwrap();
+
+        let NiBound { center, radius } = stream.bounding_sphere().unwrap();
+
+        for shape in stream.objects_with_name_mut::<NiTriShape>("unitSphere") {
+            shape.translation = center;
+            shape.scale = radius;
+        }
+
+        stream.save_path(dst_path).unwrap();
+    }
+
+    #[ignore]
+    #[test]
+    fn test_bounding_box() {
+        let src_path = "tests/assets/random_objects.nif";
+        let dst_path = "tests/assets/random_objects~1.nif";
+
+        let mut stream = NiStream::from_path(src_path).unwrap();
+
+        let (min, max) = stream.bounding_box().unwrap();
+
+        let shape = stream.objects_with_name::<NiTriShape>("unitCube").next().unwrap();
+        let data = stream.get_mut(shape.geometry_data).unwrap();
+
+        data.vertices = vec![
+            min,
+            vec3(max.x, min.y, min.z),
+            vec3(min.x, max.y, min.z),
+            vec3(max.x, max.y, min.z),
+            vec3(min.x, min.y, max.z),
+            vec3(max.x, min.y, max.z),
+            vec3(min.x, max.y, max.z),
+            max,
+        ];
+
+        stream.save_path(dst_path).unwrap();
     }
 }

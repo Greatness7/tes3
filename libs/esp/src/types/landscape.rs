@@ -188,10 +188,10 @@ impl Landscape {
 
         let mut normals = vec![Vec3::ZERO; 65 * 65];
 
-        for (normal, [x, y, z]) in normals.iter_mut().zip(data) {
-            normal.x = *x as f32;
-            normal.y = *y as f32;
-            normal.z = *z as f32;
+        for (normal, &[x, y, z]) in normals.iter_mut().zip(data) {
+            normal.x = x as f32;
+            normal.y = y as f32;
+            normal.z = z as f32;
             *normal = normal.normalize();
         }
 
@@ -203,10 +203,10 @@ impl Landscape {
 
         let mut colors = vec![Vec4::ZERO; 65 * 65];
 
-        for (color, [r, g, b]) in colors.iter_mut().zip(data) {
-            color.x = *r as f32;
-            color.y = *g as f32;
-            color.z = *b as f32;
+        for (color, &[r, g, b]) in colors.iter_mut().zip(data) {
+            color.x = r as f32;
+            color.y = g as f32;
+            color.z = b as f32;
             *color /= 255.0;
         }
 

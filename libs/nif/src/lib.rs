@@ -1,12 +1,15 @@
 pub mod types;
 pub use types::*;
 
+pub(crate) mod macros;
+
 #[allow(unused_imports)]
 pub(crate) mod prelude {
     pub use super::*;
 
     // internal imports
     pub use bytes_io::*;
+    pub use macros::*;
     pub use nif_macros::*;
 
     // external imports

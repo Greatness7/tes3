@@ -22,3 +22,13 @@ impl Save for NiAlphaProperty {
         Ok(())
     }
 }
+
+impl NiAlphaProperty {
+    flag_props! {
+        alpha_blending @ (mask = 0x0001) -> bool,
+        src_blend_mode @ (mask = 0x001E, pos = 1) -> AlphaBlendFunction,
+        dst_blend_mode @ (mask = 0x01E0, pos = 5) -> AlphaBlendFunction,
+        alpha_testing @ (mask = 0x0200) -> bool,
+        test_mode @ (mask = 0x1C00, pos = 10) -> AlphaTestFunction,
+    }
+}

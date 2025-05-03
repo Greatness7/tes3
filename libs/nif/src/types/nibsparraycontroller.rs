@@ -19,3 +19,9 @@ impl Save for NiBSPArrayController {
         Ok(())
     }
 }
+
+impl NiBSPArrayController {
+    flag_props! {
+        at_vertices @ (mask = 0x0010) -> bool,
+    }
+}

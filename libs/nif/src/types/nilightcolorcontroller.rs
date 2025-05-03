@@ -22,3 +22,9 @@ impl Save for NiLightColorController {
         Ok(())
     }
 }
+
+impl NiLightColorController {
+    flag_props! {
+        ambient @ (mask = 0x0010) -> bool,
+    }
+}

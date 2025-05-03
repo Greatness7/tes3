@@ -5,7 +5,7 @@ use crate::prelude::*;
 pub struct NiStencilProperty {
     pub base: NiProperty,
     pub stencil_enabled: bool,
-    pub stencil_function: TestFunction,
+    pub stencil_function: StencilTestFunction,
     pub stencil_ref: u32,
     #[default(0xFFFFFFFF)]
     pub stencil_mask: u32,

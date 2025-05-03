@@ -22,3 +22,10 @@ impl Save for NiLookAtController {
         Ok(())
     }
 }
+
+impl NiLookAtController {
+    flag_props! {
+        flip @ (mask = 0x0010) -> bool,
+        axis @ (mask = 0x0060, pos = 5) -> Axis,
+    }
+}

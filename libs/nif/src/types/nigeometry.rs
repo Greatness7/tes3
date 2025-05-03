@@ -29,3 +29,12 @@ impl Save for NiGeometry {
         Ok(())
     }
 }
+
+impl NiGeometry {
+    flag_props! {
+        compress_vertices @ (mask = 0x0008) -> bool,
+        compress_normals @ (mask = 0x0010) -> bool,
+        compress_uv_sets @ (mask = 0x0020) -> bool,
+        shadow @ (mask = 0x0040) -> bool,
+    }
+}

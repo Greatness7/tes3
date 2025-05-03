@@ -50,3 +50,10 @@ impl Save for NiTimeController {
         Ok(())
     }
 }
+
+impl NiTimeController {
+    flag_props! {
+        cycle_type @ (mask = 0x0006, pos = 1) -> CycleType,
+        active @ (mask = 0x0008) -> bool,
+    }
+}

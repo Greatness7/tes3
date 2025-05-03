@@ -73,3 +73,11 @@ impl Save for NiAVObject {
         Ok(())
     }
 }
+
+impl NiAVObject {
+    flag_props! {
+        app_culled @ (mask = 0x0001) -> bool,
+        propagate_mode @ (mask = 0x0006, pos = 1) -> PropagateMode,
+        visual @ (mask = 0x0008) -> bool,
+    }
+}

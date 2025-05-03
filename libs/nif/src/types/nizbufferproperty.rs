@@ -19,3 +19,11 @@ impl Save for NiZBufferProperty {
         Ok(())
     }
 }
+
+impl NiZBufferProperty {
+    flag_props! {
+        z_buffer_test @ (mask = 0x0001) -> bool,
+        z_buffer_write @ (mask = 0x0002) -> bool,
+        test_function @ (mask = 0x003C, pos = 2) -> ZBufferTestFunction,
+    }
+}

@@ -19,3 +19,9 @@ impl Save for NiBSParticleNode {
         Ok(())
     }
 }
+
+impl NiBSParticleNode {
+    flag_props! {
+        follow @ (mask = 0x0080) -> bool,
+    }
+}

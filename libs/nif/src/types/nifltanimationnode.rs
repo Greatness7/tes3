@@ -22,3 +22,9 @@ impl Save for NiFltAnimationNode {
         Ok(())
     }
 }
+
+impl NiFltAnimationNode {
+    flag_props! {
+        bounce @ (mask = 0x0040) -> bool,
+    }
+}

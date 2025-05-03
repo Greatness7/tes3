@@ -155,7 +155,7 @@ pub enum AlphaFormat {
 
 #[repr(i32)]
 #[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
-pub enum TestFunction {
+pub enum StencilTestFunction {
     #[default]
     Never = 0,
     Less = 1,
@@ -258,4 +258,77 @@ pub enum LightingMode {
     Emissive = 0,
     #[default]
     EmissiveAmbientDiffuse = 1,
+}
+
+#[repr(u16)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum AlphaBlendFunction {
+    #[default]
+    One = 0,
+    Zero = 1,
+    SrcColor = 2,
+    InvSrcColor = 3,
+    DstColor = 4,
+    InvDstColor = 5,
+    SrcAlpha = 6,
+    InvSrcAlpha = 7,
+    DstAlpha = 8,
+    InvDstAlpha = 9,
+    SrcAlphaSat = 10,
+}
+
+#[repr(u16)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum AlphaTestFunction {
+    #[default]
+    Always = 0,
+    Less = 1,
+    Equal = 2,
+    LessEqual = 3,
+    Greater = 4,
+    NotEqual = 5,
+    GreaterEqual = 6,
+    Never = 7,
+}
+
+#[repr(u16)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum PropagateMode {
+    #[default]
+    None = 0,
+    UseTriangles = 1,
+    UseOBBs = 2,
+    Continue = 3,
+}
+
+#[repr(u16)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum Axis {
+    #[default]
+    X = 0,
+    Y = 1,
+    Z = 2,
+}
+
+#[repr(u16)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum CycleType {
+    #[default]
+    Cycle = 0,
+    Reverse = 1,
+    Clamp = 2,
+}
+
+#[repr(u16)]
+#[derive(LoadSave, Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
+pub enum ZBufferTestFunction {
+    #[default]
+    Always = 0,
+    Less = 1,
+    Equal = 2,
+    LessEqual = 3,
+    Greater = 4,
+    NotEqual = 5,
+    GreaterEqual = 6,
+    Never = 7,
 }

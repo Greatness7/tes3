@@ -19,3 +19,10 @@ impl Save for NiBSAnimationNode {
         Ok(())
     }
 }
+
+impl NiBSAnimationNode {
+    flag_props! {
+        animated @ (mask = 0x0020) -> bool,
+        not_random @ (mask = 0x0040) -> bool,
+    }
+}

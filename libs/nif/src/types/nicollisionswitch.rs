@@ -19,3 +19,9 @@ impl Save for NiCollisionSwitch {
         Ok(())
     }
 }
+
+impl NiCollisionSwitch {
+    flag_props! {
+        propagate @ (mask = 0x0020) -> bool,
+    }
+}

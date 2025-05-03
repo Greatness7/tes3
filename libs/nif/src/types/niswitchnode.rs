@@ -22,3 +22,9 @@ impl Save for NiSwitchNode {
         Ok(())
     }
 }
+
+impl NiSwitchNode {
+    flag_props! {
+        update_only_active @ (mask = 0x0020) -> bool,
+    }
+}

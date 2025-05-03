@@ -19,3 +19,9 @@ impl Save for NiWireframeProperty {
         Ok(())
     }
 }
+
+impl NiWireframeProperty {
+    flag_props! {
+        wireframe @ (mask = 0x0001) -> bool,
+    }
+}

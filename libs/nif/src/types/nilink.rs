@@ -14,6 +14,7 @@ pub struct NiLink<T> {
 }
 
 impl<T> NiLink<T> {
+    #[inline]
     pub const fn new(key: NiKey) -> Self {
         Self {
             key,
@@ -21,14 +22,17 @@ impl<T> NiLink<T> {
         }
     }
 
+    #[inline]
     pub fn null() -> Self {
         Self::new(NiKey::null())
     }
 
+    #[inline]
     pub fn is_null(&self) -> bool {
         self.key.is_null()
     }
 
+    #[inline]
     pub const fn cast<U>(&self) -> NiLink<U> {
         NiLink::new(self.key)
     }

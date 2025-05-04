@@ -162,6 +162,7 @@ impl NiStream {
     /// assert_eq!(object1.type_name(), b"NiTriShape");
     /// assert_eq!(object2.type_name(), b"NiTriShapeData");
     /// ```
+    #[inline]
     pub fn insert<T>(&mut self, object: T) -> NiLink<T>
     where
         T: Into<NiType>,
@@ -169,6 +170,7 @@ impl NiStream {
         NiLink::new(self.objects.insert(object.into()))
     }
 
+    #[inline]
     pub fn remove<T>(&mut self, link: NiLink<T>) -> Option<T>
     where
         T: TryFrom<NiType>,
@@ -191,6 +193,7 @@ impl NiStream {
     ///
     /// assert_eq!(object.type_name(), b"NiNode")
     /// ```
+    #[inline]
     pub fn get<'a, T>(&'a self, link: NiLink<T>) -> Option<&'a T>
     where
         &'a T: TryFrom<&'a NiType>,
@@ -199,6 +202,7 @@ impl NiStream {
     }
 
     /// Retrieve an object of the specified type from the stream.
+    #[inline]
     pub fn get_as<'a, T, U>(&'a self, link: NiLink<T>) -> Option<&'a U>
     where
         &'a U: TryFrom<&'a NiType>,
@@ -206,6 +210,7 @@ impl NiStream {
         self.objects.get(link.key).and_then(|object| object.try_into().ok())
     }
 
+    #[inline]
     pub fn get_mut<'a, T>(&'a mut self, link: NiLink<T>) -> Option<&'a mut T>
     where
         &'a mut T: TryFrom<&'a mut NiType>,
@@ -214,6 +219,7 @@ impl NiStream {
     }
 
     /// Retrieve an object of the specified type from the stream.
+    #[inline]
     pub fn get_as_mut<'a, T, U>(&'a mut self, link: NiLink<T>) -> Option<&'a mut U>
     where
         &'a mut U: TryFrom<&'a mut NiType>,
@@ -222,6 +228,7 @@ impl NiStream {
     }
 
     /// Retrieve multiple objects from the stream.
+    #[inline]
     pub fn get_all<'a, T>(&'a self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a T>
     where
         &'a T: TryFrom<&'a NiType>,
@@ -230,6 +237,7 @@ impl NiStream {
     }
 
     /// Retrieve multiple objects of the specified type from the stream.
+    #[inline]
     pub fn get_all_as<'a, T, U>(&'a self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a U>
     where
         &'a U: 'a + TryFrom<&'a NiType>,
@@ -253,6 +261,7 @@ impl NiStream {
     ///     assert_eq!(object.type_name(), b"NiTriShape");
     /// }
     /// ```
+    #[inline]
     pub fn objects_of_type<'a, T>(&'a self) -> impl Iterator<Item = &'a T>
     where
         &'a T: 'a + TryFrom<&'a NiType>,
@@ -260,6 +269,7 @@ impl NiStream {
         self.objects.values().filter_map(|object| object.try_into().ok())
     }
 
+    #[inline]
     pub fn objects_of_type_mut<'a, T>(&'a mut self) -> impl Iterator<Item = &'a mut T>
     where
         &'a mut T: 'a + TryFrom<&'a mut NiType>,
@@ -267,6 +277,7 @@ impl NiStream {
         self.objects.values_mut().filter_map(|object| object.try_into().ok())
     }
 
+    #[inline]
     pub fn objects_of_type_with_link<'a, T>(&'a self) -> impl Iterator<Item = (NiLink<T>, &'a T)>
     where
         &'a T: 'a + TryFrom<&'a NiType>,
@@ -276,6 +287,7 @@ impl NiStream {
             .filter_map(|(key, object)| Some((NiLink::new(key), object.try_into().ok()?)))
     }
 
+    #[inline]
     pub fn objects_of_type_mut_with_link<'a, T>(&'a mut self) -> impl Iterator<Item = (NiLink<T>, &'a mut T)>
     where
         &'a mut T: 'a + TryFrom<&'a mut NiType>,
@@ -285,6 +297,7 @@ impl NiStream {
             .filter_map(|(key, object)| Some((NiLink::new(key), object.try_into().ok()?)))
     }
 
+    #[inline]
     pub fn links_of_type<'a, T>(&'a self) -> impl Iterator<Item = NiLink<T>> + 'a
     where
         &'a T: 'a + TryFrom<&'a NiType>,
@@ -293,6 +306,7 @@ impl NiStream {
     }
 
     /// Create an iterator over roots of the specified type.
+    #[inline]
     pub fn roots_of_type<'a, T>(&'a self) -> impl Iterator<Item = &'a T>
     where
         &'a T: 'a + TryFrom<&'a NiType>,
@@ -300,6 +314,7 @@ impl NiStream {
         self.get_all_as(self.roots.as_slice())
     }
 
+    #[inline]
     pub fn objects_with_name<'a, T>(&'a self, name: &'a str) -> impl Iterator<Item = &'a T>
     where
         &'a T: 'a + TryFrom<&'a NiType> + AsRef<NiObjectNET>,
@@ -308,6 +323,7 @@ impl NiStream {
             .filter(move |object| object.as_ref().name.eq_ignore_ascii_case(name))
     }
 
+    #[inline]
     pub fn objects_with_name_mut<'a, T>(&'a mut self, name: &'a str) -> impl Iterator<Item = &'a mut T>
     where
         &'a mut T: 'a + TryFrom<&'a mut NiType> + AsRef<NiObjectNET>,

@@ -144,6 +144,20 @@ impl NiStream {
         })
     }
 
+    pub fn retain_reachable(&mut self) {
+        let mut seen = HashSet::new();
+        let mut keys = Vec::new();
+        self.roots.visitor(&mut |key| keys.push(key));
+        while let Some(key) = keys.pop() {
+            if !key.is_null() && seen.insert(key) {
+                if let Some(object) = self.objects.get(key) {
+                    object.visitor(&mut |key| keys.push(key));
+                }
+            }
+        }
+        self.objects.retain(|key, _| seen.contains(&key));
+    }
+
     /// Insert an object into the stream.
     ///
     /// # Examples

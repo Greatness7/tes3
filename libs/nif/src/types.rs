@@ -371,3 +371,13 @@ pub enum NiType {
     RootCollisionNode(RootCollisionNode),
     TES3ObjectExtraData(TES3ObjectExtraData),
 }
+
+impl NiType {
+    #[inline]
+    pub fn is_instance_of<T>(&self) -> bool
+    where
+        for<'a> &'a Self: TryInto<&'a T>,
+    {
+        self.try_into().is_ok()
+    }
+}

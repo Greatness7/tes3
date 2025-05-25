@@ -54,8 +54,8 @@ where
     [L::Repr; N]: Load,
 {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        L::from_repr_array(stream.load()?) //
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+        let array: [L::Repr; N] = stream.load()?;
+        Ok(array.map(|value| value.try_into().unwrap_or_default()))
     }
 }
 

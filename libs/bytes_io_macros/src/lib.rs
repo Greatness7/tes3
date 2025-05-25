@@ -106,20 +106,13 @@ fn impl_load_save_for_enum(input: &syn::DeriveInput) -> TokenStream {
             impl Load for #self_ident {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
                     let value: #repr_ident = stream.load()?;
-                    TryFrom::try_from(value).map_err(|_| {
-                        io::Error::new(io::ErrorKind::InvalidData, "invalid enum variant")
-                    })
+                    Ok(value.try_into().unwrap_or_default())
                 }
             }
 
             impl Save for #self_ident {
-                #[allow(trivial_numeric_casts, clippy::unnecessary_cast)]
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    match self {
-                        #(
-                            Self::#variant_idents => stream.save(&(#variant_values as #repr_ident)),
-                        )*
-                    }
+                    stream.save(&(*self as #repr_ident))
                 }
             }
 

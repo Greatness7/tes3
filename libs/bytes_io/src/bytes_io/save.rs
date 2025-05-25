@@ -59,8 +59,7 @@ where
     [S::Repr; N]: Save,
 {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save(S::as_repr_array(self))?;
-        Ok(())
+        stream.save(S::as_repr_array(self))
     }
 }
 

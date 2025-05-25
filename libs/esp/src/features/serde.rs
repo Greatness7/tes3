@@ -96,17 +96,3 @@ pub mod cell_references {
         Ok(hashmap)
     }
 }
-
-impl Plugin {
-    pub fn hack_fix_null_rotations(&mut self) {
-        for cell in self.objects_of_type_mut::<Cell>() {
-            for refr in cell.references.values_mut() {
-                for v in refr.rotation.iter_mut() {
-                    if !v.is_finite() {
-                        *v = 0.0;
-                    }
-                }
-            }
-        }
-    }
-}

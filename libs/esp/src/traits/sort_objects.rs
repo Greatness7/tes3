@@ -4,125 +4,87 @@ impl Plugin {
     pub fn sort_objects(&mut self) {
         let mut indices = vec![];
 
-        // Objects will be ordered by type, sort hint, and editor id.
-        // Dialogue/DialogueInfo sorting is not currently implemented.
         #[rustfmt::skip]
         isort(&mut indices, &self.objects, |object| {
             match object {
-                TES3Object::Header(obj)           => ( 0, obj.sort_hint(), obj.editor_id()),
-                TES3Object::GameSetting(obj)      => ( 1, obj.sort_hint(), obj.editor_id()),
-                TES3Object::GlobalVariable(obj)   => ( 2, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Class(obj)            => ( 3, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Faction(obj)          => ( 4, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Race(obj)             => ( 5, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Sound(obj)            => ( 6, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Skill(obj)            => ( 7, obj.sort_hint(), obj.editor_id()),
-                TES3Object::MagicEffect(obj)      => ( 8, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Script(obj)           => ( 9, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Region(obj)           => (10, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Birthsign(obj)        => (11, obj.sort_hint(), obj.editor_id()),
-                TES3Object::StartScript(obj)      => (12, obj.sort_hint(), obj.editor_id()),
-                TES3Object::LandscapeTexture(obj) => (13, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Spell(obj)            => (14, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Static(obj)           => (15, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Door(obj)             => (16, obj.sort_hint(), obj.editor_id()),
-                TES3Object::MiscItem(obj)         => (17, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Weapon(obj)           => (18, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Container(obj)        => (19, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Creature(obj)         => (20, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Bodypart(obj)         => (21, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Light(obj)            => (22, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Enchanting(obj)       => (23, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Npc(obj)              => (24, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Armor(obj)            => (25, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Clothing(obj)         => (26, obj.sort_hint(), obj.editor_id()),
-                TES3Object::RepairItem(obj)       => (27, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Activator(obj)        => (28, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Apparatus(obj)        => (29, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Lockpick(obj)         => (30, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Probe(obj)            => (31, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Ingredient(obj)       => (32, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Book(obj)             => (33, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Alchemy(obj)          => (34, obj.sort_hint(), obj.editor_id()),
-                TES3Object::LeveledItem(obj)      => (35, obj.sort_hint(), obj.editor_id()),
-                TES3Object::LeveledCreature(obj)  => (36, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Cell(obj)             => (37, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Landscape(obj)        => (38, obj.sort_hint(), obj.editor_id()),
-                TES3Object::PathGrid(obj)         => (39, obj.sort_hint(), obj.editor_id()),
-                TES3Object::SoundGen(obj)         => (40, obj.sort_hint(), obj.editor_id()),
-                TES3Object::Dialogue(obj)         => (41, obj.sort_hint(), "".into()), // Preserve DIAL/INFO order
-                TES3Object::DialogueInfo(obj)     => (41, obj.sort_hint(), "".into()), // ^
+                TES3Object::Header(obj)           => ( 0, obj.sort_hint(), ""),
+                TES3Object::GameSetting(obj)      => ( 1, obj.sort_hint(), &*obj.id),
+                TES3Object::GlobalVariable(obj)   => ( 2, obj.sort_hint(), &*obj.id),
+                TES3Object::Class(obj)            => ( 3, obj.sort_hint(), &*obj.id),
+                TES3Object::Faction(obj)          => ( 4, obj.sort_hint(), &*obj.id),
+                TES3Object::Race(obj)             => ( 5, obj.sort_hint(), &*obj.id),
+                TES3Object::Sound(obj)            => ( 6, obj.sort_hint(), &*obj.id),
+                TES3Object::Skill(obj)            => ( 7, obj.sort_hint(), ""),
+                TES3Object::MagicEffect(obj)      => ( 8, obj.sort_hint(), ""),
+                TES3Object::Script(obj)           => ( 9, obj.sort_hint(), &*obj.id),
+                TES3Object::Region(obj)           => (10, obj.sort_hint(), &*obj.id),
+                TES3Object::Birthsign(obj)        => (11, obj.sort_hint(), &*obj.id),
+                TES3Object::StartScript(obj)      => (12, obj.sort_hint(), &*obj.id),
+                TES3Object::LandscapeTexture(obj) => (13, obj.sort_hint(), ""),
+                TES3Object::Spell(obj)            => (14, obj.sort_hint(), &*obj.id),
+                TES3Object::Static(obj)           => (15, obj.sort_hint(), &*obj.id),
+                TES3Object::Door(obj)             => (16, obj.sort_hint(), &*obj.id),
+                TES3Object::MiscItem(obj)         => (17, obj.sort_hint(), &*obj.id),
+                TES3Object::Weapon(obj)           => (18, obj.sort_hint(), &*obj.id),
+                TES3Object::Container(obj)        => (19, obj.sort_hint(), &*obj.id),
+                TES3Object::Creature(obj)         => (20, obj.sort_hint(), &*obj.id),
+                TES3Object::Bodypart(obj)         => (21, obj.sort_hint(), &*obj.id),
+                TES3Object::Light(obj)            => (22, obj.sort_hint(), &*obj.id),
+                TES3Object::Enchanting(obj)       => (23, obj.sort_hint(), &*obj.id),
+                TES3Object::Npc(obj)              => (24, obj.sort_hint(), &*obj.id),
+                TES3Object::Armor(obj)            => (25, obj.sort_hint(), &*obj.id),
+                TES3Object::Clothing(obj)         => (26, obj.sort_hint(), &*obj.id),
+                TES3Object::RepairItem(obj)       => (27, obj.sort_hint(), &*obj.id),
+                TES3Object::Activator(obj)        => (28, obj.sort_hint(), &*obj.id),
+                TES3Object::Apparatus(obj)        => (29, obj.sort_hint(), &*obj.id),
+                TES3Object::Lockpick(obj)         => (30, obj.sort_hint(), &*obj.id),
+                TES3Object::Probe(obj)            => (31, obj.sort_hint(), &*obj.id),
+                TES3Object::Ingredient(obj)       => (32, obj.sort_hint(), &*obj.id),
+                TES3Object::Book(obj)             => (33, obj.sort_hint(), &*obj.id),
+                TES3Object::Alchemy(obj)          => (34, obj.sort_hint(), &*obj.id),
+                TES3Object::LeveledItem(obj)      => (35, obj.sort_hint(), &*obj.id),
+                TES3Object::LeveledCreature(obj)  => (36, obj.sort_hint(), &*obj.id),
+                TES3Object::Cell(obj)             => (37, obj.sort_hint(), ""), // Preserve CELL/LAND/PGRD order
+                TES3Object::Landscape(obj)        => (37, obj.sort_hint(), ""), // ^
+                TES3Object::PathGrid(obj)         => (37, obj.sort_hint(), ""), // ^
+                TES3Object::SoundGen(obj)         => (38, obj.sort_hint(), &*obj.id),
+                TES3Object::Dialogue(obj)         => (39, obj.sort_hint(), ""), // Preserve DIAL/INFO order
+                TES3Object::DialogueInfo(obj)     => (39, obj.sort_hint(), ""), // ^
             }
         });
         unsafe { apply_isort(&mut indices, &mut self.objects) };
-
-        // sort inventories
-        for object in &mut self.objects {
-            let inventory = match object {
-                TES3Object::Npc(obj) => &mut obj.inventory,
-                TES3Object::Creature(obj) => &mut obj.inventory,
-                TES3Object::Container(obj) => &mut obj.inventory,
-                _ => continue,
-            };
-            isort(&mut indices, inventory, |(_, name)| name.as_str());
-            unsafe { apply_isort(&mut indices, inventory) };
-        }
     }
 }
 
 /// Internal helper trait for [`Plugin::sort_objects`] implementation.
 /// Some types override the method to influence sort logic.
 trait SortHint: Sized {
-    fn sort_hint(&self) -> i64;
+    fn sort_hint(&self) -> i32;
 }
 
-#[allow(clippy::cast_lossless)]
-const _: () = {
-    impl<T> SortHint for &T {
-        fn sort_hint(&self) -> i64 {
-            0
-        }
+impl<T> SortHint for &T {
+    fn sort_hint(&self) -> i32 {
+        0
     }
+}
 
-    impl SortHint for Cell {
-        fn sort_hint(&self) -> i64 {
-            let (x, y) = self.exterior_coords().unwrap_or_default();
-            ((x as i64) << 32) | (y as i64)
-        }
+impl SortHint for LandscapeTexture {
+    fn sort_hint(&self) -> i32 {
+        self.index.cast_signed()
     }
+}
 
-    impl SortHint for PathGrid {
-        fn sort_hint(&self) -> i64 {
-            let (x, y) = self.data.grid;
-            ((x as i64) << 32) | (y as i64)
-        }
+impl SortHint for MagicEffect {
+    fn sort_hint(&self) -> i32 {
+        self.effect_id as i32
     }
+}
 
-    impl SortHint for Landscape {
-        fn sort_hint(&self) -> i64 {
-            let (x, y) = self.grid;
-            ((x as i64) << 32) | (y as i64)
-        }
+impl SortHint for Skill {
+    fn sort_hint(&self) -> i32 {
+        self.skill_id as i32
     }
-
-    impl SortHint for LandscapeTexture {
-        fn sort_hint(&self) -> i64 {
-            self.index as i64
-        }
-    }
-
-    impl SortHint for MagicEffect {
-        fn sort_hint(&self) -> i64 {
-            self.effect_id as i64
-        }
-    }
-
-    impl SortHint for Skill {
-        fn sort_hint(&self) -> i64 {
-            self.skill_id as i64
-        }
-    }
-};
+}
 
 /// Calculate the `indices` for indirectly sorting `subject` according to `function`.
 ///
@@ -169,6 +131,22 @@ unsafe fn apply_isort<T>(indices: &mut [usize], subject: &mut [T]) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sort_hint() {
+        let mut plugin = Plugin {
+            objects: vec![
+                LandscapeTexture { index: 1, ..default() }.into(),
+                LandscapeTexture { index: 2, ..default() }.into(),
+                LandscapeTexture { index: 0, ..default() }.into(),
+            ],
+        };
+        plugin.sort_objects();
+
+        for (object, i) in plugin.objects_of_type::<LandscapeTexture>().zip(0..) {
+            assert_eq!(i, object.index);
+        }
+    }
 
     #[test]
     fn sort_identity() {

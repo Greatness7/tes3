@@ -87,7 +87,7 @@ fn impl_load_save_for_enum(input: &syn::DeriveInput) -> TokenStream {
         const _: () = {
             use bytes_io::*;
 
-            unsafe impl AsRepr for #self_ident {
+            impl AsRepr for #self_ident {
                 type Repr = #repr_ident;
             }
 

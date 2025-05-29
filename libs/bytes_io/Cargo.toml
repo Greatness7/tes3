@@ -8,7 +8,7 @@ license.workspace = true
 
 [dependencies]
 bstr = { version = "^1.6", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.14", features = ["derive", "extern_crate_alloc", "min_const_generics"] }
+bytemuck = { version = "^1.14", features = ["derive", "extern_crate_alloc", "min_const_generics", "must_cast"] }
 bytes_io_macros = { path = "../bytes_io_macros" }
 encoding_rs = "^0.8"
 glam = { version = "^0.29", features = ["bytemuck"], optional = true }

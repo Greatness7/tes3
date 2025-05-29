@@ -19,6 +19,7 @@ pub(crate) mod prelude {
 
     // external imports
     pub use bstr::{BString, ByteSlice, ByteVec};
+    pub use bytemuck::NoUninit;
     pub use cow_utils::CowUtils;
     pub use derive_more::{Deref, DerefMut, From, Into};
     pub use hashbrown::{HashMap, HashSet};

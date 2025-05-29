@@ -114,10 +114,10 @@ macro_rules! impl_load {
             #[cfg(feature = "nightly")]
             impl Load for Vec<$T> {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                    use bytemuck::{cast_slice_mut, zeroed_vec};
+                    use bytemuck::{must_cast_slice_mut, zeroed_vec};
                     let len = stream.load_as::<u32, usize>()?;
                     let mut this = zeroed_vec(len);
-                    stream.read_exact(cast_slice_mut(&mut this))?;
+                    stream.read_exact(must_cast_slice_mut(&mut this))?;
                     Ok(this)
                 }
             }

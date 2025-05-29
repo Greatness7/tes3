@@ -14,7 +14,7 @@ pub(crate) mod prelude {
 
     // external imports
     pub use bstr::{BString, ByteSlice, ByteVec};
-    pub use bytemuck::{Pod, Zeroable};
+    pub use bytemuck::{NoUninit, Pod, Zeroable};
     pub use derive_more::{Deref, DerefMut, From, Into};
     pub use hashbrown::{HashMap, HashSet};
     pub use smart_default::SmartDefault;

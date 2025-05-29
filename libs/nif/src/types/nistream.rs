@@ -440,7 +440,7 @@ mod tests {
     use super::*;
     use glam::vec3;
 
-    #[ignore]
+    #[ignore = "visual"]
     #[test]
     fn test_bounding_sphere() {
         let src_path = "tests/assets/random_objects.nif";
@@ -458,7 +458,7 @@ mod tests {
         stream.save_path(dst_path).unwrap();
     }
 
-    #[ignore]
+    #[ignore = "visual"]
     #[test]
     fn test_bounding_box() {
         let src_path = "tests/assets/random_objects.nif";

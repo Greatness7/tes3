@@ -70,7 +70,7 @@ impl<T> SortHint for &T {
 
 impl SortHint for LandscapeTexture {
     fn sort_hint(&self) -> i32 {
-        self.index.cast_signed()
+        self.index as i32
     }
 }
 

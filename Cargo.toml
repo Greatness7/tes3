@@ -104,6 +104,7 @@ multiple_crate_versions = "allow"
 wildcard_imports = "allow"
 needless_continue = "allow"
 cast_lossless = "allow"
+cast_possible_wrap = "allow"
 #
 # Clippy Group: Nursery
 # https://rust-lang.github.io/rust-clippy/master/index.html#?groups=nursery

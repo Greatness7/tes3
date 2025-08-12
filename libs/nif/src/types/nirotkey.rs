@@ -74,7 +74,7 @@ impl Save for NiRotKey {
             NiRotKey::LinKey(keys) => save(stream, keys.len(), KeyType::LinKey, keys),
             NiRotKey::BezKey(keys) => save(stream, keys.len(), KeyType::BezKey, keys),
             NiRotKey::TCBKey(keys) => save(stream, keys.len(), KeyType::TCBKey, keys),
-            NiRotKey::EulerKey(keys) => save(stream, keys.len(), KeyType::EulerKey, [keys]),
+            NiRotKey::EulerKey(keys) => save(stream, keys.len().min(1), KeyType::EulerKey, [keys]),
         }
     }
 }

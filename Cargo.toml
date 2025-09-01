@@ -6,9 +6,12 @@ categories = ["Game development"]
 version.workspace = true
 edition.workspace = true
 
+[lib]
+crate-type = ["cdylib"]
+
 [workspace.package]
 version = "0.0.1"
-edition = "2021"
+edition = "2024"
 rust-version = "1.80"
 authors = ["Greatness7 <Greatness7@gmail.com>"]
 license = "MIT OR Apache-2.0"
@@ -20,6 +23,21 @@ members = ["libs/*"]
 [dependencies]
 esp = { path = "libs/esp", optional = true }
 nif = { path = "libs/nif", optional = true }
+
+easy-ext = "^1.0"
+enum-map = "^2.6"
+glam = "^0.29"
+str-utils = "^0.1"
+
+[dependencies.interoptopus]
+git = "https://github.com/ralfbiedert/interoptopus.git"
+
+[dependencies.interoptopus_backend_csharp]
+git = "https://github.com/ralfbiedert/interoptopus.git"
+
+[build-dependencies]
+interoptopus = { git = "https://github.com/ralfbiedert/interoptopus.git" }
+interoptopus_backend_csharp = { git = "https://github.com/ralfbiedert/interoptopus.git" }
 
 [features]
 default = ["esp", "nif"]
@@ -43,6 +61,7 @@ rust_2018_idioms = { level = "warn", priority = -1 }
 rust_2021_compatibility = { level = "warn", priority = -1 }
 unused = { level = "warn", priority = -1 }
 stable_features = "allow" # extract_if
+unsafe_op_in_unsafe_fn = "allow"
 #
 # Allowed-by-default Lints
 # https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html

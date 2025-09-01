@@ -24,6 +24,9 @@ base64-simd = { version = "^0.8", optional = true }
 serde = { version = "^1.0", features = ["derive"], optional = true }
 zstd = { version = "^0.13", optional = true }
 
+[dependencies.interoptopus]
+git = "https://github.com/ralfbiedert/interoptopus.git"
+
 [dev-dependencies]
 tempfile = "^3.8"
 serde_json = "^1.0"

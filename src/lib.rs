@@ -25,12 +25,20 @@ pub struct Scene {
     pub Nodes: ffi::Vec<Node>,
     pub VisualMeshes: ffi::Vec<Mesh>,
     pub CollisionMeshes: ffi::Vec<Mesh>,
+    pub Emitters: ffi::Vec<Emitter>,
 }
 
 #[ffi_type]
 #[derive(Clone)]
 pub struct Node {
     pub Name: ffi::String,
+    pub Transform: Transform,
+}
+
+#[ffi_type]
+#[derive(Clone)]
+pub struct Emitter {
+    pub Texture: ffi::String,
     pub Transform: Transform,
 }
 
@@ -160,6 +168,8 @@ pub fn LoadScene(path: ffi::String) -> ffi::Result<Scene, ffi::String> {
     stream.discard_editor_markers();
     stream.flatten_properties();
 
+    let world_transforms = stream.get_world_transforms();
+
     let visual_meshes: Vec<_> = stream
         .visible_geometries()
         .map(|(shape, data, transform)| {
@@ -176,10 +186,38 @@ pub fn LoadScene(path: ffi::String) -> ffi::Result<Scene, ffi::String> {
         })
         .collect();
 
+    // Currently we only care about "AttachLight" nodes.
+    let nodes: Vec<_> = stream
+        .objects_with_name::<nif::NiObjectNET>("attachlight")
+        .filter_map(|object| {
+            let link = stream.get_link(object);
+            let transform = world_transforms.get(&link.key)?;
+            Some(Node {
+                Name: object.name.to_string().into(),
+                Transform: transform.clone().into(),
+            })
+        })
+        .take(1)
+        .collect();
+
+    let emitters: Vec<_> = stream
+        .objects_of_type::<nif::NiParticleSystemController>()
+        .filter_map(|controller| {
+            let transform = world_transforms.get(&controller.emitter.key)?;
+            let target = stream.get_as(controller.target)?;
+            let texture = stream.get_texture(target);
+            Some(Emitter {
+                Texture: texture.into(),
+                Transform: transform.clone().into(),
+            })
+        })
+        .collect();
+
     ffi::Ok(Scene {
-        Nodes: vec![].into(),
+        Nodes: nodes.into(),
         VisualMeshes: visual_meshes.into(),
         CollisionMeshes: collision_meshes.into(),
+        Emitters: vec![].into(),
     })
 }
 
@@ -189,6 +227,7 @@ pub fn ffi_inventory() -> Inventory {
     let inventory = Inventory::builder() //
         .register(builtins_string!())
         .register(builtins_vec!(Node))
+        .register(builtins_vec!(Emitter))
         .register(builtins_vec!(Mesh))
         .register(builtins_vec!(Vec2))
         .register(builtins_vec!(Vec3))
@@ -219,4 +258,13 @@ fn generate_bindings() {
         .unwrap()
         .write_file("bindings/TES3.cs")
         .unwrap()
+}
+
+#[test]
+fn feature() {
+    let path = "c:/Users/Admin/Games/Morrowind_BSA/Data Files/meshes/l/light_com_chandelier_05.nif";
+    let scene = LoadScene(path.to_string().into()).unwrap();
+    for emitter in scene.Emitters.into_vec() {
+        println!("emitter: {:?}", emitter.Texture.into_string());
+    }
 }

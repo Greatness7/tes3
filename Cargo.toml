@@ -24,6 +24,7 @@ members = ["libs/*"]
 esp = { path = "libs/esp", optional = true }
 nif = { path = "libs/nif", optional = true }
 
+hashbrown = "^0.15"
 easy-ext = "^1.0"
 enum-map = "^2.6"
 glam = "^0.29"

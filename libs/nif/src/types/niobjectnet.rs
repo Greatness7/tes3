@@ -51,4 +51,21 @@ impl NiObjectNET {
     {
         self.extra_datas(stream).filter_map(|object| object.try_into().ok())
     }
+
+    pub fn controllers<'a>(&'a self, stream: &'a NiStream) -> impl Iterator<Item = &'a NiType> {
+        let mut next = self.controller;
+        std::iter::from_fn(move || {
+            let object = stream.objects.get(next.key)?;
+            let controller: &NiTimeController = object.try_into().ok()?;
+            next = controller.next;
+            Some(object)
+        })
+    }
+
+    pub fn controllers_of_type<'a, T>(&'a self, stream: &'a NiStream) -> impl Iterator<Item = &'a T>
+    where
+        &'a T: 'a + TryFrom<&'a NiType>,
+    {
+        self.controllers(stream).filter_map(|object| object.try_into().ok())
+    }
 }

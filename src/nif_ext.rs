@@ -1,4 +1,5 @@
 use glam::Affine3A;
+use hashbrown::HashMap;
 use nif::*;
 use str_utils::*;
 
@@ -248,7 +249,7 @@ impl NiStream {
         }
     }
 
-    pub fn get_texture(&self, shape: &NiTriShape) -> String {
+    pub fn get_texture(&self, shape: &NiAVObject) -> String {
         for property in &shape.properties {
             let Some(tex_prop) = self.get_as::<_, NiTexturingProperty>(*property) else {
                 continue;
@@ -268,6 +269,44 @@ impl NiStream {
             return path.to_string();
         }
         "".to_string()
+    }
+
+    pub fn get_world_transforms(&self) -> HashMap<NiKey, Affine3A> {
+        let root = self.roots.first().copied().unwrap_or_default();
+        let root_transform = Affine3A::IDENTITY;
+
+        let mut results = HashMap::new();
+
+        let mut stack = vec![(root.key, root_transform)];
+
+        while let Some((key, transform)) = stack.pop() {
+            let Some(this) = self.objects.get(key) else {
+                continue;
+            };
+
+            let Ok(object) = <&NiAVObject>::try_from(this) else {
+                continue;
+            };
+
+            let transform = transform * object.transform();
+            results.insert(key, transform);
+
+            if let Ok(node) = <&NiSwitchNode>::try_from(this) {
+                if let Some(child) = node.children.get(node.active_index) {
+                    stack.push((child.key, transform));
+                }
+                continue;
+            }
+
+            if let Ok(node) = <&NiNode>::try_from(this) {
+                for child in node.children.iter().rev() {
+                    stack.push((child.key, transform));
+                }
+                continue;
+            }
+        }
+
+        results
     }
 }
 

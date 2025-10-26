@@ -7,13 +7,13 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-bstr = { version = "^1.6", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.14", features = ["derive", "extern_crate_alloc", "min_const_generics", "must_cast"] }
+bstr = { version = "^1.12", default-features = false, features = ["std"] }
+bytemuck = { version = "^1.24", features = ["derive", "extern_crate_alloc", "min_const_generics", "must_cast"] }
 bytes_io_macros = { path = "../bytes_io_macros" }
 encoding_rs = "^0.8"
-glam = { version = "^0.29", features = ["bytemuck"], optional = true }
-hashbrown = { version = "^0.15", features = ["rayon"] }
-memchr = "^2.6"
+glam = { version = "^0.30", features = ["bytemuck"], optional = true }
+hashbrown = { version = "^0.16", features = ["rayon"] }
+memchr = "^2.7"
 smart-default = "^0.7"
 
 [features]

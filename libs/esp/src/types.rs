@@ -36,6 +36,7 @@ mod lockpick;
 mod magiceffect;
 mod miscitem;
 mod npc;
+mod omw_lualist;
 mod pathgrid;
 mod plugin;
 mod probe;
@@ -89,6 +90,7 @@ pub use lockpick::*;
 pub use magiceffect::*;
 pub use miscitem::*;
 pub use npc::*;
+pub use omw_lualist::*;
 pub use pathgrid::*;
 pub use plugin::*;
 pub use probe::*;
@@ -153,4 +155,5 @@ pub enum TES3Object {
     #[tag("PGRD")] PathGrid(PathGrid),
     #[tag("DIAL")] Dialogue(Dialogue),
     #[tag("INFO")] DialogueInfo(DialogueInfo),
+    #[tag("LUAL")] ScriptConfigList(ScriptConfigList)
 }

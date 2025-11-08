@@ -32,6 +32,12 @@ impl EditorId for Header {
     }
 }
 
+impl EditorId for ScriptConfigList {
+    fn editor_id(&self) -> Cow<'_, str> {
+        "".into()
+    }
+}
+
 impl EditorId for Skill {
     fn editor_id(&self) -> Cow<'_, str> {
         self.skill_id.display().into()

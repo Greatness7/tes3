@@ -50,6 +50,7 @@ impl Plugin {
                 TES3Object::SoundGen(obj)         => (38, obj.sort_hint(), &*obj.id),
                 TES3Object::Dialogue(obj)         => (39, obj.sort_hint(), ""), // Preserve DIAL/INFO order
                 TES3Object::DialogueInfo(obj)     => (39, obj.sort_hint(), ""), // ^
+                TES3Object::ScriptConfigList(obj) => (40, obj.sort_hint(), ""),
             }
         });
         unsafe { apply_isort(&mut indices, &mut self.objects) };

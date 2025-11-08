@@ -253,3 +253,16 @@ bitflags! {
         const NOT_PLAYABLE = 0x2;
     }
 }
+
+bitflags! {
+    #[esp_meta]
+    #[repr(transparent)]
+    #[derive(LoadSave, Clone, Copy, Debug, Default, Eq, PartialEq)]
+    pub struct OMWScriptAttachFlag: u32 {
+        const GLOBAL = 0x01;
+        const CUSTOM = 0x02;
+        const PLAYER = 0x04;
+        const MERGE = 0x08;
+        const MENU = 0x10;
+    }
+}

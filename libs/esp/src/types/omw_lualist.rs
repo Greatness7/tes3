@@ -5,8 +5,8 @@ use crate::prelude::*;
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct PerInstanceConfig {
     pub attach: bool,
-    pub mast_idx: i32,
-    pub ref_idx: u32,
+    pub mast_index: i32,
+    pub ref_index: u32,
     pub data: Vec<u8>,
 }
 

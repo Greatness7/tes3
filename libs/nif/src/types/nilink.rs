@@ -84,6 +84,8 @@ pub trait Visitor {
     fn visitor<F>(&self, f: &mut F)
     where
         F: FnMut(NiKey);
+
+    fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>);
 }
 
 impl<T> Visitor for &T {
@@ -93,6 +95,21 @@ impl<T> Visitor for &T {
         F: FnMut(NiKey),
     {
     }
+
+    #[inline]
+    fn remap_links(&mut self, _: &HashMap<NiKey, NiKey>) {}
+}
+
+impl<T> Visitor for &mut T {
+    #[inline]
+    fn visitor<F>(&self, _: &mut F)
+    where
+        F: FnMut(NiKey),
+    {
+    }
+
+    #[inline]
+    fn remap_links(&mut self, _: &HashMap<NiKey, NiKey>) {}
 }
 
 impl<V: Visitor> Visitor for Option<V> {
@@ -103,6 +120,13 @@ impl<V: Visitor> Visitor for Option<V> {
     {
         if let Some(inner) = self {
             inner.visitor(f);
+        }
+    }
+
+    #[inline]
+    fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+        if let Some(inner) = self {
+            inner.remap_links(remap);
         }
     }
 }
@@ -117,6 +141,13 @@ impl<V: Visitor> Visitor for Vec<V> {
             item.visitor(f);
         }
     }
+
+    #[inline]
+    fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+        for item in self.iter_mut() {
+            item.remap_links(remap);
+        }
+    }
 }
 
 impl<T> Visitor for NiLink<T> {
@@ -126,6 +157,13 @@ impl<T> Visitor for NiLink<T> {
         F: FnMut(NiKey),
     {
         f(self.key);
+    }
+
+    #[inline]
+    fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+        if let Some(key) = remap.get(&self.key) {
+            self.key = *key;
+        }
     }
 }
 
@@ -140,6 +178,14 @@ impl Visitor for TextureMap {
             TextureMap::BumpMap(inner) => inner.visitor(f),
         }
     }
+
+    #[inline]
+    fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+        match self {
+            TextureMap::Map(inner) => inner.remap_links(remap),
+            TextureMap::BumpMap(inner) => inner.remap_links(remap),
+        }
+    }
 }
 
 impl Visitor for TextureSource {
@@ -151,6 +197,14 @@ impl Visitor for TextureSource {
         match self {
             TextureSource::External(inner) => inner.visitor(f),
             TextureSource::Internal(inner) => inner.visitor(f),
+        }
+    }
+
+    #[inline]
+    fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+        match self {
+            TextureSource::External(_) => {}
+            TextureSource::Internal(inner) => inner.remap_links(remap),
         }
     }
 }

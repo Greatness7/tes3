@@ -433,6 +433,22 @@ impl NiStream {
                 .map(NiAVObject::clear_transform);
         }
     }
+
+    pub fn append(&mut self, other: &mut NiStream) -> Vec<NiLink<NiObject>> {
+        let NiStream { objects, mut roots } = std::mem::take(other);
+
+        let remap: HashMap<_, _> = objects
+            .into_iter()
+            .map(|(k, object)| (k, self.objects.insert(object)))
+            .collect();
+
+        for key in remap.values() {
+            self.objects[*key].remap_links(&remap);
+        }
+
+        roots.remap_links(&remap);
+        roots
+    }
 }
 
 #[cfg(test)]

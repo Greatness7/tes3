@@ -49,6 +49,12 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
                     (&self.#fields).visitor(f);
                 )*
             }
+
+            fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+                #(
+                    (&mut self.#fields).remap_links(remap);
+                )*
+            }
         }
         #inheritence_impls
     };
@@ -61,14 +67,14 @@ pub fn derive_meta(input: TokenStream) -> TokenStream {
 }
 
 #[rustfmt::skip]
-fn get_struct_fields_rev(data: &Data) -> impl Iterator<Item = &Ident> {
+fn get_struct_fields_rev(data: &Data) -> Vec<&Ident> {
     let fields = match data {
         Data::Struct(DataStruct { fields: Fields::Named(f), .. }) => {
             Some(f.named.iter().filter_map(|f| f.ident.as_ref()))
         },
         _ => None
     };
-    fields.into_iter().flatten().rev()
+    fields.into_iter().flatten().rev().collect()
 }
 
 /// Internal derive macro for use with the `NiType` enum in `nif.rs`.
@@ -132,6 +138,14 @@ pub fn derive_nitype(input: TokenStream) -> TokenStream {
                     match self {
                         #(
                             Self::#idents(inner) => inner.visitor(f),
+                        )*
+                    }
+                }
+
+                fn remap_links(&mut self, remap: &HashMap<NiKey, NiKey>) {
+                    match self {
+                        #(
+                            Self::#idents(inner) => inner.remap_links(remap),
                         )*
                     }
                 }

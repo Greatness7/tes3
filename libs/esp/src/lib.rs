@@ -29,7 +29,7 @@ pub(crate) mod prelude {
     pub use smart_default::SmartDefault;
     pub use std::io;
 
-    pub type HashMap<K, V> = indexmap::IndexMap<K, V, hashbrown::hash_map::DefaultHashBuilder>;
+    pub type HashMap<K, V> = indexmap::IndexMap<K, V, hashbrown::DefaultHashBuilder>;
 
     // use [`std::default::default`] when stable
     pub fn default<T: Default>() -> T {

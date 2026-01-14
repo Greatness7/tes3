@@ -1,10 +1,9 @@
 use std::fmt::Debug;
 use std::marker::PhantomData;
+use std::ops::Deref;
 use std::rc::Rc;
 
-use super::*;
-
-use tynm::type_name;
+use pretty_name::type_name;
 use yoke::{erased::ErasedRcCart, Yoke, Yokeable};
 
 pub struct Ref<T>(pub Yoke<T, ErasedRcCart>)
@@ -21,7 +20,7 @@ where
 }
 
 impl<T> Ref<&'static T> {
-    pub fn type_name() -> String {
+    pub fn type_name() -> &'static str {
         type_name::<T>()
     }
 }

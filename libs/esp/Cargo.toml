@@ -24,8 +24,8 @@ base64-simd = { version = "^0.8", optional = true }
 serde = { version = "^1.0", features = ["derive"], optional = true }
 zstd = { version = "^0.13", optional = true }
 mlua = { version = "^0.10", optional = true, features = ["luajit", "module"] }
-yoke = { version = "^0.7", optional = true }
-tynm = { version = "^0.1", optional = true }
+yoke = { version = "^0.8", optional = true }
+pretty-name = { version = "^0.4", optional = true }
 indexmap = "^2.7"
 
 [dev-dependencies]
@@ -47,7 +47,7 @@ serde = [
 lua = [
     "dep:mlua",
     "dep:yoke",
-    "dep:tynm",
+    "dep:pretty-name",
     "esp_macros/lua",
 ]
 

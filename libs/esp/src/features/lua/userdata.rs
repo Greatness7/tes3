@@ -62,8 +62,8 @@ where
 
 impl<X, Y> UserData for Ref<&'static (X, Y)>
 where
-    X: Getter,
-    Y: Getter,
+    X: Getter + LuaPrimitive,
+    Y: Getter + LuaPrimitive,
     Self: Debug,
 {
     fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
@@ -75,14 +75,23 @@ where
 
     fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
         impl_meta_method!(methods, "__tostring");
+
+        methods.add_meta_method("__index", |lua, this, i: usize| {
+            let value = this.get();
+            match i {
+                1 => value.0.clone_into_lua(lua),
+                2 => value.1.clone_into_lua(lua),
+                _ => Ok(Nil),
+            }
+        })
     }
 }
 
 impl<X, Y, Z> UserData for Ref<&'static (X, Y, Z)>
 where
-    X: Getter,
-    Y: Getter,
-    Z: Getter,
+    X: Getter + LuaPrimitive,
+    Y: Getter + LuaPrimitive,
+    Z: Getter + LuaPrimitive,
     Self: Debug,
 {
     fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
@@ -95,6 +104,16 @@ where
 
     fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
         impl_meta_method!(methods, "__tostring");
+
+        methods.add_meta_method("__index", |lua, this, i: usize| {
+            let value = this.get();
+            match i {
+                1 => value.0.clone_into_lua(lua),
+                2 => value.1.clone_into_lua(lua),
+                3 => value.2.clone_into_lua(lua),
+                _ => Ok(Nil),
+            }
+        })
     }
 }
 

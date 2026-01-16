@@ -68,9 +68,6 @@ where
 {
     fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
         fields.add_field("type", Self::type_name());
-
-        getter(fields, "x", |s: &Self| s.map(|v, _| &v.0));
-        getter(fields, "y", |s: &Self| s.map(|v, _| &v.1));
     }
 
     fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
@@ -96,10 +93,6 @@ where
 {
     fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
         fields.add_field("type", Self::type_name());
-
-        getter(fields, "x", |s: &Self| s.map(|v, _| &v.0));
-        getter(fields, "y", |s: &Self| s.map(|v, _| &v.1));
-        getter(fields, "z", |s: &Self| s.map(|v, _| &v.2));
     }
 
     fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {

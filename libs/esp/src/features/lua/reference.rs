@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use std::ops::Deref;
 use std::rc::Rc;
 
-use pretty_name::type_name;
+use disqualified::ShortName;
 use yoke::{erased::ErasedRcCart, Yoke, Yokeable};
 
 pub struct Ref<T>(pub Yoke<T, ErasedRcCart>)
@@ -20,8 +20,8 @@ where
 }
 
 impl<T> Ref<&'static T> {
-    pub fn type_name() -> &'static str {
-        type_name::<T>()
+    pub fn type_name() -> String {
+        ShortName::of::<T>().to_string()
     }
 }
 

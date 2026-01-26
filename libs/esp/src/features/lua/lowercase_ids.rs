@@ -52,7 +52,6 @@ impl Plugin {
                     object.bolt_visual.make_ascii_lowercase();
                     object.hit_visual.make_ascii_lowercase();
                     object.area_visual.make_ascii_lowercase();
-                    object.description.make_ascii_lowercase();
                 }
                 Script(object) => {
                     object.id.make_ascii_lowercase();

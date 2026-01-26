@@ -8,18 +8,41 @@ pub use getter::*;
 
 mod userdata;
 
+mod lowercase_ids;
+
 pub use mlua::{prelude::*, IntoLua, Nil, UserData, UserDataFields, UserDataMethods};
+
+fn load_plugin(_: &Lua, (path, options): (String, Option<LuaTable>)) -> LuaResult<Ref<&'static Plugin>> {
+    let mut lowercase_ids = false;
+    let mut ignored_types: Vec<[u8; 4]> = vec![];
+
+    if let Some(options) = options {
+        lowercase_ids = options.get("lowercase_ids").unwrap_or_default();
+        let ignore: Vec<String> = options.get("ignored_types").unwrap_or_default();
+        for s in ignore {
+            match <[u8; 4]>::try_from(s.as_bytes()) {
+                Ok(ok) => ignored_types.push(ok),
+                Err(e) => return Err(LuaError::external(e)),
+            }
+        }
+    }
+
+    let filter = |tag| !ignored_types.contains(&tag);
+
+    let mut plugin = Plugin::from_path_filtered(path, filter) //
+        .map_err(LuaError::external)?;
+
+    if lowercase_ids {
+        plugin.lowercase_ids();
+    }
+
+    Ok(plugin.into_lua_ref())
+}
 
 pub fn lua_module(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
 
-    exports.set(
-        "load_plugin",
-        lua.create_function(|_, path: String| {
-            let plugin = Plugin::from_path(path).map_err(LuaError::external)?;
-            Ok(plugin.into_lua_ref())
-        })?,
-    )?;
+    exports.set("load_plugin", lua.create_function(load_plugin)?)?;
 
     Ok(exports)
 }

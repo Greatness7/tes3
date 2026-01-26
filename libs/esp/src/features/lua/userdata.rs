@@ -3,6 +3,28 @@ use std::fmt::Debug;
 use super::*;
 
 #[macro_export]
+macro_rules! into_lua {
+    ($value:expr, $lua:expr) => {{
+        let value_ref = &*$value;
+        match_type!(value_ref, {
+            &i8 as v => v.clone_into_lua($lua),
+            &u8 as v => v.clone_into_lua($lua),
+            &i16 as v => v.clone_into_lua($lua),
+            &u16 as v => v.clone_into_lua($lua),
+            &f32 as v => v.clone_into_lua($lua),
+            &i32 as v => v.clone_into_lua($lua),
+            &u32 as v => v.clone_into_lua($lua),
+            &f64 as v => v.clone_into_lua($lua),
+            &i64 as v => v.clone_into_lua($lua),
+            &u64 as v => v.clone_into_lua($lua),
+            &bool as v => v.clone_into_lua($lua),
+            &String as v => v.clone_into_lua($lua),
+            _ => $value.into_lua($lua),
+        })
+    }};
+}
+
+#[macro_export]
 macro_rules! impl_meta_method {
     ($methods:ident, "__tostring") => {
         $methods.add_meta_method("__tostring", |_, this, _: ()| {
@@ -18,7 +40,7 @@ macro_rules! impl_meta_method {
         $methods.add_meta_method("__index", |lua, this, i: usize| match i.checked_sub(1) {
             Some(i) if i < this.len() => {
                 let value = this.map::<&_>(|this, _| &this[i]);
-                value.into_lua(lua)
+                into_lua!(value, lua)
             }
             _ => Ok(Nil),
         });
@@ -29,7 +51,8 @@ macro_rules! impl_meta_method {
                 let index = i + 1;
                 if i < this.len() {
                     let index = index.into_lua(lua)?;
-                    let value = this.map::<&_>(|this, _| &this[i]).into_lua(lua)?;
+                    let value = this.map::<&_>(|this, _| &this[i]);
+                    let value = into_lua!(value, lua)?;
                     Ok((index, value))
                 } else {
                     Ok((Nil, Nil))

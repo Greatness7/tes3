@@ -75,11 +75,11 @@ pub fn impl_lua_bindings_for_enum_with_data_variants(ident: &syn::Ident, data: &
                     match self.get() {
                         #(
                             #ident::#variants(_) => {
-                                self.map::<&_>(|this, _| {
+                                let value = self.map::<&_>(|this, _| {
                                     let #ident::#variants(inner) = this else { unsafe { std::hint::unreachable_unchecked() } };
                                     inner
-                                })
-                                .into_lua(lua)
+                                });
+                                into_lua!(value, lua)
                             }
                         )*
                     }

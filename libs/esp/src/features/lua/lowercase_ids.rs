@@ -6,8 +6,8 @@ impl Plugin {
             use TES3Object::*;
             match object {
                 Header(object) => {
-                    for (name, _) in object.masters.iter_mut() {
-                        name.make_ascii_lowercase();
+                    for (file_name, _) in object.masters.iter_mut() {
+                        file_name.normalize();
                     }
                 }
                 GameSetting(object) => {
@@ -33,7 +33,7 @@ impl Plugin {
                 }
                 Sound(object) => {
                     object.id.make_ascii_lowercase();
-                    object.sound_path.make_ascii_lowercase();
+                    object.sound_path.normalize();
                 }
                 SoundGen(object) => {
                     object.id.make_ascii_lowercase();
@@ -42,8 +42,8 @@ impl Plugin {
                 }
                 Skill(_object) => {}
                 MagicEffect(object) => {
-                    object.icon.make_ascii_lowercase();
-                    object.texture.make_ascii_lowercase();
+                    object.icon.normalize();
+                    object.texture.normalize();
                     object.bolt_sound.make_ascii_lowercase();
                     object.cast_sound.make_ascii_lowercase();
                     object.hit_sound.make_ascii_lowercase();
@@ -66,7 +66,7 @@ impl Plugin {
                 }
                 Birthsign(object) => {
                     object.id.make_ascii_lowercase();
-                    object.texture.make_ascii_lowercase();
+                    object.texture.normalize();
                     for spell in object.spells.iter_mut() {
                         spell.make_ascii_lowercase();
                     }
@@ -77,39 +77,39 @@ impl Plugin {
                 }
                 LandscapeTexture(object) => {
                     object.id.make_ascii_lowercase();
-                    object.file_name.make_ascii_lowercase();
+                    object.file_name.normalize();
                 }
                 Spell(object) => {
                     object.id.make_ascii_lowercase();
                 }
                 Static(object) => {
                     object.id.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                 }
                 Door(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                     object.open_sound.make_ascii_lowercase();
                     object.close_sound.make_ascii_lowercase();
                 }
                 MiscItem(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 Weapon(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                     object.enchanting.make_ascii_lowercase();
                 }
                 Container(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                     for (_, item) in object.inventory.iter_mut() {
                         item.make_ascii_lowercase();
                     }
@@ -117,7 +117,7 @@ impl Plugin {
                 Creature(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                     for (_, item) in object.inventory.iter_mut() {
                         item.make_ascii_lowercase();
                     }
@@ -149,13 +149,13 @@ impl Plugin {
                 Bodypart(object) => {
                     object.id.make_ascii_lowercase();
                     object.race.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                 }
                 Light(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                     object.sound.make_ascii_lowercase();
                 }
                 Enchanting(object) => {
@@ -164,7 +164,7 @@ impl Plugin {
                 Npc(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                     for (_, item) in object.inventory.iter_mut() {
                         item.make_ascii_lowercase();
                     }
@@ -200,8 +200,8 @@ impl Plugin {
                 Armor(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                     object.enchanting.make_ascii_lowercase();
                     for biped_object in object.biped_objects.iter_mut() {
                         biped_object.male_bodypart.make_ascii_lowercase();
@@ -211,8 +211,8 @@ impl Plugin {
                 Clothing(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                     object.enchanting.make_ascii_lowercase();
                     for biped_object in object.biped_objects.iter_mut() {
                         biped_object.male_bodypart.make_ascii_lowercase();
@@ -222,50 +222,50 @@ impl Plugin {
                 RepairItem(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 Activator(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
+                    object.mesh.normalize();
                 }
                 Apparatus(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 Lockpick(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 Probe(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 Ingredient(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 Book(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                     object.enchanting.make_ascii_lowercase();
                 }
                 Alchemy(object) => {
                     object.id.make_ascii_lowercase();
                     object.script.make_ascii_lowercase();
-                    object.mesh.make_ascii_lowercase();
-                    object.icon.make_ascii_lowercase();
+                    object.mesh.normalize();
+                    object.icon.normalize();
                 }
                 LeveledItem(object) => {
                     object.id.make_ascii_lowercase();
@@ -321,10 +321,29 @@ impl Plugin {
                     object.speaker_faction.make_ascii_lowercase();
                     // object.speaker_cell.make_ascii_lowercase();
                     object.player_faction.make_ascii_lowercase();
-                    object.sound_path.make_ascii_lowercase();
+                    object.sound_path.normalize();
                     for filter in object.filters.iter_mut() {
                         filter.id.make_ascii_lowercase();
                     }
+                }
+            }
+        }
+    }
+}
+
+trait Normalize {
+    fn normalize(&mut self);
+}
+
+impl Normalize for String {
+    fn normalize(&mut self) {
+        self.make_ascii_lowercase();
+        // SAFETY: Both '/' and '\\' are single-byte ASCII characters
+        // that cannot appear as part of a multi-byte utf8 sequence.
+        unsafe {
+            for byte in self.as_bytes_mut() {
+                if *byte == b'\\' {
+                    *byte = b'/';
                 }
             }
         }

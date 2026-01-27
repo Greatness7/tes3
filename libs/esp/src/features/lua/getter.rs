@@ -118,8 +118,8 @@ where
             if value.is_none() {
                 Ok(Nil)
             } else {
-                let remap = value.map::<&_>(|this, _| this.as_ref().unwrap());
-                remap.into_lua(lua)
+                let value = value.map::<&_>(|this, _| this.as_ref().unwrap());
+                into_lua!(value, lua)
             }
         })
     }

@@ -19,6 +19,9 @@ macro_rules! into_lua {
             &u64 as v => v.clone_into_lua($lua),
             &bool as v => v.clone_into_lua($lua),
             &String as v => v.clone_into_lua($lua),
+            &AttributeId as v => v.clone_into_lua($lua),
+            &SkillId as v => v.clone_into_lua($lua),
+            &EffectId as v => v.clone_into_lua($lua),
             _ => $value.into_lua($lua),
         })
     }};

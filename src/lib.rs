@@ -165,7 +165,7 @@ pub fn LoadScene(path: ffi::String) -> ffi::Result<Scene, ffi::String> {
     }
 
     stream.clear_root_node_transforms();
-    stream.discard_editor_markers();
+    // stream.discard_editor_markers();
     stream.flatten_properties();
 
     let world_transforms = stream.get_world_transforms();
@@ -217,7 +217,7 @@ pub fn LoadScene(path: ffi::String) -> ffi::Result<Scene, ffi::String> {
         Nodes: nodes.into(),
         VisualMeshes: visual_meshes.into(),
         CollisionMeshes: collision_meshes.into(),
-        Emitters: vec![].into(),
+        Emitters: emitters.into(),
     })
 }
 
@@ -262,9 +262,9 @@ fn generate_bindings() {
 
 #[test]
 fn feature() {
-    let path = "c:/Users/Admin/Games/Morrowind_BSA/Data Files/meshes/l/light_com_chandelier_05.nif";
+    let path = "C:/Users/Admin/Games/Morrowind/Installers/BSA Assets/Meshes/editormarker_box_01.nif";
     let scene = LoadScene(path.to_string().into()).unwrap();
-    for emitter in scene.Emitters.into_vec() {
-        println!("emitter: {:?}", emitter.Texture.into_string());
+    for mesh in scene.CollisionMeshes.into_vec() {
+        println!("mesh: {:?}", mesh.Texture.into_string());
     }
 }

@@ -24,11 +24,11 @@ members = ["libs/*"]
 esp = { path = "libs/esp", optional = true }
 nif = { path = "libs/nif", optional = true }
 
-hashbrown = "^0.15"
+hashbrown = "^0.16"
 easy-ext = "^1.0"
 enum-map = "^2.6"
-glam = "^0.29"
-str-utils = "^0.1"
+glam = "^0.30"
+str-utils = "^0.3"
 
 [dependencies.interoptopus]
 git = "https://github.com/ralfbiedert/interoptopus.git"

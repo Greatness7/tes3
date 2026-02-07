@@ -38,6 +38,7 @@ pub struct Node {
 #[ffi_type]
 #[derive(Clone)]
 pub struct Emitter {
+    pub Name: ffi::String,
     pub Texture: ffi::String,
     pub Transform: Transform,
 }
@@ -207,6 +208,7 @@ pub fn LoadScene(path: ffi::String) -> ffi::Result<Scene, ffi::String> {
             let target = stream.get_as(controller.target)?;
             let texture = stream.get_texture(target);
             Some(Emitter {
+                Name: target.name.to_string().into(),
                 Texture: texture.into(),
                 Transform: transform.clone().into(),
             })
@@ -262,9 +264,10 @@ fn generate_bindings() {
 
 #[test]
 fn feature() {
-    let path = "C:/Users/Admin/Games/Morrowind/Installers/BSA Assets/Meshes/editormarker_box_01.nif";
+    let path = "C:/Users/Admin/Games/Morrowind/Installers/BSA Assets/Meshes/l/light_de_candle_24.nif";
     let scene = LoadScene(path.to_string().into()).unwrap();
-    for mesh in scene.CollisionMeshes.into_vec() {
-        println!("mesh: {:?}", mesh.Texture.into_string());
+    for emitter in scene.Emitters.into_vec() {
+        println!("emitter: {:?}", emitter.Name.into_string());
+        println!("emitter: {:?}", emitter.Texture.into_string());
     }
 }

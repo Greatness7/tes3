@@ -206,9 +206,10 @@ pub fn LoadScene(path: ffi::String) -> ffi::Result<Scene, ffi::String> {
         .filter_map(|controller| {
             let transform = world_transforms.get(&controller.emitter.key)?;
             let target = stream.get_as(controller.target)?;
+            let emitter = stream.get(controller.emitter)?;
             let texture = stream.get_texture(target);
             Some(Emitter {
-                Name: target.name.to_string().into(),
+                Name: emitter.name.clone().into(),
                 Texture: texture.into(),
                 Transform: transform.clone().into(),
             })

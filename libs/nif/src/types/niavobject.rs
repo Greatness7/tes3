@@ -28,6 +28,13 @@ impl NiAVObject {
         self.rotation = Mat3::IDENTITY;
         self.scale = 1.0;
     }
+
+    pub fn get_property<'a, T>(&'a self, stream: &'a NiStream) -> Option<&'a T>
+    where
+        &'a T: TryFrom<&'a NiType>,
+    {
+        stream.get_all_as(&self.properties).next()
+    }
 }
 
 impl Load for NiAVObject {

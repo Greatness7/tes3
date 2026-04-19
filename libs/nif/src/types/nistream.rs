@@ -243,7 +243,7 @@ impl NiStream {
 
     /// Retrieve multiple objects from the stream.
     #[inline]
-    pub fn get_all<'a, T>(&'a self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a T>
+    pub fn get_all<'a, T: 'a>(&'a self, links: &[NiLink<T>]) -> impl Iterator<Item = &'a T>
     where
         &'a T: TryFrom<&'a NiType>,
     {
@@ -252,9 +252,9 @@ impl NiStream {
 
     /// Retrieve multiple objects of the specified type from the stream.
     #[inline]
-    pub fn get_all_as<'a, T, U>(&'a self, links: &'a [NiLink<T>]) -> impl Iterator<Item = &'a U>
+    pub fn get_all_as<'a, T, U: 'a>(&'a self, links: &[NiLink<T>]) -> impl Iterator<Item = &'a U>
     where
-        &'a U: 'a + TryFrom<&'a NiType>,
+        &'a U: TryFrom<&'a NiType>,
     {
         links.iter().filter_map(move |link| self.get_as(*link))
     }

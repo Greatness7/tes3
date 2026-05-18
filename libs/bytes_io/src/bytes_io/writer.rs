@@ -57,6 +57,9 @@ impl Writer {
     }
 
     pub fn save_bytes_padded<const N: usize>(&mut self, bytes: &[u8]) -> io::Result<()> {
+        if bytes.len() > N {
+            Self::error("padded byte slice exceeds fixed width")?;
+        }
         self.save_bytes(bytes)?;
         self.save_bytes(&[0; N][bytes.len()..])?; // padding
         Ok(())

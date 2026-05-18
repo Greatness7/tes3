@@ -114,7 +114,9 @@ impl Save for Region {
 impl Load for WeatherChances {
     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
         let len: u32 = stream.load()?;
-        assert!((len == 8 || len == 10), "Unexpected size ({len}) for REGN::WEAT");
+        if len != 8 && len != 10 {
+            Reader::error("Unexpected size for REGN::WEAT")?;
+        }
         let clear = stream.load()?;
         let cloudy = stream.load()?;
         let foggy = stream.load()?;

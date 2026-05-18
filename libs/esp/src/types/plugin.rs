@@ -63,7 +63,8 @@ impl Plugin {
         let mut offsets = Vec::new();
         while let Ok((tag, len)) = stream.load::<([u8; 4], u32)>() {
             let start = stream.cursor.position() - 8;
-            if let Ok(end) = stream.skip(len + 8)
+            if let Some(object_size) = len.checked_add(8)
+                && let Ok(end) = stream.skip(object_size)
                 && filter(tag)
             {
                 #[allow(clippy::cast_possible_truncation)]

@@ -67,12 +67,14 @@ where
 {
     fn save(&self, stream: &mut Writer) -> io::Result<()> {
         if self.is_null() {
-            stream.save(&-1i32)?;
+            stream.save(&-1i32)
         } else {
             let key = self.key.data().as_ffi();
-            stream.save_as::<i32>(stream.context[&key])?;
+            let Some(index) = stream.context.get(&key) else {
+                return Writer::error("NiLink target not found");
+            };
+            stream.save_as::<i32>(*index)
         }
-        Ok(())
     }
 }
 

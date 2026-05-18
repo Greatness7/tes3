@@ -20,7 +20,7 @@ pub mod base64_bytes {
 
         #[cfg(feature = "zstd")]
         {
-            bytes = zstd::encode_all(&*bytes, 0).unwrap();
+            bytes = zstd::encode_all(&*bytes, 0).map_err(serde::ser::Error::custom)?;
         }
 
         let encoded = BASE64.encode_to_string(bytes);

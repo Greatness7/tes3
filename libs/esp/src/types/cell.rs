@@ -65,7 +65,11 @@ impl Load for Cell {
                     this.atmosphere_data = Some(stream.load()?);
                     // Apparently some editors may add extra padding to this subrecord.
                     // see: https://www.nexusmods.com/morrowind/mods/50999 (version: 1.02, offset: 196017)
-                    stream.skip(size - 16)?;
+                    if size < 16 {
+                        Reader::error("Invalid size for CELL::AMBI")?;
+                    } else {
+                        stream.skip(size - 16)?;
+                    }
                 }
                 b"NAM0" => {
                     stream.expect(4u32)?;

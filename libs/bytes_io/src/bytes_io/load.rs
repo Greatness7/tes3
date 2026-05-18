@@ -33,43 +33,6 @@ impl<L: Load> Load for Box<L> {
     }
 }
 
-#[cfg(not(feature = "nightly"))]
-impl<L: Load> Load for Vec<L> {
-    fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len: u32 = stream.load()?;
-        (0..len).map(|_| stream.load()).collect()
-    }
-}
-
-#[cfg(feature = "nightly")]
-impl<L: Load> Load for Vec<L> {
-    default fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-        let len: u32 = stream.load()?;
-        (0..len).map(|_| stream.load()).collect()
-    }
-}
-
-// impl Load for f16 {
-//     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-//         let bits: u16 = stream.load()?;
-//         Ok(f16::from_bits(bits))
-//     }
-// }
-
-// impl Load for [f16; 2] {
-//     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-//         let data: [u16; 2] = stream.load()?;
-//         Ok(unsafe { std::mem::transmute(data) })
-//     }
-// }
-
-// impl Load for [f16; 3] {
-//     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-//         let data: [u16; 3] = stream.load()?;
-//         Ok(unsafe { std::mem::transmute(data) })
-//     }
-// }
-
 impl<L, const N: usize> Load for [L; N]
 where
     L: AsRepr,
@@ -133,16 +96,6 @@ macro_rules! impl_load {
                     Ok(this)
                 }
             }
-            #[cfg(feature = "nightly")]
-            impl Load for Vec<$T> {
-                fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                    use bytemuck::{must_cast_slice_mut, zeroed_vec};
-                    let len = stream.load_as::<u32, usize>()?;
-                    let mut this = zeroed_vec(len);
-                    stream.read_exact(must_cast_slice_mut(&mut this))?;
-                    Ok(this)
-                }
-            }
         )*
     }
 }
@@ -183,6 +136,44 @@ const _: () = {
     impl Load for Quat {
         fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
             stream.load().map(Vec4::yzwx).map(Quat::from_vec4)
+        }
+    }
+};
+
+/// Specialized `Load` implementation for Vec with fast path for POD scalar types.
+const _: () = {
+    use castaway::{cast, match_type};
+
+    // Zero-sized witness for matching without constructing a dummy temporary Vec.
+    // We're doing this because asm showed that Drop was not being optimized away.
+    struct TypeTag<T>(std::marker::PhantomData<fn() -> T>);
+
+    impl<T> TypeTag<T> {
+        const VALUE: Self = Self(std::marker::PhantomData);
+    }
+
+    // Keep the public Vec<L> impl stable while preserving the old specialization fast path
+    // for POD scalar vectors. For concrete L, castaway's type match should fold away in
+    // optimized builds, leaving only the matching bulk load or the generic fallback.
+    macro_rules! load_vec_fast_path {
+    ($stream:expr, $len:expr, $L:ty; $($T:ty)*) => {
+        match_type!(TypeTag::<$L>::VALUE, {
+            $(
+                TypeTag<$T> as _ => {
+                    let value = $stream.load_vec::<$T>($len)?;
+                    let casted = cast!(value, Vec<$L>).unwrap();
+                    Ok(casted)
+                },
+            )*
+            _ => (0..$len).map(|_| $stream.load()).collect(),
+        })
+    };
+}
+
+    impl<L: Load + 'static> Load for Vec<L> {
+        fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+            let len = stream.load_as::<u32, usize>()?;
+            load_vec_fast_path! { stream, len, L; i8 u8 i16 u16 f16 f32 i32 u32 f64 i64 u64 }
         }
     }
 };

@@ -32,48 +32,6 @@ impl<S: Save> Save for Box<S> {
     }
 }
 
-#[cfg(not(feature = "nightly"))]
-impl<S: Save> Save for Vec<S> {
-    fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save_as::<u32>(self.len())?;
-        for item in self {
-            stream.save(item)?;
-        }
-        Ok(())
-    }
-}
-
-#[cfg(feature = "nightly")]
-impl<S: Save> Save for Vec<S> {
-    default fn save(&self, stream: &mut Writer) -> io::Result<()> {
-        stream.save_as::<u32>(self.len())?;
-        for item in self {
-            stream.save(item)?;
-        }
-        Ok(())
-    }
-}
-
-// impl Save for f16 {
-//     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-//         stream.save(&self.to_bits())
-//     }
-// }
-
-// impl Save for [f16; 2] {
-//     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-//         let array: &[u16; 2] = unsafe { std::mem::transmute(self) };
-//         stream.save(array)
-//     }
-// }
-
-// impl Save for [f16; 3] {
-//     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-//         let array: &[u16; 3] = unsafe { std::mem::transmute(self) };
-//         stream.save(array)
-//     }
-// }
-
 impl<S, const N: usize> Save for [S; N]
 where
     S: AsRepr,
@@ -133,14 +91,6 @@ macro_rules! impl_save {
                     stream.write_all(bytes_of(self))
                 }
             }
-            #[cfg(feature = "nightly")]
-            impl Save for Vec<$T> {
-                fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    use bytemuck::cast_slice;
-                    stream.save_as::<u32>(self.len())?;
-                    stream.write_all(cast_slice(self))
-                }
-            }
         )*
     }
 }
@@ -166,6 +116,33 @@ const _: () = {
     impl Save for Quat {
         fn save(&self, stream: &mut Writer) -> io::Result<()> {
             stream.save(&Vec4::from(*self).wxyz())
+        }
+    }
+};
+
+/// Specialized `Save` implementation for Vec with fast path for POD scalar types.
+const _: () = {
+    use castaway::match_type;
+
+    macro_rules! save_vec_fast_path {
+        ($stream:expr, $value:expr; $($T:ty)*) => {
+            match_type!($value.as_slice(), {
+                $(
+                    &[$T] as value => $stream.save_vec(value),
+                )*
+                _ => {
+                    for item in $value {
+                        $stream.save(item)?;
+                    }
+                    Ok(())
+                },
+            })
+        };
+    }
+    impl<S: Save + 'static> Save for Vec<S> {
+        fn save(&self, stream: &mut Writer) -> io::Result<()> {
+            stream.save_as::<u32>(self.len())?;
+            save_vec_fast_path! { stream, self; i8 u8 i16 u16 f16 f32 i32 u32 f64 i64 u64 }
         }
     }
 };

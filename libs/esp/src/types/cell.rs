@@ -37,7 +37,7 @@ impl Load for Cell {
 
         this.flags = stream.load()?;
 
-        let mut num_temp_refs: i32 = 0;
+        let mut temp_refs_section = false;
         let mut moved_refs = vec![];
 
         while let Ok(tag) = stream.load() {
@@ -69,7 +69,8 @@ impl Load for Cell {
                 }
                 b"NAM0" => {
                     stream.expect(4u32)?;
-                    num_temp_refs = stream.load()?;
+                    let _num_temp_refs: i32 = stream.load()?;
+                    temp_refs_section = true;
                 }
                 b"MVRF" => {
                     stream.expect(4u32)?;
@@ -93,8 +94,7 @@ impl Load for Cell {
                     reference.mast_index = indices.0;
                     reference.refr_index = indices.1;
                     // set persistent
-                    reference.temporary = num_temp_refs > 0;
-                    num_temp_refs -= 1;
+                    reference.temporary = temp_refs_section;
                     // insert the ref
                     this.references.insert(indices, reference);
                     // override MVRF indices when master index was 0

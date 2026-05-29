@@ -1,9 +1,8 @@
 // rust std imports
-use std::io::{self, Read};
+use std::io;
 
 // external imports
 use bstr::BString;
-use bytemuck::{Zeroable, bytes_of_mut};
 use half::f16;
 
 // internal imports
@@ -70,30 +69,22 @@ macro_rules! impl_load {
         $(
             impl Load for $T {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                    let mut this = Self::zeroed();
-                    stream.read_exact(bytes_of_mut(&mut this))?;
-                    Ok(this)
+                    stream.load_pod()
                 }
             }
             impl<const N: usize> Load for [$T; N] {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                    let mut this = Self::zeroed();
-                    stream.read_exact(bytes_of_mut(&mut this))?;
-                    Ok(this)
+                    stream.load_pod()
                 }
             }
             impl<const M: usize, const N: usize> Load for [[$T; M]; N] {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                    let mut this = Self::zeroed();
-                    stream.read_exact(bytes_of_mut(&mut this))?;
-                    Ok(this)
+                    stream.load_pod()
                 }
             }
             impl<const M: usize, const N: usize, const O: usize> Load for [[[$T; M]; N]; O] {
                 fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                    let mut this = Self::zeroed();
-                    stream.read_exact(bytes_of_mut(&mut this))?;
-                    Ok(this)
+                    stream.load_pod()
                 }
             }
         )*
@@ -123,9 +114,7 @@ const _: () = {
             $(
                 impl Load for $T {
                     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
-                        let mut this = Self::zeroed();
-                        stream.read_exact(bytes_of_mut(&mut this))?;
-                        Ok(this)
+                        stream.load_pod()
                     }
                 }
             )*

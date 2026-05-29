@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use std::io::{self, Read};
 
 // external imports
-use bytemuck::{Pod, cast_slice_mut, zeroed_vec};
+use bytemuck::{Pod, bytes_of_mut, cast_slice_mut, zeroed_vec};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use memchr::memchr;
 use smart_default::SmartDefault;
@@ -72,6 +72,15 @@ impl<'a> Reader<'a> {
             |_| Self::error("Invalid integer length"),
             |i| (0..i).map(|_| self.load()).collect(),
         )
+    }
+
+    pub fn load_pod<P>(&mut self) -> io::Result<P>
+    where
+        P: Pod,
+    {
+        let mut value = P::zeroed();
+        self.read_exact(bytes_of_mut(&mut value))?;
+        Ok(value)
     }
 
     pub fn load_vec<P>(&mut self, len: impl TryInto<usize>) -> io::Result<Vec<P>>

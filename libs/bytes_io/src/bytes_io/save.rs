@@ -3,7 +3,6 @@ use std::io::{self, Write};
 
 // external imports
 use bstr::BString;
-use bytemuck::bytes_of;
 use half::f16;
 
 // internal imports
@@ -73,22 +72,22 @@ macro_rules! impl_save {
         $(
             impl Save for $T {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.write_all(bytes_of(self))
+                    stream.save_pod(self)
                 }
             }
             impl<const N: usize> Save for [$T; N] {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.write_all(bytes_of(self))
+                    stream.save_pod(self)
                 }
             }
             impl<const M: usize, const N: usize> Save for [[$T; M]; N] {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.write_all(bytes_of(self))
+                    stream.save_pod(self)
                 }
             }
             impl<const M: usize, const N: usize, const O: usize> Save for [[[$T; M]; N]; O] {
                 fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                    stream.write_all(bytes_of(self))
+                    stream.save_pod(self)
                 }
             }
         )*
@@ -105,7 +104,7 @@ const _: () = {
             $(
                 impl Save for $T {
                     fn save(&self, stream: &mut Writer) -> io::Result<()> {
-                        stream.write_all(bytes_of(self))
+                        stream.save_pod(self)
                     }
                 }
             )*

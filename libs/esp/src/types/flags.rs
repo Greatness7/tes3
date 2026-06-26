@@ -264,5 +264,6 @@ bitflags! {
         const PLAYER = 0x04;
         const MERGE = 0x08;
         const MENU = 0x10;
+        const LOAD = 0x20;
     }
 }

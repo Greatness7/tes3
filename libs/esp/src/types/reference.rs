@@ -15,7 +15,7 @@ pub struct Reference {
     pub owner: Option<String>,
     pub owner_global: Option<String>,
     pub owner_faction: Option<String>,
-    pub owner_faction_rank: Option<u32>,
+    pub owner_faction_rank: Option<i32>,
     pub charge_left: Option<u32>,
     pub health_left: Option<i32>,
     pub object_count: Option<u32>,

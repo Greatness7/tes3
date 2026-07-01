@@ -38,7 +38,8 @@ impl Load for Cell {
         this.flags = stream.load()?;
 
         let mut temp_refs_section = false;
-        let mut moved_refs = vec![];
+        // MVRF/CNDT destination grid, consumed by the next FRMR
+        let mut pending_move: Option<(u32, (i32, i32))> = None;
 
         while let Ok(tag) = stream.load() {
             match &tag {
@@ -63,8 +64,7 @@ impl Load for Cell {
                 b"AMBI" => {
                     let size: u32 = stream.load()?;
                     this.atmosphere_data = Some(stream.load()?);
-                    // Apparently some editors may add extra padding to this subrecord.
-                    // see: https://www.nexusmods.com/morrowind/mods/50999 (version: 1.02, offset: 196017)
+                    // Some editors pad AMBI beyond 16 bytes (see: nexusmods.com/morrowind/mods/50999, v1.02 offset 196017)
                     if size < 16 {
                         Reader::error("Invalid size for CELL::AMBI")?;
                     } else {
@@ -79,34 +79,32 @@ impl Load for Cell {
                 b"MVRF" => {
                     stream.expect(4u32)?;
                     let packed_indices = stream.load()?;
-                    let indices = unpack(packed_indices);
-                    // "MVRF" is always followed by "CNDT"
+                    let (_mast_index, refr_index) = unpack(packed_indices);
+                    // The MVRF subrecord is always paired with a CNDT
+                    // describing the destination cell coordinates.
                     stream.expect(*b"CNDT")?;
                     stream.expect(8u32)?;
                     let moved_cell = stream.load()?;
-                    // MVRF/CNDT are independent of other subrecords
-                    // the moved reference may not have been loaded yet at this point
-                    // so postpone assignments until we know all references are loaded
-                    moved_refs.push((indices, moved_cell));
+                    // Engine pairs MVRF→FRMR positionally; master byte is unreliable in dirty plugins.
+                    // Keep only refr_index for the consistency check; destination attaches to next FRMR.
+                    pending_move = Some((refr_index, moved_cell));
                 }
                 b"FRMR" => {
                     stream.expect(4u32)?;
                     let packed_indices = stream.load()?;
                     let indices = unpack(packed_indices);
-                    // unpack indices
                     let mut reference: Reference = stream.load()?;
                     reference.mast_index = indices.0;
                     reference.refr_index = indices.1;
                     // set persistent
                     reference.temporary = temp_refs_section;
-                    // insert the ref
-                    this.references.insert(indices, reference);
-                    // override MVRF indices when master index was 0
-                    if let Some(moved_ref) = moved_refs.last_mut()
-                        && let ((0, _), _) = moved_ref
+                    // Attach pending move; on refr_index mismatch, silently drop (matches engine behaviour)
+                    if let Some((refr_index, moved_cell)) = pending_move.take()
+                        && refr_index == indices.1
                     {
-                        moved_ref.0 = indices;
+                        reference.moved_cell = Some(moved_cell);
                     }
+                    this.references.insert(indices, reference);
                 }
                 b"INTV" => {
                     stream.expect(4u32)?;
@@ -125,23 +123,6 @@ impl Load for Cell {
                 _ => {
                     Reader::error(format!("Unexpected Tag: {}::{}", this.tag_str(), tag.to_str_lossy()))?;
                 }
-            }
-        }
-
-        // assign moved cells
-        for (indices, moved_cell) in moved_refs {
-            if let Some(reference) = this.references.get_mut(&indices) {
-                reference.moved_cell = Some(moved_cell);
-            } else {
-                // Since we don't require loading all master files, there is potential that
-                // the indices refer to a reference not defined in the current plugin. We've
-                // no choice but to trigger an error in this case. Note that the TESCS always
-                // copies the associated reference to the plugin, which prevents this from
-                // happening. Other tools may not be so nice.
-                Reader::error(format!(
-                    "Unable to resolve moved reference {:?} for cell {} {:?}",
-                    indices, this.name, this.data.grid
-                ))?;
             }
         }
 

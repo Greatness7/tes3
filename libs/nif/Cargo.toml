@@ -8,10 +8,10 @@ license.workspace = true
 
 [dependencies]
 bstr = { version = "^1.12", default-features = false, features = ["std"] }
-bytemuck = { version = "^1.24", features = ["derive"] }
+bytemuck = { version = "^1.24", features = ["derive", "must_cast"] }
 bytes_io = { path = "../bytes_io", features = ["glam"] }
 derive_more = { version = "^2.0", features = ["deref", "deref_mut", "from", "into" ] }
-glam = "^0.30"
+glam = { version = "^0.30", features = ["approx"] }
 hashbrown = "^0.16"
 nif_macros = { path = "../nif_macros" }
 paste = "^1.0"

@@ -4,7 +4,7 @@ use std::io::{Read, Seek, Write};
 use std::path::Path;
 
 // external imports
-use slotmap::{new_key_type, DenseSlotMap, Key};
+use slotmap::{DenseSlotMap, Key, new_key_type};
 
 // internal imports
 use crate::prelude::*;
@@ -133,11 +133,12 @@ impl NiStream {
 
         std::iter::from_fn(move || {
             while let Some(key) = keys.pop() {
-                if !key.is_null() && seen.insert(key) {
-                    if let Some(object) = self.objects.get(key) {
-                        object.visitor(&mut |key| keys.push(key));
-                        return Some((key, object));
-                    }
+                if !key.is_null()
+                    && seen.insert(key)
+                    && let Some(object) = self.objects.get(key)
+                {
+                    object.visitor(&mut |key| keys.push(key));
+                    return Some((key, object));
                 }
             }
             None
@@ -149,10 +150,11 @@ impl NiStream {
         let mut keys = Vec::new();
         self.roots.visitor(&mut |key| keys.push(key));
         while let Some(key) = keys.pop() {
-            if !key.is_null() && seen.insert(key) {
-                if let Some(object) = self.objects.get(key) {
-                    object.visitor(&mut |key| keys.push(key));
-                }
+            if !key.is_null()
+                && seen.insert(key)
+                && let Some(object) = self.objects.get(key)
+            {
+                object.visitor(&mut |key| keys.push(key));
             }
         }
         self.objects.retain(|key, _| seen.contains(&key));
@@ -378,7 +380,7 @@ impl NiStream {
                 if let Ok(geometry) = <&T>::try_from(object) {
                     let transform = transform * geometry.as_ref().transform();
                     return Some((geometry, transform));
-                };
+                }
             }
             None
         })

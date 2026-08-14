@@ -1,7 +1,7 @@
 use std::sync::{LazyLock, Mutex};
 
 use proc_macro::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::{Data, DataStruct, DeriveInput, Fields, Ident, LitByteStr, Type};
 
 mod util;
@@ -268,16 +268,14 @@ fn get_literal_byte_str(id: &Ident) -> LitByteStr {
 
 /// Return the type ident of the first struct field if it is named "base".
 fn get_base_ident(data: &Data) -> Option<&Ident> {
-    if let Data::Struct(s) = data {
-        if let Fields::Named(f) = &s.fields {
-            let field = f.named.first()?;
-            let ident = field.ident.as_ref()?;
-            if let Type::Path(ty) = &field.ty {
-                if ident == "base" {
-                    return ty.path.get_ident();
-                }
-            }
-        }
+    if let Data::Struct(s) = data
+        && let Fields::Named(f) = &s.fields
+        && let Some(field) = f.named.first()
+        && let Some(ident) = field.ident.as_ref()
+        && let Type::Path(ty) = &field.ty
+        && ident == "base"
+    {
+        return ty.path.get_ident();
     }
     None
 }

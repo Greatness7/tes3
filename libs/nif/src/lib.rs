@@ -2,6 +2,8 @@ pub mod types;
 pub use types::*;
 
 pub(crate) mod macros;
+pub use bytemuck;
+pub use glam;
 
 #[allow(unused_imports)]
 pub(crate) mod prelude {

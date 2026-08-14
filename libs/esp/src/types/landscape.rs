@@ -192,7 +192,7 @@ impl Landscape {
             normal.x = x as f32;
             normal.y = y as f32;
             normal.z = z as f32;
-            *normal = normal.normalize();
+            *normal = normal.try_normalize().unwrap_or(Vec3::Z);
         }
 
         normals

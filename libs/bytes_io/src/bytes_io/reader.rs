@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use std::io::{self, Read};
 
 // external imports
-use bytemuck::{cast_slice_mut, zeroed_vec, Pod};
+use bytemuck::{Pod, cast_slice_mut, zeroed_vec};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use memchr::memchr;
 use smart_default::SmartDefault;
@@ -52,6 +52,14 @@ impl<'a> Reader<'a> {
     pub fn load_bytes(&mut self, len: usize) -> io::Result<Vec<u8>> {
         let mut bytes = vec![0; len];
         self.cursor.read_exact(&mut bytes)?;
+        Ok(bytes)
+    }
+
+    pub fn load_bytes_padded(&mut self, len: usize) -> io::Result<Vec<u8>> {
+        let mut bytes = self.load_bytes(len)?;
+        if let Some(index) = memchr(0, &bytes) {
+            bytes.truncate(index);
+        }
         Ok(bytes)
     }
 

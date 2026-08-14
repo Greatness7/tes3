@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use std::io::{self, Write};
 
 // external imports
-use bytemuck::{cast_slice, Pod};
+use bytemuck::{Pod, cast_slice};
 use encoding_rs::{Encoding, WINDOWS_1252};
 use hashbrown::HashMap;
 use memchr::memchr;
@@ -54,6 +54,12 @@ impl Writer {
 
     pub fn save_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
         self.write_all(bytes)
+    }
+
+    pub fn save_bytes_padded<const N: usize>(&mut self, bytes: &[u8]) -> io::Result<()> {
+        self.save_bytes(bytes)?;
+        self.save_bytes(&[0; N][bytes.len()..])?; // padding
+        Ok(())
     }
 
     pub fn save_vec<P>(&mut self, value: &[P]) -> io::Result<()>

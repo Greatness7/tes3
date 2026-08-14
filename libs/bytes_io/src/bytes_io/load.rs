@@ -3,7 +3,8 @@ use std::io::{self, Read};
 
 // external imports
 use bstr::BString;
-use bytemuck::{bytes_of_mut, Zeroable};
+use bytemuck::{Zeroable, bytes_of_mut};
+use half::f16;
 
 // internal imports
 use crate::bytes_io::{AsRepr, Reader};
@@ -47,6 +48,27 @@ impl<L: Load> Load for Vec<L> {
         (0..len).map(|_| stream.load()).collect()
     }
 }
+
+// impl Load for f16 {
+//     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+//         let bits: u16 = stream.load()?;
+//         Ok(f16::from_bits(bits))
+//     }
+// }
+
+// impl Load for [f16; 2] {
+//     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+//         let data: [u16; 2] = stream.load()?;
+//         Ok(unsafe { std::mem::transmute(data) })
+//     }
+// }
+
+// impl Load for [f16; 3] {
+//     fn load(stream: &mut Reader<'_>) -> io::Result<Self> {
+//         let data: [u16; 3] = stream.load()?;
+//         Ok(unsafe { std::mem::transmute(data) })
+//     }
+// }
 
 impl<L, const N: usize> Load for [L; N]
 where
@@ -124,7 +146,7 @@ macro_rules! impl_load {
         )*
     }
 }
-impl_load! { i8 u8 i16 u16 f32 i32 u32 f64 i64 u64 }
+impl_load! { i8 u8 i16 u16 f16 f32 i32 u32 f64 i64 u64 }
 
 pub trait LoadFn: Iterator {
     fn load<L, F, T>(&mut self, function: F) -> io::Result<T>

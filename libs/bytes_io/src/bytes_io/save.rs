@@ -4,6 +4,7 @@ use std::io::{self, Write};
 // external imports
 use bstr::BString;
 use bytemuck::bytes_of;
+use half::f16;
 
 // internal imports
 use crate::bytes_io::{AsRepr, Writer};
@@ -52,6 +53,26 @@ impl<S: Save> Save for Vec<S> {
         Ok(())
     }
 }
+
+// impl Save for f16 {
+//     fn save(&self, stream: &mut Writer) -> io::Result<()> {
+//         stream.save(&self.to_bits())
+//     }
+// }
+
+// impl Save for [f16; 2] {
+//     fn save(&self, stream: &mut Writer) -> io::Result<()> {
+//         let array: &[u16; 2] = unsafe { std::mem::transmute(self) };
+//         stream.save(array)
+//     }
+// }
+
+// impl Save for [f16; 3] {
+//     fn save(&self, stream: &mut Writer) -> io::Result<()> {
+//         let array: &[u16; 3] = unsafe { std::mem::transmute(self) };
+//         stream.save(array)
+//     }
+// }
 
 impl<S, const N: usize> Save for [S; N]
 where
@@ -123,7 +144,7 @@ macro_rules! impl_save {
         )*
     }
 }
-impl_save! { i8 u8 i16 u16 f32 i32 u32 f64 i64 u64 }
+impl_save! { i8 u8 i16 u16 f16 f32 i32 u32 f64 i64 u64 }
 
 #[cfg(feature = "glam")]
 const _: () = {

@@ -257,4 +257,15 @@ impl Reference {
             self.scale = None;
         }
     }
+
+    pub fn sort_key(&self) -> (bool, u32, u32) {
+        (
+            !self.persistent(),
+            match self.mast_index {
+                0 => u32::MAX,
+                i => i,
+            },
+            self.refr_index,
+        )
+    }
 }

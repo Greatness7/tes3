@@ -35,13 +35,13 @@ impl Plugin {
     pub fn save_path(&mut self, path: impl AsRef<Path>) -> io::Result<()> {
         let mut file = std::fs::File::create(&path)?;
 
-        if let Some(header) = self.header_mut() {
-            if let Some(extension) = path.as_ref().extension() {
-                if extension.eq_ignore_ascii_case("esp") {
-                    header.file_type = FileType::Esp;
-                } else if extension.eq_ignore_ascii_case("esm") {
-                    header.file_type = FileType::Esm;
-                }
+        if let Some(header) = self.header_mut()
+            && let Some(extension) = path.as_ref().extension()
+        {
+            if extension.eq_ignore_ascii_case("esp") {
+                header.file_type = FileType::Esp;
+            } else if extension.eq_ignore_ascii_case("esm") {
+                header.file_type = FileType::Esm;
             }
         }
 
@@ -63,11 +63,11 @@ impl Plugin {
         let mut offsets = Vec::new();
         while let Ok((tag, len)) = stream.load::<([u8; 4], u32)>() {
             let start = stream.cursor.position() - 8;
-            if let Ok(end) = stream.skip(len + 8) {
-                if filter(tag) {
-                    #[allow(clippy::cast_possible_truncation)]
-                    offsets.push(start as usize..end as usize);
-                }
+            if let Ok(end) = stream.skip(len + 8)
+                && filter(tag)
+            {
+                #[allow(clippy::cast_possible_truncation)]
+                offsets.push(start as usize..end as usize);
             }
         }
 

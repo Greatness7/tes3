@@ -98,10 +98,10 @@ impl Load for Cell {
                     // insert the ref
                     this.references.insert(indices, reference);
                     // override MVRF indices when master index was 0
-                    if let Some(moved_ref) = moved_refs.last_mut() {
-                        if let ((0, _), _) = moved_ref {
-                            moved_ref.0 = indices;
-                        }
+                    if let Some(moved_ref) = moved_refs.last_mut()
+                        && let ((0, _), _) = moved_ref
+                    {
+                        moved_ref.0 = indices;
                     }
                 }
                 b"INTV" => {
@@ -226,11 +226,7 @@ impl Cell {
     }
 
     pub const fn exterior_coords(&self) -> Option<(i32, i32)> {
-        if self.is_exterior() {
-            Some(self.data.grid)
-        } else {
-            None
-        }
+        if self.is_exterior() { Some(self.data.grid) } else { None }
     }
 
     pub fn get_region(&self) -> &str {
@@ -245,18 +241,13 @@ impl Cell {
         // 2. master-defined references come before plugin-defined references
         // 3. references from the same source file are sorted by object index
 
-        references.sort_by_key(|((mast_index, refr_index), reference)| {
-            (
-                !reference.persistent(),
-                match *mast_index {
-                    0 => u32::MAX,
-                    i => i,
-                },
-                *refr_index,
-            )
-        });
+        references.sort_by_key(|(_, reference)| reference.sort_key());
 
         references
+    }
+
+    pub fn sort_key(&self) -> (Option<(i32, i32)>, &str) {
+        (self.exterior_coords(), &self.name)
     }
 }
 

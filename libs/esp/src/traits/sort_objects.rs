@@ -113,17 +113,23 @@ where
 unsafe fn apply_isort<T>(indices: &mut [usize], subject: &mut [T]) {
     let this = indices.as_mut_ptr();
     let data = subject.as_mut_ptr();
-    for i in 0..indices.len().saturating_sub(1) {
-        let mut curr_idx = i;
-        loop {
-            let next_ptr = this.add(curr_idx);
-            let next_idx = *next_ptr;
-            *next_ptr = curr_idx;
-            if next_idx == i {
-                break;
+    // SAFETY: the caller guarantees `indices` is a permutation of
+    // `0..subject.len()` and that both slices have equal length, so every
+    // index used below is in bounds for its respective allocation. The two
+    // pointers derive from disjoint slices, so the writes never alias.
+    unsafe {
+        for i in 0..indices.len().saturating_sub(1) {
+            let mut curr_idx = i;
+            loop {
+                let next_ptr = this.add(curr_idx);
+                let next_idx = *next_ptr;
+                *next_ptr = curr_idx;
+                if next_idx == i {
+                    break;
+                }
+                std::ptr::swap(data.add(curr_idx), data.add(next_idx));
+                curr_idx = next_idx;
             }
-            std::ptr::swap(data.add(curr_idx), data.add(next_idx));
-            curr_idx = next_idx;
         }
     }
 }

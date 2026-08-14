@@ -266,7 +266,7 @@ impl Landscape {
     }
 
     #[allow(clippy::many_single_char_names)]
-    pub fn calcuate_triangles(&self) -> Vec<[u16; 3]> {
+    pub fn calculate_triangles(&self) -> Vec<[u16; 3]> {
         let mut triangles = vec![[0; 3]; 8192];
 
         let v = 65u16;

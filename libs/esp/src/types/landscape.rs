@@ -281,11 +281,13 @@ impl Landscape {
             let c = a + 1;
             let d = b + 1;
 
-            let m = (x ^ y) & 1;
-            let n = 1 - m;
-
-            pair[0] = [d * n + a * m, b * n + c * m, a * n + b * m];
-            pair[1] = [c * n + b * m, d * n + c * m, a * n + d * m];
+            if (x ^ y) & 1 == 0 {
+                pair[0] = [d, b, a];
+                pair[1] = [c, d, a];
+            } else {
+                pair[0] = [a, c, b];
+                pair[1] = [b, c, d];
+            }
         }
 
         triangles

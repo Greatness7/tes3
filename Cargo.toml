@@ -8,8 +8,8 @@ edition.workspace = true
 
 [workspace.package]
 version = "0.0.1"
-edition = "2021"
-rust-version = "1.80"
+edition = "2024"
+rust-version = "1.85"
 authors = ["Greatness7 <Greatness7@gmail.com>"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/Greatness7/tes3"

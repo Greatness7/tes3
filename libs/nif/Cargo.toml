@@ -24,7 +24,7 @@ tempfile = "^3.23"
 [features]
 default = []
 nightly = ["bytes_io/nightly"]
-simd = ["bytes_io/simd", "glam/core-simd"]
+simd = ["bytes_io/simd"]
 
 [lints]
 workspace = true

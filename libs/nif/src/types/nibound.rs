@@ -28,36 +28,21 @@ impl NiBound {
     ///
     #[must_use]
     pub fn merged_with(self, other: Self) -> Self {
-        let (center, radius) = {
-            let c_diff = self.center - other.center;
-            let len_sq = c_diff.length_squared();
-            if len_sq < 1e-6 {
-                // Spheres are coincident
-                if other.radius > self.radius {
-                    (other.center, other.radius)
-                } else {
-                    (self.center, self.radius)
-                }
-            } else {
-                let r_diff = other.radius - self.radius;
-                if r_diff.abs().powi(2) >= len_sq {
-                    // One sphere encloses the other
-                    if r_diff >= 0.0 {
-                        (other.center, other.radius)
-                    } else {
-                        (self.center, self.radius)
-                    }
-                } else {
-                    // Spheres intersect or are disjoint
-                    let dist = len_sq.sqrt();
-                    let alpha = (dist - r_diff) / (2.0 * dist);
-                    let center = other.center + alpha * c_diff;
-                    let radius = 0.5 * (other.radius + dist + self.radius);
-                    (center, radius)
-                }
-            }
-        };
-        Self { center, radius }
+        let c_diff = self.center - other.center;
+        let r_diff = other.radius - self.radius;
+        let len_sq = c_diff.length_squared();
+
+        if r_diff * r_diff >= len_sq {
+            // One sphere encloses the other or coincident.
+            return if r_diff >= 0.0 { other } else { self };
+        }
+
+        let dist = len_sq.sqrt();
+        let alpha = (dist - r_diff) / (2.0 * dist);
+        Self {
+            center: other.center + alpha * c_diff,
+            radius: 0.5 * (other.radius + dist + self.radius),
+        }
     }
 
     /// Returns the bounding sphere transformed by the given transform.
@@ -132,5 +117,15 @@ where
     #[inline]
     fn get(&self) -> (&NiGeometryData, &Affine3A) {
         (self.0.as_ref(), &self.1)
+    }
+}
+
+impl<X, T> GeometryTransform for &(X, T, Affine3A)
+where
+    T: AsRef<NiGeometryData>,
+{
+    #[inline]
+    fn get(&self) -> (&NiGeometryData, &Affine3A) {
+        (self.1.as_ref(), &self.2)
     }
 }

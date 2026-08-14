@@ -117,6 +117,7 @@ fn impl_load_save_for_enum(input: &syn::DeriveInput) -> TokenStream {
             }
 
             impl #self_ident {
+                /// Returns the name of this variant as a static string.
                 pub const fn display(&self) -> &'static str {
                     match self {
                         #(

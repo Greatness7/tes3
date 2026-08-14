@@ -150,7 +150,18 @@ fn parse_variant_tags<'a, I>(variants: I) -> Vec<syn::LitStr>
 where
     I: IntoIterator<Item = &'a syn::Variant>,
 {
-    variants.into_iter().map(|v| v.attrs[0].parse_args().unwrap()).collect()
+    variants
+        .into_iter()
+        .map(|variant| {
+            variant
+                .attrs
+                .iter()
+                .find(|attr| attr.path().is_ident("tag"))
+                .expect("every TES3Object variant must carry #[tag(\"XXXX\")]")
+                .parse_args()
+                .unwrap()
+        })
+        .collect()
 }
 
 fn parse_variant_idents<'a, I>(variants: I) -> Vec<syn::Ident>

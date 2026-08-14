@@ -85,12 +85,12 @@ fn insert_struct_field_attrs(field: &mut syn::Field) {
 
 fn is_repr_transparent(attributes: &[syn::Attribute]) -> bool {
     for attr in attributes {
-        if let Some(outer_ident) = attr.path().get_ident() {
-            if let Ok(inner_ident) = attr.parse_args::<syn::Ident>() {
-                if outer_ident == "repr" && inner_ident == "transparent" {
-                    return true;
-                }
-            }
+        if let Some(outer_ident) = attr.path().get_ident()
+            && let Ok(inner_ident) = attr.parse_args::<syn::Ident>()
+            && outer_ident == "repr"
+            && inner_ident == "transparent"
+        {
+            return true;
         }
     }
     false

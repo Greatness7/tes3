@@ -27,6 +27,7 @@ fn load_save() -> std::io::Result<()> {
 }
 
 #[test]
+#[cfg(feature = "serde")]
 fn load_save_json() -> std::io::Result<()> {
     let src_path = "tests/assets/all_types.esp";
 

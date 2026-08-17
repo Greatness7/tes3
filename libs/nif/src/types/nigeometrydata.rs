@@ -59,7 +59,7 @@ impl Save for NiGeometryData {
 }
 
 impl NiGeometryData {
-    pub fn num_uv_sets(&self) -> usize {
+    pub const fn num_uv_sets(&self) -> usize {
         if self.vertices.is_empty() {
             0
         } else {

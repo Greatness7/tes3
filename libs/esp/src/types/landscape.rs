@@ -272,7 +272,9 @@ impl Landscape {
         let v = 65u16;
         let t = v - 1;
 
-        for (pair, i) in triangles.chunks_exact_mut(2).zip(0..) {
+        let (pairs, _) = triangles.as_chunks_mut::<2>();
+
+        for (pair, i) in pairs.iter_mut().zip(0..) {
             let y = i / t;
             let x = i % t;
 

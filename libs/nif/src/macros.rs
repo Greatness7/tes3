@@ -4,11 +4,13 @@ macro_rules! flag_props {
     ($($name:ident @ (mask = $mask:expr) -> bool),*) => {
         $(
             #[inline]
+            #[allow(clippy::missing_const_for_fn)]
             pub fn $name(&self) -> bool {
                 self.flags & $mask != 0
             }
             paste::paste! {
                 #[inline]
+                #[allow(clippy::missing_const_for_fn)]
                 pub fn [<set_ $name>](&mut self, value: bool) {
                     if value {
                         self.flags |= $mask;
@@ -28,6 +30,7 @@ macro_rules! flag_props {
             }
             paste::paste! {
                 #[inline]
+                #[allow(clippy::missing_const_for_fn)]
                 pub fn [<set_ $name>](&mut self, value: $type) {
                     self.flags = (self.flags & !$mask) | ((value as u16) << $pos);
                 }

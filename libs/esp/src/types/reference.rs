@@ -258,7 +258,7 @@ impl Reference {
         }
     }
 
-    pub fn sort_key(&self) -> (bool, u32, u32) {
+    pub const fn sort_key(&self) -> (bool, u32, u32) {
         (
             !self.persistent(),
             match self.mast_index {

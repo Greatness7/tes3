@@ -111,7 +111,6 @@ cast_possible_wrap = "allow"
 #
 nursery = { level = "warn", priority = -1 }
 use_self = "allow"
-missing-const-for-fn = "allow"
 #
 # Clippy Group: Restriction
 # https://rust-lang.github.io/rust-clippy/master/index.html#?groups=restriction

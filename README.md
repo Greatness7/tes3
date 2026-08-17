@@ -2,7 +2,7 @@
 
 A library for working with TES3 content.
 
-Currently supports reading and writing of all `.esp`, `.esm`, `.nif`, `.kf` structures.
+Currently supports reading and writing of all `.esp`, `.esm`, `.nif`, `.kf` structures, and of `.bsa` archives.
 
 This library is still very much in-progress! At the moment it does little more than expose the core game structures for editing. Code quality or architecture may be questionable. Improvements/contributions are welcome!
 
@@ -17,7 +17,7 @@ The plan is to eventually stablize a useful API and publish to `crates.io`. Not 
 [dependencies.tes3]
 git = "https://github.com/Greatness7/tes3"
 default-features = false
-features = ["esp"]  # add "nif" only if you need it
+features = ["esp"]  # add "nif" or "bsa" only if you need them
 ```
 
 `main.rs`

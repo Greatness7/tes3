@@ -4,6 +4,7 @@ use std::io::{Read, Seek, Write};
 use std::path::Path;
 
 // external imports
+use hashbrown::hash_map::Entry;
 use slotmap::{DenseSlotMap, Key, new_key_type};
 
 // internal imports
@@ -384,6 +385,83 @@ impl NiStream {
             }
             None
         })
+    }
+
+    /// The world transform of every [`NiAVObject`] reachable from the stream's roots.
+    ///
+    /// Roots start at the identity, matching the engine.
+    /// Objects not reachable through [`NiNode::children`] are absent.
+    ///
+    pub fn world_transforms(&self) -> HashMap<NiKey, Affine3A> {
+        let mut transforms = HashMap::new();
+
+        let mut queue: VecDeque<_> = self //
+            .roots
+            .iter()
+            .map(|root| (root.key, Affine3A::IDENTITY))
+            .collect();
+
+        while let Some((key, parent_transform)) = queue.pop_front() {
+            let Some(object) = self.objects.get(key) else {
+                continue;
+            };
+            let Ok(av_object) = <&NiAVObject>::try_from(object) else {
+                continue;
+            };
+
+            // Already visited, so a malformed file with a cycle cannot hang the walk.
+            let Entry::Vacant(entry) = transforms.entry(key) else {
+                continue;
+            };
+
+            let transform = parent_transform * av_object.transform();
+            entry.insert(transform);
+
+            if let Ok(node) = <&NiNode>::try_from(object) {
+                queue.reserve(node.children.len());
+                for child in &node.children {
+                    queue.push_back((child.key, transform));
+                }
+            }
+        }
+
+        transforms
+    }
+
+    /// Bakes skin deformation into every skinned geometry.
+    pub fn apply_skin_deforms(&mut self) {
+        let skinned: Vec<_> = self
+            .objects_of_type_with_link::<NiGeometry>()
+            .filter(|(_, geometry)| !geometry.skin_instance.is_null())
+            .map(|(link, geometry)| (link, geometry.skin_instance, geometry.geometry_data))
+            .collect();
+
+        if skinned.is_empty() {
+            return;
+        }
+
+        let world_transforms = self.world_transforms();
+
+        let results: Vec<_> = skinned
+            .into_iter()
+            .filter_map(|(link, skin_link, data_link)| {
+                let skin_instance = self.get(skin_link)?;
+                let geometry_data = self.get(data_link)?;
+                let (vertices, normals) = skin_instance.deform_with(self, geometry_data, &world_transforms)?;
+                Some((link, data_link, vertices, normals))
+            })
+            .collect();
+
+        for (link, data_link, vertices, normals) in results {
+            if let Some(data) = self.get_mut(data_link) {
+                data.vertices = vertices;
+                data.normals = normals;
+                data.update_center_radius();
+            }
+            if let Some(geometry) = self.get_mut(link) {
+                geometry.skin_instance = NiLink::null();
+            }
+        }
     }
 
     /// Bounding sphere encompassing all geometries in the stream.

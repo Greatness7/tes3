@@ -46,6 +46,16 @@ impl Save for NiSkinData {
     }
 }
 
+impl NiSkinData {
+    /// The transform mapping the skin root's space into the skinned geometry's local space.
+    pub fn transform(&self) -> Affine3A {
+        Affine3A {
+            matrix3: (self.rotation * self.scale).transpose().into(),
+            translation: self.translation.into(),
+        }
+    }
+}
+
 #[derive(Meta, Clone, Debug, PartialEq, SmartDefault)]
 pub struct BoneData {
     #[default(Mat3::IDENTITY)]
@@ -84,5 +94,15 @@ impl Save for BoneData {
         stream.save_as::<u16>(self.vertex_weights.len())?;
         stream.save_seq(&self.vertex_weights)?;
         Ok(())
+    }
+}
+
+impl BoneData {
+    /// The transform mapping the skin root's space into this bone's space, at bind time.
+    pub fn transform(&self) -> Affine3A {
+        Affine3A {
+            matrix3: (self.rotation * self.scale).transpose().into(),
+            translation: self.translation.into(),
+        }
     }
 }

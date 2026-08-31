@@ -36,7 +36,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Install clippy
-        run: rustup target add clippy
+        run: rustup component add clippy
 
       - name: Run clippy linter
         run: cargo clippy -- -D warnings

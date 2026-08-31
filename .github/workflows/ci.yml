@@ -12,6 +12,33 @@ defaults:
     shell: bash
 
 jobs:
+  # Check code formatting
+  fmt:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Check formatting
+        run: cargo fmt --check
+
+  # Clippy linter
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable caching
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run clippy linter
+        run: cargo clippy -- -D warnings
+
+  # Build
   build:
     name: Build
     runs-on: ${{ matrix.OS }}

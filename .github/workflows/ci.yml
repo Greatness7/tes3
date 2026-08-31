@@ -35,6 +35,9 @@ jobs:
       - name: Enable caching
         uses: Swatinem/rust-cache@v2
 
+      - name: Install clippy
+        run: rustup target add clippy
+
       - name: Run clippy linter
         run: cargo clippy -- -D warnings
 

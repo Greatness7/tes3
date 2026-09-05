@@ -1,0 +1,92 @@
+name: Cargo Build & Test
+
+on:
+  push:
+  pull_request:
+
+env: 
+  CARGO_TERM_COLOR: always
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Check code formatting
+  fmt:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Check formatting
+        run: cargo fmt --check
+
+  # Clippy linter
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable caching
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install clippy
+        run: rustup component add clippy
+
+      - name: Run clippy linter
+        run: cargo clippy -- -D warnings
+
+  # Build
+  build:
+    name: Build
+    runs-on: ${{ matrix.OS }}
+    env:
+      NAME: esp-isolator
+      TARGET: ${{ matrix.TARGET }}
+      OS: ${{ matrix.OS }}
+    strategy:
+      matrix:
+        include:
+          - TARGET: x86_64-unknown-linux-gnu
+            OS: ubuntu-latest
+          - TARGET: x86_64-pc-windows-msvc
+            OS: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Install rust target
+        run: rustup target add $TARGET
+      - name: Enable caching
+        uses: Swatinem/rust-cache@v2
+      - run: cargo build --release --verbose --target $TARGET
+
+  test:
+    name: Test
+    needs: build
+    runs-on: ${{ matrix.OS }}
+    env:
+      NAME: esp-isolator
+      TARGET: ${{ matrix.TARGET }}
+      OS: ${{ matrix.OS }}
+    strategy:
+      matrix:
+        include:
+          - TARGET: x86_64-unknown-linux-gnu
+            OS: ubuntu-latest
+          - TARGET: x86_64-pc-windows-msvc
+            OS: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Install rust target
+        run: rustup target add $TARGET
+      - name: Enable caching
+        uses: Swatinem/rust-cache@v2
+      - run: cargo test --release --verbose --target $TARGET

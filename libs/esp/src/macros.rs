@@ -93,4 +93,5 @@ make_delegate!(
     SoundGen
     Dialogue
     DialogueInfo
+    ScriptConfigList
 );

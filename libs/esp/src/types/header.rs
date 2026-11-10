@@ -80,6 +80,11 @@ impl Save for Header {
 
 impl Header {
     pub fn from_path(path: impl AsRef<Path>) -> io::Result<Self> {
+        Self::from_path_with_encoding(path, Reader::default().encoding)
+    }
+
+    /// [`Header::from_path`] with the author and description read in `encoding`.
+    pub fn from_path_with_encoding(path: impl AsRef<Path>, encoding: &'static Encoding) -> io::Result<Self> {
         let mut file = std::fs::File::open(path)?;
         let mut buffer = [0; 4];
 
@@ -99,6 +104,8 @@ impl Header {
         // content
         let mut buffer = vec![0; size + 4];
         file.read_exact(&mut buffer)?;
-        Reader::new(&buffer).load()
+        let mut reader = Reader::new(&buffer);
+        reader.encoding = encoding;
+        reader.load()
     }
 }

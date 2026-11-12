@@ -8,7 +8,7 @@ macro_rules! flag_props {
             pub fn $name(&self) -> bool {
                 self.flags & $mask != 0
             }
-            paste::paste! {
+            pastey::paste! {
                 #[inline]
                 #[allow(clippy::missing_const_for_fn)]
                 pub fn [<set_ $name>](&mut self, value: bool) {
@@ -28,7 +28,7 @@ macro_rules! flag_props {
                 let value = (self.flags & $mask) >> $pos;
                 value.try_into().unwrap_or_default()
             }
-            paste::paste! {
+            pastey::paste! {
                 #[inline]
                 #[allow(clippy::missing_const_for_fn)]
                 pub fn [<set_ $name>](&mut self, value: $type) {

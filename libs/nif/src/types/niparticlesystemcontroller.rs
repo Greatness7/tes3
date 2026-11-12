@@ -69,8 +69,8 @@ impl Load for NiParticleSystemController {
         let spawned_speed_chaos = stream.load()?;
         let spawned_direction_chaos = stream.load()?;
         let num_particles: u16 = stream.load()?;
-        let particles = stream.load_seq(num_particles)?;
         let num_active_particles = stream.load()?;
+        let particles = stream.load_seq(num_particles)?;
         let emitter_modifier = stream.load()?;
         let particle_modifier = stream.load()?;
         let particle_collider = stream.load()?;
@@ -143,8 +143,8 @@ impl Save for NiParticleSystemController {
         stream.save(&self.spawned_speed_chaos)?;
         stream.save(&self.spawned_direction_chaos)?;
         stream.save_as::<u16>(self.particles.len())?;
-        stream.save_seq(&self.particles)?;
         stream.save(&self.num_active_particles)?;
+        stream.save_seq(&self.particles)?;
         stream.save(&self.emitter_modifier)?;
         stream.save(&self.particle_modifier)?;
         stream.save(&self.particle_collider)?;

@@ -28,6 +28,14 @@ impl Plugin {
         Ok(plugin)
     }
 
+    /// [`Plugin::from_path`] with the strings read in `encoding` (a plugin's code page is
+    /// its game's: Windows-1251 for the Russian release, 1250 for the Polish one).
+    pub fn from_path_with_encoding(path: impl AsRef<Path>, encoding: &'static Encoding) -> io::Result<Self> {
+        let mut plugin = Self::new();
+        plugin.load_bytes_filtered_with_encoding(&std::fs::read(path)?, |_| true, encoding)?;
+        Ok(plugin)
+    }
+
     pub fn load_path(&mut self, path: impl AsRef<Path>) -> io::Result<()> {
         self.load_bytes(&std::fs::read(path)?)
     }
@@ -48,6 +56,21 @@ impl Plugin {
         file.write_all(&self.save_bytes()?)
     }
 
+    /// [`Plugin::save_path`] with the strings written in `encoding`.
+    pub fn save_path_with_encoding(&mut self, path: impl AsRef<Path>, encoding: &'static Encoding) -> io::Result<()> {
+        if let Some(header) = self.header_mut()
+            && let Some(extension) = path.as_ref().extension()
+        {
+            if extension.eq_ignore_ascii_case("esp") {
+                header.file_type = FileType::Esp;
+            } else if extension.eq_ignore_ascii_case("esm") {
+                header.file_type = FileType::Esm;
+            }
+        }
+        let bytes = self.save_bytes_with_encoding(encoding)?;
+        std::fs::write(path, bytes)
+    }
+
     pub fn load_bytes(&mut self, bytes: &[u8]) -> io::Result<()> {
         self.load_bytes_filtered(bytes, |_| true)
     }
@@ -57,7 +80,27 @@ impl Plugin {
     }
 
     pub fn load_bytes_filtered(&mut self, bytes: &[u8], filter: impl Fn([u8; 4]) -> bool) -> io::Result<()> {
-        let mut stream = Reader::new(bytes);
+        self.load_bytes_filtered_with_encoding(bytes, filter, Reader::default().encoding)
+    }
+
+    /// [`Plugin::load_bytes`] with the strings read in `encoding`.
+    pub fn load_bytes_with_encoding(&mut self, bytes: &[u8], encoding: &'static Encoding) -> io::Result<()> {
+        self.load_bytes_filtered_with_encoding(bytes, |_| true, encoding)
+    }
+
+    /// [`Plugin::load_bytes_filtered`] with the strings read in `encoding`.
+    pub fn load_bytes_filtered_with_encoding(
+        &mut self,
+        bytes: &[u8],
+        filter: impl Fn([u8; 4]) -> bool,
+        encoding: &'static Encoding,
+    ) -> io::Result<()> {
+        let reader = |bytes| {
+            let mut r = Reader::new(bytes);
+            r.encoding = encoding;
+            r
+        };
+        let mut stream = reader(bytes);
 
         // do a quick pass calculating the positions of objects
         let mut offsets = Vec::new();
@@ -78,7 +121,7 @@ impl Plugin {
             use rayon::prelude::*;
             self.objects = offsets
                 .into_par_iter()
-                .map(|range| Reader::new(&bytes[range]).load())
+                .map(|range| reader(&bytes[range]).load())
                 .collect::<io::Result<_>>()?;
         }
 
@@ -87,7 +130,7 @@ impl Plugin {
         {
             self.objects = offsets
                 .into_iter()
-                .map(|range| Reader::new(&bytes[range]).load())
+                .map(|range| reader(&bytes[range]).load())
                 .collect::<io::Result<_>>()?;
         }
 
@@ -95,7 +138,14 @@ impl Plugin {
     }
 
     pub fn save_bytes(&mut self) -> io::Result<Vec<u8>> {
+        self.save_bytes_with_encoding(Writer::default().encoding)
+    }
+
+    /// [`Plugin::save_bytes`] with the strings written in `encoding`: a string the code page
+    /// cannot hold is an error, as it is in Windows-1252.
+    pub fn save_bytes_with_encoding(&mut self, encoding: &'static Encoding) -> io::Result<Vec<u8>> {
         let mut stream = Writer::new(vec![]);
+        stream.encoding = encoding;
 
         // update header
         let num_objects = self.objects.len();
